@@ -13,8 +13,8 @@ import com.tencentcloudapi.tiia.v20190529.TiiaClient;
 public class tencent_credential {
 
     public static TiiaClient get_creadential(){
-        String SecretId = "AKIDpTs1tUoqc6xXqsjJcePt61f28wTklUw6";
-        String SecretKey = "vZw2rPfeS2MPBhwtZz8B3f04rNcbJlyv";
+        String SecretId = "AKIDpUt3wYswjFUTAajaCXaNuA9rJTMyJNAg";
+        String SecretKey = "GGzRcXBXcPwCArHQHrBF2QYQ0JOEm33m";
         Credential cred = new Credential(SecretId, SecretKey);
 
         // 实例化一个http选项，可选的，没有特殊需求可以跳过

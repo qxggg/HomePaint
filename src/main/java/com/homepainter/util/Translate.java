@@ -8,7 +8,7 @@ public class Translate {
     public static String translateEnToZh(String source) throws Exception {
         String target = "";
         com.aliyun.alimt20181012.Client client = Sample.createClient(
-                "LTAI5t9wdyd4TksKyC4VJLeN", "Vd2PSALzrTx67ggRwU3iYGjkmRn7ut");
+                "LTAI5t9YxxF4jAZwqz5foyz6", "ntVNfFY0IRPSuVQQUSiLq3hHPCGGF1");
         com.aliyun.alimt20181012.models.TranslateGeneralRequest translateGeneralRequest = new com.aliyun.alimt20181012.models.TranslateGeneralRequest()
                 .setFormatType("text")
                 .setSourceLanguage("en")
