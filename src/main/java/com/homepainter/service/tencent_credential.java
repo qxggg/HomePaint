@@ -30,7 +30,7 @@ public class tencent_credential {
 
     public static COSClient get_credential(){
         // 初始化用户身份信息(secretId, secretKey)
-        COSCredentials cred = new BasicCOSCredentials("AKIDpTs1tUoqc6xXqsjJcePt61f28wTklUw6","vZw2rPfeS2MPBhwtZz8B3f04rNcbJlyv");
+        COSCredentials cred = new BasicCOSCredentials("AKIDpUt3wYswjFUTAajaCXaNuA9rJTMyJNAg","GGzRcXBXcPwCArHQHrBF2QYQ0JOEm33m");
         // 设置bucket的区域, COS地域的简称请参照 https://www.qcloud.com/document/product/436/6224
         ClientConfig clientConfig = new ClientConfig(new Region("ap-nanjing"));
         // 生成cos客户端

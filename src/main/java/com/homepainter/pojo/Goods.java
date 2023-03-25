@@ -17,7 +17,83 @@ public class Goods {
 
     double price;
 
+    String superCategory;
+
+    String category;
+
+    String subtitle;
+
+    String style;
+
+    String theme;
+
+    String material;
+
+    String modal_id;
     List<Goods_image> imageUrl;
 
     List<Goods_appraise> appraise;
+
+    public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id, List<Goods_image> imageUrl) {
+        this.goodsId = goodsId;
+        this.title = title;
+        this.storage = storage;
+        this.detail = detail;
+        this.price = price;
+        this.superCategory = superCategory;
+        this.category = category;
+        this.subtitle = subtitle;
+        this.style = style;
+        this.theme = theme;
+        this.material = material;
+        this.modal_id = modal_id;
+        this.imageUrl = imageUrl;
+    }
+
+    public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id) {
+        this.goodsId = goodsId;
+        this.title = title;
+        this.storage = storage;
+        this.detail = detail;
+        this.price = price;
+        this.superCategory = superCategory;
+        this.category = category;
+        this.subtitle = subtitle;
+        this.style = style;
+        this.theme = theme;
+        this.material = material;
+        this.modal_id = modal_id;
+    }
+
+    public Goods(String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id) {
+        this.title = title;
+        this.storage = storage;
+        this.detail = detail;
+        this.price = price;
+        this.superCategory = superCategory;
+        this.category = category;
+        this.subtitle = subtitle;
+        this.style = style;
+        this.theme = theme;
+        this.material = material;
+        this.modal_id = modal_id;
+    }
+
+    public Goods( String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id, List<Goods_image> imageUrl) {
+        this.title = title;
+        this.storage = storage;
+        this.detail = detail;
+        this.price = price;
+        this.superCategory = superCategory;
+        this.category = category;
+        this.subtitle = subtitle;
+        this.style = style;
+        this.theme = theme;
+        this.material = material;
+        this.modal_id = modal_id;
+        this.imageUrl = imageUrl;
+    }
+
+
+
 }

@@ -28,6 +28,7 @@ public class CommunityController {
     @Autowired
     TranslateService translateService;
 
+    
     @PostMapping("/list")
     public Map<String, Object> getCommunityList(){
         Map<String, Object> map = new HashMap();

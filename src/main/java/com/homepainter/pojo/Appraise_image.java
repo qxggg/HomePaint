@@ -13,4 +13,11 @@ public class Appraise_image {
 
     int appraiseId;
     String imageUrl;
+
+    String imageId;
+
+    public Appraise_image(int appraiseId, String imageUrl) {
+        this.appraiseId = appraiseId;
+        this.imageUrl = imageUrl;
+    }
 }

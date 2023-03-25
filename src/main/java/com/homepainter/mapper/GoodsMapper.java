@@ -19,7 +19,7 @@ public interface GoodsMapper {
             ),
             @Result(
                     property = "imageUrl",
-                    column = "appraiseId",
+                    column = "goodsId",
                     javaType = List.class,
                     many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getAllImage")
             ),
@@ -37,7 +37,7 @@ public interface GoodsMapper {
             ),
             @Result(
                     property = "imageUrl",
-                    column = "appraiseId",
+                    column = "goodsId",
                     javaType = List.class,
                     many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getAllImage")
             ),
@@ -62,7 +62,7 @@ public interface GoodsMapper {
             ),
             @Result(
                     property = "imageUrl",
-                    column = "appraiseId",
+                    column = "goodsId",
                     javaType = List.class,
                     many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getAllImage")
             ),
@@ -76,4 +76,8 @@ public interface GoodsMapper {
             )
     })
     Goods getGoodsById(int goodsId);
+
+    @Insert("insert into goods values (#{goodsId}, #{title}, #{storage}, #{detail}, #{price}, #{superCategory}, #{category}, #{subtitle}, #{style}, #{theme}, #{material}, #{modal_id})")
+    int insertGoods(Goods goods);
+
 }

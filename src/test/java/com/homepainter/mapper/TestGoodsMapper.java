@@ -2,7 +2,9 @@ package com.homepainter.mapper;
 
 
 import com.homepainter.pojo.Appraise_image;
+import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_appraise;
+import com.homepainter.pojo.Goods_image;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +30,9 @@ public class TestGoodsMapper {
 //        goodsMapper.getAllGoods().forEach(System.out::println);
 //        goodsMapper.getGoodsByContent("w").forEach(System.out::println);
 //        appraiseImageMapper.getAllImage().forEach(System.out::println);
-        System.out.println(goodsMapper.getGoodsById(1));
+//        System.out.println(goodsMapper.getGoodsById(1));
+//        goodsMapper.insertGoods(new Goods("hello", 321, "haha", 131, "haha", "haha", "haha", "haha", "haha", "haha", "haha"));
+        goodsImageMapper.insertGoodsImage(new Goods_image(1, "wwowowohahaha.jpg"));
+
     }
 }
