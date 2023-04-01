@@ -12,8 +12,8 @@ public class RandomUtils {
      * @param repeat 允许重复
      * @return
      */
-    public static int[] getRandomNumbers(int number, int min, int max, boolean repeat) {
-        Random random = new Random();
+    public static int[] getRandomNumbers(Random random, int number, int min, int max, boolean repeat) {
+
         int[] array = new int[number];
         boolean[] flags = new boolean[max + 1];
         if (repeat) {

@@ -15,4 +15,7 @@ public interface Appraise_imageMapper {
 
     @Select("select * from appraise_image")
     List<Appraise_image> getAllImage();
+
+    @Select("select * from appraise_image where appraiseId = #{appraiseId}")
+    List<Appraise_image> getImageById(int appraiseId);
 }

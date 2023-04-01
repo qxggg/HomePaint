@@ -29,12 +29,12 @@ public class Goods {
 
     String material;
 
-    String modal_id;
+    String modalId;
     List<Goods_image> imageUrl;
 
     List<Goods_appraise> appraise;
 
-    public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id, List<Goods_image> imageUrl) {
+    public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modalId, List<Goods_image> imageUrl) {
         this.goodsId = goodsId;
         this.title = title;
         this.storage = storage;
@@ -46,11 +46,11 @@ public class Goods {
         this.style = style;
         this.theme = theme;
         this.material = material;
-        this.modal_id = modal_id;
+        this.modalId = modalId;
         this.imageUrl = imageUrl;
     }
 
-    public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id) {
+    public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modalId) {
         this.goodsId = goodsId;
         this.title = title;
         this.storage = storage;
@@ -62,10 +62,10 @@ public class Goods {
         this.style = style;
         this.theme = theme;
         this.material = material;
-        this.modal_id = modal_id;
+        this.modalId = modalId;
     }
 
-    public Goods(String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id) {
+    public Goods(String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modalId) {
         this.title = title;
         this.storage = storage;
         this.detail = detail;
@@ -76,10 +76,10 @@ public class Goods {
         this.style = style;
         this.theme = theme;
         this.material = material;
-        this.modal_id = modal_id;
+        this.modalId = modalId;
     }
 
-    public Goods( String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modal_id, List<Goods_image> imageUrl) {
+    public Goods( String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modalId, List<Goods_image> imageUrl) {
         this.title = title;
         this.storage = storage;
         this.detail = detail;
@@ -90,7 +90,7 @@ public class Goods {
         this.style = style;
         this.theme = theme;
         this.material = material;
-        this.modal_id = modal_id;
+        this.modalId = modalId;
         this.imageUrl = imageUrl;
     }
 

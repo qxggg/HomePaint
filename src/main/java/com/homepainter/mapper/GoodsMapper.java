@@ -20,31 +20,40 @@ public interface GoodsMapper {
                     property = "appraise",
                     column = "goodsId",
                     javaType = List.class,
-                    many = @Many(select = "com.homepainter.mapper.Goods_appraiseMapper.getAllAppraise")
+                    many = @Many(select = "com.homepainter.mapper.Goods_appraiseMapper.getAppraiseById")
             ),
             @Result(
                     property = "imageUrl",
                     column = "goodsId",
                     javaType = List.class,
-                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getAllImage")
+                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getImageById")
             ),
+            @Result(
+                    property = "goodsId",
+                    column = "goodsId"
+            ),
+            @Result(
+                    property = "appraiseId",
+                    column = "appraiseId"
+            )
+
 
     })
     List<Goods> getAllGoods();
 
-    @Select("select * from goods where title like concat('%', #{searchContent}, '%') or subtitle like concat('%', #{searchContent}, '%') or detail like concat('%', #{searchContent}, '%')")
+    @Select("select * from goods where title like concat('%', #{searchContent}, '%') or subtitle like concat('%', #{searchContent}, '%') or detail like concat('%', #{searchContent}, '%') or style like concat('%', #{searchContent}, '%') or theme like concat('%', #{searchContent}, '%') or material like concat('%', #{searchContent}, '%') or category like concat('%', #{searchContent}, '%')")
     @Results({
             @Result(
                     property = "appraise",
                     column = "goodsId",
                     javaType = List.class,
-                    many = @Many(select = "com.homepainter.mapper.Goods_appraiseMapper.getAllAppraise")
+                    many = @Many(select = "com.homepainter.mapper.Goods_appraiseMapper.getAppraiseById")
             ),
             @Result(
                     property = "imageUrl",
                     column = "goodsId",
                     javaType = List.class,
-                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getAllImage")
+                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getImageById")
             ),
             @Result(
                     property = "goodsId",
@@ -63,13 +72,13 @@ public interface GoodsMapper {
                     property = "appraise",
                     column = "goodsId",
                     javaType = List.class,
-                    many = @Many(select = "com.homepainter.mapper.Goods_appraiseMapper.getAllAppraise")
+                    many = @Many(select = "com.homepainter.mapper.Goods_appraiseMapper.getAppraiseById")
             ),
             @Result(
                     property = "imageUrl",
                     column = "goodsId",
                     javaType = List.class,
-                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getAllImage")
+                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getImageById")
             ),
             @Result(
                     property = "goodsId",
@@ -79,6 +88,7 @@ public interface GoodsMapper {
                     property = "appraiseId",
                     column = "appraiseId"
             )
+
     })
     Goods getGoodsById(int goodsId);
 

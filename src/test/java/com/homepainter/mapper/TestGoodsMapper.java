@@ -27,13 +27,13 @@ public class TestGoodsMapper {
     public void testGoods(){
 //        goodsImageMapper.getAllImage().forEach(System.out::println);
 //      goodsAppraise.getAllAppraise().forEach(System.out::println);
-//        goodsMapper.getAllGoods().forEach(System.out::println);
+        goodsMapper.getAllGoods().forEach(System.out::println);
 //        goodsMapper.getGoodsByContent("w").forEach(System.out::println);
 //        appraiseImageMapper.getAllImage().forEach(System.out::println);
 //        System.out.println(goodsMapper.getGoodsById(1));
 //        goodsMapper.insertGoods(new Goods("hello", 321, "haha", 131, "haha", "haha", "haha", "haha", "haha", "haha", "haha"));
 //        goodsImageMapper.insertGoodsImage(new Goods_image(1, "wwowowohahaha.jpg"));
-        goodsMapper.getStyleById(1);
+//        goodsMapper.getStyleById(1);
 
     }
 }

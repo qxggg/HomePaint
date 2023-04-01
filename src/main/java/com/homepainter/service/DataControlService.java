@@ -5,10 +5,7 @@ import com.homepainter.util.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class DataControlService {
@@ -21,7 +18,8 @@ public class DataControlService {
 
 
         List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
-        int[] user = RandomUtils.getRandomNumbers(50, 1, 2000, false);
+        Random random = new Random();
+        int[] user = RandomUtils.getRandomNumbers(random, 50, 1, 2000, false);
         //
 
         int[] click = new int[2001];
@@ -42,11 +40,12 @@ public class DataControlService {
         Arrays.fill(consum, 0);
         Arrays.fill(view, 0);
 
-        int[] randomClick = RandomUtils.getRandomNumbers(50, 0, 50, true);
-        int[] randomLike = RandomUtils.getRandomNumbers(50, 0, 1, true);
-        int[] randomUse = RandomUtils.getRandomNumbers(50, 0, 1, true);
-        int[] randomConsum = RandomUtils.getRandomNumbers(50, 0, 1, true);
-        int[] randomView = RandomUtils.getRandomNumbers(50, 0, 10000, true);
+
+        int[] randomClick = RandomUtils.getRandomNumbers(random, 19,0, 50, true);
+        int[] randomLike = RandomUtils.getRandomNumbers(random, 19,0, 1, true);
+        int[] randomUse = RandomUtils.getRandomNumbers(random, 19,0, 1, true);
+        int[] randomConsum = RandomUtils.getRandomNumbers(random, 19,0, 1, true);
+        int[] randomView = RandomUtils.getRandomNumbers(random, 19,0, 10000, true);
 
         for (int i = 1, j = 0; i < user.length; ++i) {
             click[user[i]] = randomClick[j];
@@ -78,5 +77,70 @@ public class DataControlService {
         return list;
     }
 
+
+    public List<HashMap<String, Object>> styleService(){
+        List<HashMap<String, Object>> list = new ArrayList<>();
+
+        Random random = new Random();
+
+
+
+
+
+
+        for(int p = 1; p <= 10000; ++p) {
+            HashMap<String, Object> map = new HashMap<>();
+            int[] randomClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomCollect= RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomConsume = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomView = RandomUtils.getRandomNumbers(random,19, 0, 10000, true);
+            int[] randomSearchClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomUse = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] intComment = RandomUtils.getRandomNumbers(random,19, 0, 100000, true);
+            double[] randomComment = new double[19];
+            for(int i = 0; i < randomComment.length; ++i) randomComment[i] = intComment[i] / 100000.00;
+
+            map.put("randomClick", Arrays.toString(randomClick));
+            map.put("randomCollect", Arrays.toString(randomCollect));
+            map.put("randomConsume", Arrays.toString(randomConsume));
+            map.put("randomView", Arrays.toString(randomView));
+            map.put("randomSearchClick", Arrays.toString(randomSearchClick));
+            map.put("randomComment", Arrays.toString(randomComment));
+            map.put("randomUse", Arrays.toString(randomUse));
+            list.add(map);
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        List<HashMap<String, Object>> list = new ArrayList<>();
+
+
+
+        double[] randomComment = new double[19];
+        for(int i = 1; i < randomComment.length; ++i) randomComment[i] = RandomUtils.generateRandomNumber();
+
+
+        Random random = new Random();
+        for(int p = 1; p <= 10000; ++p) {
+            HashMap<String, Object> map = new HashMap<>();
+            int[] randomClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomCollect= RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomConsume = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomView = RandomUtils.getRandomNumbers(random,19, 0, 10000, true);
+            int[] randomSearchClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            int[] randomUse = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+            map.put("id", p);
+            map.put("randomClick", Arrays.toString(randomClick));
+            map.put("randomCollect", Arrays.toString(randomCollect));
+            map.put("randomConsume", Arrays.toString(randomConsume));
+            map.put("randomView", Arrays.toString(randomView));
+            map.put("randomSearchClick", Arrays.toString(randomSearchClick));
+            map.put("randomComment", Arrays.toString(randomComment));
+            map.put("randomUse", Arrays.toString(randomUse));
+            list.add(map);
+        }
+        System.out.println(list);
+    }
 
 }

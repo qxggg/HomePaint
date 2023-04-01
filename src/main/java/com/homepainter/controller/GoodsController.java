@@ -29,7 +29,7 @@ public class GoodsController {
         Map<String, Object> map = new HashMap<>();
         map.put("data", goodsService.getAllGoods());
         map.put("code", 0);
-        map.put("msg", "查询订单成功！");
+        map.put("msg", "查询商品成功！");
         return map;
     }
 
@@ -39,7 +39,7 @@ public class GoodsController {
         if (data.get("goods_id") == null) map.put("data", goodsService.getAllGoods());
         else map.put("data", goodsService.getGoodsById((int) data.get("goods_id")));
         map.put("code", 0);
-        map.put("msg", "查询订单成功！");
+        map.put("msg", "查询商品成功！");
         return map;
     }
     @PostMapping("get_list")
@@ -48,7 +48,7 @@ public class GoodsController {
         if (data.get("search_content") == null) map.put("data", goodsService.getAllGoods());
         else map.put("data", goodsService.getGoodsByContent((String) data.get("search_content")));
         map.put("code", 0);
-        map.put("msg", "查询订单成功！");
+        map.put("msg", "查询商品成功！");
         return map;
     }
 

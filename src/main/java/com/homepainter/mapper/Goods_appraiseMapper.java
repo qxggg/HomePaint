@@ -24,4 +24,20 @@ public interface Goods_appraiseMapper {
             )
     })
     List<Goods_appraise> getAllAppraise();
+
+    @Select("select * from goods_appraise where appraiseId = #{appraiseId}")
+    @Results({
+            @Result(
+                    property = "imageUrl",
+                    column = "appraiseId",
+                    javaType = List.class,
+                    many = @Many(select = "com.homepainter.mapper.Appraise_imageMapper.getImageById")
+            ),
+
+            @Result(
+                    property = "appraiseId",
+                    column = "appraiseId"
+            )
+    })
+    List<Goods_appraise> getAppraiseById(int appraiseId);
 }
