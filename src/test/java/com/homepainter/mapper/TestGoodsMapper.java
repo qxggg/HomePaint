@@ -32,7 +32,8 @@ public class TestGoodsMapper {
 //        appraiseImageMapper.getAllImage().forEach(System.out::println);
 //        System.out.println(goodsMapper.getGoodsById(1));
 //        goodsMapper.insertGoods(new Goods("hello", 321, "haha", 131, "haha", "haha", "haha", "haha", "haha", "haha", "haha"));
-        goodsImageMapper.insertGoodsImage(new Goods_image(1, "wwowowohahaha.jpg"));
+//        goodsImageMapper.insertGoodsImage(new Goods_image(1, "wwowowohahaha.jpg"));
+        goodsMapper.getStyleById(1);
 
     }
 }

@@ -9,6 +9,11 @@ import java.util.List;
 @Mapper
 @Repository
 public interface GoodsMapper {
+
+    @Select("select style from goods where goodsId = #{goodsId}")
+    String getStyleById(int goodsId);
+
+
     @Select("select * from goods")
     @Results({
             @Result(
