@@ -84,12 +84,13 @@ public class DataControlService {
         Random random = new Random();
 
 
-
-
-
-
-        for(int p = 1; p <= 10000; ++p) {
+        for(int p = 1; p <= 12000; ++p) {
             HashMap<String, Object> map = new HashMap<>();
+            int[] index = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+
+            int[] seed = RandomUtils.getRandomNumbers(random, 1, 0, 18, false);
+            int[] zero = RandomUtils.getRandomNumbers(random, seed[0], 0, 18, false);
+            int[] index2 = new int[19 - seed[0]];
             int[] randomClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
             int[] randomCollect= RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
             int[] randomConsume = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
@@ -100,6 +101,21 @@ public class DataControlService {
             double[] randomComment = new double[19];
             for(int i = 0; i < randomComment.length; ++i) randomComment[i] = intComment[i] / 100000.00;
 
+            for (int i = 0, j = 0; i < zero.length; ++i) {
+                randomClick[zero[i]] = 0;
+                randomCollect[zero[i]] = 0;
+                randomConsume[zero[i]] = 0;
+                randomView[zero[i]] = 0;
+                randomSearchClick[zero[i]] = 0;
+                randomUse[zero[i]] = 0;
+                randomComment[zero[i]] = 0;
+                index[zero[i]] = 0;
+            }
+
+            for (int i = 0, j = 0; i < index.length; ++i)
+                if (index[i] != 0) index2[j++] = i;
+
+
             map.put("randomClick", Arrays.toString(randomClick));
             map.put("randomCollect", Arrays.toString(randomCollect));
             map.put("randomConsume", Arrays.toString(randomConsume));
@@ -107,8 +123,10 @@ public class DataControlService {
             map.put("randomSearchClick", Arrays.toString(randomSearchClick));
             map.put("randomComment", Arrays.toString(randomComment));
             map.put("randomUse", Arrays.toString(randomUse));
+            map.put("index", Arrays.toString(index2));
             list.add(map);
         }
+
         return list;
     }
 
@@ -142,5 +160,7 @@ public class DataControlService {
         }
         System.out.println(list);
     }
+
+
 
 }

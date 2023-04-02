@@ -14,7 +14,7 @@ public interface GoodsMapper {
     String getStyleById(int goodsId);
 
 
-    @Select("select * from goods")
+    @Select("select * from goods limit 10")
     @Results({
             @Result(
                     property = "appraise",

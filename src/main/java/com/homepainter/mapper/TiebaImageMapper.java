@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface TiebaImageMapper {
 
-    @Select("select * from tiebaImage")
-    List<TiebaImage> getTiebaImage();
+    @Select("select * from tiebaImage where tiebaId = #{tiebaId}")
+    List<TiebaImage> getTiebaImage(int tiebaId);
 }

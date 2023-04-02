@@ -1,4 +1,4 @@
-package com.homepainter.controller.DTO;
+package com.homepainter.controller;
 
 import com.homepainter.service.DataControlService;
 import org.springframework.beans.factory.annotation.Autowired;

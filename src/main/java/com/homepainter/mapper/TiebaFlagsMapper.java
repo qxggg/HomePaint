@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface TiebaFlagsMapper {
 
-    @Select("select * from tiebaFlags")
-    public List<TiebaFlags> getTiebaFlags();
+    @Select("select * from tiebaFlags where tiebaId = #{tiebaId}")
+    public List<TiebaFlags> getTiebaFlags(int tiebaId);
 }

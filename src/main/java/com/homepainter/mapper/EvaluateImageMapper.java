@@ -13,7 +13,7 @@ import java.util.*;
 @Repository
 public interface EvaluateImageMapper {
 
-    @Select("select * from evaluateimage")
+    @Select("select * from evaluateimage where evaluateId = #{evaluateId}")
     List<EvaluateImage> getEvaluateImage();
 
     @Insert("insert into evaluateimage values (#{evaluateId}, #{imageUrl}, #{imageId})")
