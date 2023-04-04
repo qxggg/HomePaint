@@ -77,5 +77,14 @@ public class GoodsController {
       return map;
     }
 
+    @GetMapping("/swiperList")
+    public Map<String, Object> getHot(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 0);
+        map.put("msg", "查询成功");
+        map.put("data", goodsService.selectHotByType("swiperList"));
+        return map;
+    }
+
 
 }

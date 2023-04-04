@@ -25,8 +25,9 @@ import java.util.Arrays;
 public interface HouseIdentify {
     static final Logger LOGGER = LoggerFactory.getLogger(HouseIdentify.class);
 
-    public static String houseIdentify(String url){
+    public static JSONObject houseIdentify(String url){
         String res = "";
+        JSONObject result = new JSONObject();
         Request request = new Request();
         try {
             request.setKey("0b54b951a8bf4cff8e0def9dcae62196");
@@ -63,16 +64,18 @@ public interface HouseIdentify {
 //            LOGGER.info(resEntity.string());
 
             res = resEntity.string();
-            System.out.println("haha" + res );
+            result = JSONObject.parseObject(res);
+            System.out.println("haha" + result );
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
-        return res;
+        return result;
     }
 
     public static void main(String[] args) throws Exception {
         // Create a new request.
         Request request = new Request();
+
         try {
             request.setKey("0b54b951a8bf4cff8e0def9dcae62196");
             request.setSecret("a845bf8174c64297a838c0e3a51e24a5");
@@ -107,7 +110,9 @@ public interface HouseIdentify {
             ResponseBody resEntity = response.body();
 //            LOGGER.info(resEntity.string());
             System.out.println("jajaja");
-            System.out.println(resEntity.string());
+            String res = resEntity.string();
+            JSONObject result = JSONObject.parseObject(res);
+            System.out.println(result);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }

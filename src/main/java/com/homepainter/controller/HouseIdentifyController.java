@@ -1,5 +1,6 @@
 package com.homepainter.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
 import com.homepainter.util.File2Base64;
 import com.qcloud.cos.model.PutObjectResult;
@@ -42,7 +43,7 @@ public class HouseIdentifyController {
         String filename =  System.currentTimeMillis() + "model.jpg";
         PutObjectResult putObjectResult = putObject(filename, file_res, "module/");
         String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/module/" + filename;
-        String r = HouseIdentify.houseIdentify(Imageurl);
+        JSONObject r = HouseIdentify.houseIdentify(Imageurl);
 
         res.put("data", r);
         res.put("code", 0);

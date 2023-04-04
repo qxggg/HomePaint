@@ -34,10 +34,10 @@ public class UserController {
         return map;
     }
 
-    @PostMapping("/test")
+    @GetMapping("/test")
     public Map<String, Object> hello (@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 1);
+        map.put("data", "接口联通成功");
         return map;
     }
     @PostMapping("/login")

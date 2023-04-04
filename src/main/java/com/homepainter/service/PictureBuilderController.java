@@ -2,6 +2,7 @@ package com.homepainter.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.homepainter.util.File2Base64;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import org.apache.http.ContentTooLongException;
@@ -107,9 +108,9 @@ public class PictureBuilderController {
     public static void main(String[] args) throws IOException {
         PictureBuilderController pictureBuilderController = new PictureBuilderController();
 //        pictureBuilderController.createProject("131411", pictureBuilderController.getToken(), "19819605657");
- //       pictureBuilderController.getUrl(pictureBuilderController.getToken(),"838EF1D5ADD1309B19279FDF848DE57E", "5000.0000000", "1", "5");
+        //       pictureBuilderController.getUrl(pictureBuilderController.getToken(),"838EF1D5ADD1309B19279FDF848DE57E", "5000.0000000", "1", "5");
 //    pictureBuilderController.unlocked(pictureBuilderController.getToken(), "838EF1D5ADD1309B19279FDF848DE57E");
-    pictureBuilderController.download(pictureBuilderController.getToken(), "60BDBBB56889116C41E9465FD716A6AF", "obj");
+
     }
 
 }

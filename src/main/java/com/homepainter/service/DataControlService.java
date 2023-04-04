@@ -129,35 +129,128 @@ public class DataControlService {
 
         return list;
     }
-
-    public static void main(String[] args) {
+    public List<HashMap<String, Object>> goodsService(){
         List<HashMap<String, Object>> list = new ArrayList<>();
 
-
-
-        double[] randomComment = new double[19];
-        for(int i = 1; i < randomComment.length; ++i) randomComment[i] = RandomUtils.generateRandomNumber();
-
-
         Random random = new Random();
-        for(int p = 1; p <= 10000; ++p) {
+
+
+        for(int p = 1; p <= 950; ++p) {
             HashMap<String, Object> map = new HashMap<>();
-            int[] randomClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
-            int[] randomCollect= RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
-            int[] randomConsume = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
-            int[] randomView = RandomUtils.getRandomNumbers(random,19, 0, 10000, true);
-            int[] randomSearchClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
-            int[] randomUse = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
-            map.put("id", p);
+            int[] index = new int[2000];
+            Arrays.fill(index, 1);
+
+            int[] seed = RandomUtils.getRandomNumbers(random, 1, 0, 1999, false);
+            int[] zero = RandomUtils.getRandomNumbers(random, seed[0], 0, 1999, false);
+            int[] index2 = new int[2000 - seed[0]];
+            int[] randomClick = RandomUtils.getRandomNumbers(random,2000, 0, 100, true);
+            int[] randomCollect= RandomUtils.getRandomNumbers(random,2000, 0, 1, true);
+            int[] randomConsume = RandomUtils.getRandomNumbers(random,2000, 0, 1, true);
+            int[] randomView = RandomUtils.getRandomNumbers(random,2000, 0, 10000, true);
+
+            int[] randomUse = RandomUtils.getRandomNumbers(random,2000, 0, 1, true);
+            int[] intComment = RandomUtils.getRandomNumbers(random,2000, 0, 100000, true);
+            double[] randomComment = new double[2000];
+            for(int i = 0; i < randomComment.length; ++i) randomComment[i] = intComment[i] / 100000.00;
+
+            for (int i = 0, j = 0; i < zero.length; ++i) {
+                randomClick[zero[i]] = 0;
+                randomCollect[zero[i]] = 0;
+                randomConsume[zero[i]] = 0;
+                randomView[zero[i]] = 0;
+                randomUse[zero[i]] = 0;
+                randomComment[zero[i]] = 0;
+                index[zero[i]] = 0;
+            }
+
+            for (int i = 0, j = 0; i < index.length; ++i)
+                if (index[i] != 0) index2[j++] = i;
+
+
             map.put("randomClick", Arrays.toString(randomClick));
             map.put("randomCollect", Arrays.toString(randomCollect));
             map.put("randomConsume", Arrays.toString(randomConsume));
             map.put("randomView", Arrays.toString(randomView));
-            map.put("randomSearchClick", Arrays.toString(randomSearchClick));
             map.put("randomComment", Arrays.toString(randomComment));
             map.put("randomUse", Arrays.toString(randomUse));
+            map.put("index", Arrays.toString(index2));
             list.add(map);
         }
+
+        return list;
+    }
+
+    public static void main(String[] args) {
+//        List<HashMap<String, Object>> list = new ArrayList<>();
+//
+//
+//
+//        double[] randomComment = new double[19];
+//        for(int i = 1; i < randomComment.length; ++i) randomComment[i] = RandomUtils.generateRandomNumber();
+//
+//
+//        Random random = new Random();
+//        for(int p = 1; p <= 10000; ++p) {
+//            HashMap<String, Object> map = new HashMap<>();
+//            int[] randomClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+//            int[] randomCollect= RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+//            int[] randomConsume = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+//            int[] randomView = RandomUtils.getRandomNumbers(random,19, 0, 10000, true);
+//            int[] randomSearchClick = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+//            int[] randomUse = RandomUtils.getRandomNumbers(random,19, 0, 1000, true);
+//            map.put("id", p);
+//            map.put("randomClick", Arrays.toString(randomClick));
+//            map.put("randomCollect", Arrays.toString(randomCollect));
+//            map.put("randomConsume", Arrays.toString(randomConsume));
+//            map.put("randomView", Arrays.toString(randomView));
+//            map.put("randomSearchClick", Arrays.toString(randomSearchClick));
+//            map.put("randomComment", Arrays.toString(randomComment));
+//            map.put("randomUse", Arrays.toString(randomUse));
+//            list.add(map);
+//        }
+//        System.out.println(list);
+        List<HashMap<String, Object>> list = new ArrayList<>();
+
+        Random random = new Random();
+        HashMap<String, Object> map = new HashMap<>();
+        int[] index = new int[2000];
+        Arrays.fill(index, 1);
+
+        int[] seed = RandomUtils.getRandomNumbers(random, 1, 0, 1999, false);
+        int[] zero = RandomUtils.getRandomNumbers(random, seed[0], 0, 1999, false);
+        int[] index2 = new int[2000 - seed[0]];
+        int[] randomClick = RandomUtils.getRandomNumbers(random,2000, 0, 100, true);
+        int[] randomCollect= RandomUtils.getRandomNumbers(random,2000, 0, 1, true);
+        int[] randomConsume = RandomUtils.getRandomNumbers(random,2000, 0, 1, true);
+        int[] randomView = RandomUtils.getRandomNumbers(random,2000, 0, 10000, true);
+
+        int[] randomUse = RandomUtils.getRandomNumbers(random,2000, 0, 1, true);
+        int[] intComment = RandomUtils.getRandomNumbers(random,2000, 0, 100000, true);
+        double[] randomComment = new double[2000];
+        for(int i = 0; i < randomComment.length; ++i) randomComment[i] = intComment[i] / 100000.00;
+
+        for (int i = 0, j = 0; i < zero.length; ++i) {
+            randomClick[zero[i]] = 0;
+            randomCollect[zero[i]] = 0;
+            randomConsume[zero[i]] = 0;
+            randomView[zero[i]] = 0;
+            randomUse[zero[i]] = 0;
+            randomComment[zero[i]] = 0;
+            index[zero[i]] = 0;
+        }
+
+        for (int i = 0, j = 0; i < index.length; ++i)
+            if (index[i] != 0) index2[j++] = i;
+
+
+        map.put("randomClick", Arrays.toString(randomClick));
+        map.put("randomCollect", Arrays.toString(randomCollect));
+        map.put("randomConsume", Arrays.toString(randomConsume));
+        map.put("randomView", Arrays.toString(randomView));
+        map.put("randomComment", Arrays.toString(randomComment));
+        map.put("randomUse", Arrays.toString(randomUse));
+        map.put("index", Arrays.toString(index2));
+        list.add(map);
         System.out.println(list);
     }
 

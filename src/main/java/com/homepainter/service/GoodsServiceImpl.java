@@ -2,8 +2,10 @@ package com.homepainter.service;
 
 import com.homepainter.mapper.GoodsMapper;
 import com.homepainter.mapper.Goods_imageMapper;
+import com.homepainter.mapper.HotMapper;
 import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_image;
+import com.homepainter.pojo.Hot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ public class GoodsServiceImpl implements GoodsService{
 
     @Autowired
     Goods_imageMapper goodsImageMapper;
+
+    @Autowired
+    HotMapper hotMapper;
     @Override
     public List<Goods> getAllGoods() {
         return goodsMapper.getAllGoods();
@@ -37,6 +42,11 @@ public class GoodsServiceImpl implements GoodsService{
         for (Goods_image goodsImage : goods.getImageUrl())
             if (goodsImageMapper.insertGoodsImage(goodsImage) == 0) return 0;
         return 1;
+    }
+
+    @Override
+    public List<Hot> selectHotByType(String type) {
+        return hotMapper.getHotById(type);
     }
 
 

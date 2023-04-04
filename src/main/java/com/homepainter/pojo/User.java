@@ -13,12 +13,20 @@ public class User {
     private String password;
     private String telephone;
 
+    int userId;
+
     public User(String telephone, String password){
         this.telephone = telephone;
         this.password = password;
     }
 
     public User(String telephone){
+        this.telephone = telephone;
+    }
+
+    public User(String username, String password, String telephone) {
+        this.username = username;
+        this.password = password;
         this.telephone = telephone;
     }
 }

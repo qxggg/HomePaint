@@ -22,4 +22,12 @@ public class DataController {
         map.put("data", dataControlService.styleService());
         return map;
     }
+
+    @GetMapping("/goods")
+    public Map<String, Object> getAllGoods(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("data", dataControlService.goodsService());
+        return map;
+    }
+
 }
