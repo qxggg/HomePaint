@@ -13,27 +13,15 @@ public class TiebaEvaluate {
     int tiebaId;
     String detail;
     int evaluateId;
-    String avatar;
     String username;
-
     List<EvaluateImage> evaluateImage;
+    int userId;
 
-    String telephone;
-
-    public TiebaEvaluate(int tiebaId, String detail, String avatar, String username, String telephone) {
-        this.tiebaId = tiebaId;
+    public TiebaEvaluate(String detail, int tiebaId, String username, List<EvaluateImage> evaluateImage, int userId) {
         this.detail = detail;
-        this.avatar = avatar;
-        this.username = username;
-        this.telephone = telephone;
-    }
-
-    public TiebaEvaluate(int tiebaId, String detail, String avatar, String username, String telephone, List<EvaluateImage> evaluateImage) {
         this.tiebaId = tiebaId;
-        this.detail = detail;
-        this.avatar = avatar;
         this.username = username;
-        this.telephone = telephone;
         this.evaluateImage = evaluateImage;
+        this.userId = userId;
     }
 }

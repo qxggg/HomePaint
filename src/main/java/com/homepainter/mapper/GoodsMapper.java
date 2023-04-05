@@ -40,8 +40,10 @@ public interface GoodsMapper {
 
     })
     List<Goods> getAllGoods();
-
-    @Select("select * from goods where title like concat('%', #{searchContent}, '%') or subtitle like concat('%', #{searchContent}, '%') or detail like concat('%', #{searchContent}, '%') or style like concat('%', #{searchContent}, '%') or theme like concat('%', #{searchContent}, '%') or material like concat('%', #{searchContent}, '%') or category like concat('%', #{searchContent}, '%')")
+//    @Select("select * from goods where match(category, title, subtitle, style, detail)  against(#{searchContent}) ")
+      @Select("select * from goods where title like concat('%', #{searchContent}, '%') or subtitle like concat('%', #{searchContent}, '%') or detail like concat('%', #{searchContent}, '%') or style like concat('%', #{searchContent}, '%') or theme like concat('%', #{searchContent}, '%') or material like concat('%', #{searchContent}, '%') or category like concat('%', #{searchContent}, '%') limit 50")
+//
+//    @Select("select * from goods where match(category) against(#{searchContent}) or match(title) against(#{searchContent}) or match(subtitle) against(#{searchContent}) or match(superCategory) against(#{searchContent}) or match(style) against(#{style})")
     @Results({
             @Result(
                     property = "appraise",
@@ -94,5 +96,6 @@ public interface GoodsMapper {
 
     @Insert("insert into goods values (#{goodsId}, #{title}, #{storage}, #{detail}, #{price}, #{superCategory}, #{category}, #{subtitle}, #{style}, #{theme}, #{material}, #{modal_id})")
     int insertGoods(Goods goods);
+
 
 }

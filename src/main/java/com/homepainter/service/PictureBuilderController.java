@@ -11,9 +11,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -78,12 +80,36 @@ public class PictureBuilderController {
         return url;
     }
 
-    public String post(String token, String url, MediaType mediaType){
 
-//        RequestBody requestBody = RequestBody.create(mediaType, )
-        return null;
+    public void upload(String token, String url, String fp_id, File binaryFile) throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+//        HttpPost httpPost = new HttpPost(url);
+//        httpPost.setHeader("token", token);
+//        httpPost.setHeader("requestType-Content", "ModelingStand");
+//        httpPost.setHeader("Content-Type", "application/json");
+        HttpPut httpPut = new HttpPut(url);
+        httpPut.setHeader("token", token);
+        httpPut.setHeader("Content-Type", "application/x-zip-compressed");
+        httpPut.setHeader("x-oss-meta-author", fp_id);
+        HttpEntity reqEntity = MultipartEntityBuilder.create()
+                .addPart("binaryFile", new FileBody(binaryFile, ContentType.APPLICATION_OCTET_STREAM, binaryFile.getName()))
+                .build();
+        httpPut.setEntity(reqEntity);
+        CloseableHttpResponse response = httpClient.execute(httpPut);
     }
 
+    public void cover(String token, String fp_id, File file) throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("https://www.gongchuangshijie.com:81/BoYa/files/uploadCover");
+        httpPost.setHeader("token", token);
+        httpPost.setHeader("requestType-Content", "ModelingStand");
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addTextBody("fp_id", fp_id);
+        FileBody fileBody = new FileBody(file);
+        builder.addPart("coverFile", fileBody);
+        httpPost.setEntity(builder.build());
+        HttpResponse response = httpClient.execute(httpPost);
+    }
 
     public void unlocked(String token, String fp_id) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -102,15 +128,33 @@ public class PictureBuilderController {
         System.out.println(url);
     }
 
-    public void download(String fp_id, String format, String telephone) throws IOException {
-       FileDownloader.get_zip(fp_id, format, telephone);
+
+    public void down(String fp_id, String format, String telephone) throws IOException {
+        PictureBuilderController pictureBuilderController = new PictureBuilderController();
+        unlocked(pictureBuilderController.getToken(), fp_id);
+        FileDownloader.get_zip(fp_id, format, telephone);
     }
+
+    public void up(File zip, File picture, String projectName, String telephone, String handleType, String type, String photoInfo) throws IOException {
+        PictureBuilderController pictureBuilderController = new PictureBuilderController();
+        String token = pictureBuilderController.getToken();
+        String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
+        String url = pictureBuilderController.getUrl(token, fp_id, photoInfo, handleType, type);
+        pictureBuilderController.upload(token, url, fp_id, zip);
+        pictureBuilderController.cover(token, fp_id, picture);
+    };
+
+
     public static void main(String[] args) throws IOException {
         PictureBuilderController pictureBuilderController = new PictureBuilderController();
-//        pictureBuilderController.createProject("131411", pictureBuilderController.getToken(), "19819605657");
-        //       pictureBuilderController.getUrl(pictureBuilderController.getToken(),"838EF1D5ADD1309B19279FDF848DE57E", "5000.0000000", "1", "5");
-//    pictureBuilderController.unlocked(pictureBuilderController.getToken(), "838EF1D5ADD1309B19279FDF848DE57E");
-
+        String fp_id = pictureBuilderController.createProject("测试用", pictureBuilderController.getToken(), "19819605657");
+        String url = pictureBuilderController.getUrl(pictureBuilderController.getToken(), fp_id, "5000.0000000", "5", "1");
+        String pathname = "C:\\Users\\25697\\Desktop\\第十六届全国大学生软件创新大赛\\HomePaint\\download\\Model.zip";
+        File file = new File(pathname);
+        pictureBuilderController.upload(pictureBuilderController.getToken(), url, fp_id, file);
+        File picture = new File("C:\\Users\\25697\\Desktop\\第十六届全国大学生软件创新大赛\\HomePaint\\download\\model_m2.jpg");
+        pictureBuilderController.cover(pictureBuilderController.getToken(), fp_id, picture);
     }
 
 }
+

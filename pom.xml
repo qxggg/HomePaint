@@ -87,12 +87,12 @@
         <dependency>
             <groupId>com.tencentcloudapi</groupId>
             <artifactId>tencentcloud-sdk-java-common</artifactId>
-            <version>LATEST</version>
+            <version>3.1.728</version>
         </dependency>
         <dependency>
             <groupId>com.tencentcloudapi</groupId>
             <artifactId>tencentcloud-sdk-java-tiia</artifactId>
-            <version>LATEST</version>
+            <version>3.1.728</version>
         </dependency>
 
 

@@ -16,6 +16,8 @@ public interface UserService {
 
     void sendCode(String telephone);
 
+    int getIdByTel(String telephone);
+
 
 
 }

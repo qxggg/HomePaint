@@ -14,7 +14,7 @@ public class Goods_appraise {
     int goodsId;
     String appraise;
 
-    String avatar;
+    int userId;
 
     String username;
 

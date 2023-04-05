@@ -52,5 +52,10 @@ public class UserServiceImpl implements UserService{
         redisUtil.expire("tel" + telephone, 300);
     }
 
+    @Override
+    public int getIdByTel(String telephone) {
+        return userMapper.selectIdByTel(telephone);
+    }
+
 
 }

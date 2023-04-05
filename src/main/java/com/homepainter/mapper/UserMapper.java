@@ -19,4 +19,7 @@ public interface UserMapper {
 
     @Insert("insert into `user` values(#{username}, #{password}, #{telephone}, #{userId})")
     int insertUser(User user);
+
+    @Select("select userId from user where telephone = #{telephone}")
+    int selectIdByTel(String telephone);
 }

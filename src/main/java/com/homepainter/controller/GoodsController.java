@@ -6,6 +6,7 @@ import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_image;
 import com.homepainter.service.GoodsService;
 import com.homepainter.service.TranslateService;
+import com.homepainter.util.RedisUtil;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,9 @@ public class GoodsController {
     @Autowired
     TranslateService translateService;
 
+    @Autowired
+    RedisUtil redisUtil;
+
     public static int goodsInsertCount = 1001;
 
     @GetMapping("/get_list")
@@ -33,7 +37,7 @@ public class GoodsController {
         return map;
     }
 
-    @GetMapping("/get")
+    @PostMapping("/post")
     public Map<String, Object> getGoodsById(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         if (data.get("goods_id") == null) map.put("data", goodsService.getAllGoods());
@@ -46,7 +50,14 @@ public class GoodsController {
     public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         if (data.get("search_content") == null) map.put("data", goodsService.getAllGoods());
-        else map.put("data", goodsService.getGoodsByContent((String) data.get("search_content")));
+        else {
+            if (!redisUtil.hasKey("search_content")) {
+                List<Goods> goods = goodsService.getGoodsByContent("search_content");
+                map.put("data", goodsService.getGoodsByContent((String) data.get("search_content")));
+
+            }
+        }
+
         map.put("code", 0);
         map.put("msg", "查询商品成功！");
         return map;

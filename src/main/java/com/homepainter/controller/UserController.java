@@ -1,6 +1,7 @@
 package com.homepainter.controller;
 
 import com.homepainter.pojo.User;
+import com.homepainter.service.BehaveService;
 import com.homepainter.service.UserService;
 import com.homepainter.util.RedisUtil;
 import com.homepainter.util.TokenUtil;
@@ -22,9 +23,12 @@ public class UserController {
     @Autowired
     private HttpSession session;
 
+
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private BehaveService behaveService;
 
     @GetMapping("/error")
     public Map<String, Object> error(){
@@ -55,7 +59,7 @@ public class UserController {
             map.put("code", 1);
             map.put("token", token);
             map.put("msg", "登陆成功！");
-            redisUtil.set(token, "token" + telephone);
+            redisUtil.set(token, "token" + userService.getIdByTel(telephone));
             redisUtil.expire(token, 54000);
         }
 
@@ -75,7 +79,7 @@ public class UserController {
             map.put("msg", "登陆成功！");
             String token = TokenUtil.generateToken(new User(telephone));
             map.put("token", token);
-            redisUtil.set(token, "token" + telephone);
+            redisUtil.set(token, "token" + userService.getIdByTel(telephone));
             redisUtil.expire(token, 54000);
         }
         return map;
@@ -85,7 +89,7 @@ public class UserController {
     public Map<String, Object> sendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
-        if (userService.ifExistsTel((String) data.get("telephone"))) map.put("msg", "该手机号未注册！");
+        if (userService.ifExistsTel((String) data.get("telephone"))) {map.put("msg", "该手机号未注册！"); return map;}
         userService.sendCode((String) data.get("telephone"));
         map.put("code", 1);
         map.put("msg", "发送成功");
@@ -107,6 +111,9 @@ public class UserController {
             if (userService.insertUser(user) == true) {
                 map.put("code", 1);
                 map.put("msg", "注册成功！");
+                int id = userService.getIdByTel(telephone);
+                behaveService.initStyle(id);
+                behaveService.initGoods(id);
             } else map.put("msg", "网络错误！");
         }
         else map.put("msg", "验证码错误！");
@@ -117,7 +124,7 @@ public class UserController {
     public Map<String, Object> registerSendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
-        if (!userService.ifExistsTel((String) data.get("telephone"))) map.put("msg", "该手机已注册！");
+        if (!userService.ifExistsTel((String) data.get("telephone"))){ map.put("msg", "该手机已注册！"); return map;}
         else {
             userService.sendCode((String) data.get("telephone"));
             map.put("code", 1);

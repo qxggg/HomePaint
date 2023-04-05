@@ -70,7 +70,8 @@ public class CommunityController {
             l.add(new EvaluateImage(forum_id, s));
         String tel =(String) redisUtil.get(token);
         String telephone = tel.substring(5);
-        if (communityService.makeEvaluate(new TiebaEvaluate(forum_id, (String) data.get("detail"), (String) data.get("avatar"), (String) data.get("username"), telephone, l))){
+        int id = Integer.parseInt(telephone);
+        if (communityService.makeEvaluate(new TiebaEvaluate((String) data.get("detail"), forum_id, (String) data.get("username"), l, id))){
             map.put("code", 0);
             map.put("msg", "插入评论成功");
         }
