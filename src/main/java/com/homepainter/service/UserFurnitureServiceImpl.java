@@ -18,4 +18,9 @@ public class UserFurnitureServiceImpl implements UserFurnitureService{
     public int insertUserFurniture(UserFurniture userFurniture) {
         return userFurnitureMapper.insertUserFurniture(userFurniture);
     }
+
+    @Override
+    public List<UserFurniture> getById(int userId) {
+        return userFurnitureMapper.getById(userId);
+    }
 }

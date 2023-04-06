@@ -55,8 +55,9 @@ public interface TiebaMapper {
                     column = "tiebaId"
             )
     })
-    List<Tieba> getTiebaById(int tiebaId);
+    Tieba getTiebaByIdNoAp(int tiebaId);
 
     @Update("update tieba set favorites = favorites + 1 where tiebaId = #{tiebaId}")
     int givePrice(int tiebaId);
+
 }

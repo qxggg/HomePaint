@@ -19,4 +19,5 @@ public class UserFurniture {
     String name;
 
     Date time;
+
 }

@@ -11,6 +11,6 @@ public class TestCommunityService {
     CommunityService communityService;
     @Test
     public void testTieba(){
-        communityService.tiebaMapper.getTiebaById(1).forEach(System.out::println);
+
     }
 }

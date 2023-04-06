@@ -93,10 +93,33 @@ public class File2Base64 {
     /**
      * 从输入流中获取字节数组
      *
-     * @param inputStream
      * @return
      * @throws IOException
      */
+    public static void GETFile_Image2Base64(String httpUrl, String fileName) {
+        InputStream in = null;
+        byte[] data = null;
+        try {
+            URL url = new URL(httpUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(5000);
+            in = connection.getInputStream();
+            data = readInputStream(in);
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+            outputStream.write(data); // 将字节数组写入文件
+            System.out.println("字节数组已成功输出到文件 " + fileName);
+        } catch (IOException e) {
+            System.out.println("发生了 I/O 错误：" + e.getMessage());
+        }
+
+    }
+
     public static byte[] readInputStream(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];
         int len = 0;
@@ -107,5 +130,11 @@ public class File2Base64 {
         bos.close();
         return bos.toByteArray();
     }
+
+    public void zip(File[] files){
+
+    }
+
+
 
 }

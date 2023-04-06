@@ -94,6 +94,22 @@ public interface GoodsMapper {
     })
     Goods getGoodsById(int goodsId);
 
+    @Select("select * from goods where goodsId = #{goodsId}")
+    @Results({
+            @Result(
+                    property = "imageUrl",
+                    column = "goodsId",
+                    javaType = List.class,
+                    many = @Many(select = "com.homepainter.mapper.Goods_imageMapper.getImageById")
+            ),
+            @Result(
+                    property = "goodsId",
+                    column = "goodsId"
+            )
+
+    })
+    Goods getGoodsByIdNoAp(int goodsId);
+
     @Insert("insert into goods values (#{goodsId}, #{title}, #{storage}, #{detail}, #{price}, #{superCategory}, #{category}, #{subtitle}, #{style}, #{theme}, #{material}, #{modal_id})")
     int insertGoods(Goods goods);
 

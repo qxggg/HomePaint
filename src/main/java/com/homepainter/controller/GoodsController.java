@@ -11,6 +11,7 @@ import com.homepainter.service.UserService;
 import com.homepainter.util.RedisUtil;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -31,6 +32,10 @@ public class GoodsController {
     @Autowired
     RedisUtil redisUtil;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+
     public static int goodsInsertCount = 1001;
 
     @GetMapping("/get_list")
@@ -47,8 +52,16 @@ public class GoodsController {
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
+
         if (data.get("goods_id") == null) map.put("data", goodsService.getAllGoods());
-        else map.put("data", goodsService.getGoodsById((int) data.get("goods_id")));
+
+        else {
+            Goods goods = goodsService.getGoodsById((int) data.get("goods_id"));
+            map.put("data", goods);
+            List<Map<String, Object>> maps = jdbcTemplate.queryForList("select * from collect where enumId = 'goods' and userId = " + userId + " and collectId = " + goods.getGoodsId());
+            if (maps.isEmpty()) map.put("isCollect", false);
+            else map.put("isCollect", true);
+        }
         map.put("code", 0);
         map.put("msg", "查询商品成功！");
         return map;
@@ -123,6 +136,32 @@ public class GoodsController {
         return map;
     }
 
+    @GetMapping("/shoucang/list")
+    public Map<String, Object> getCollectList( @RequestHeader String token){
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        Map<String, Object> map = new HashMap<>();
+        map.put("goods", goodsService.getCollectById(userId, "goods"));
+        map.put("tieba", goodsService.getCollectById(userId, "tieba"));
+        map.put("code", 0);
+        map.put("msg", "查询成功！");
+        return map;
+    }
+
+//    @GetMapping("/shoucang/list")
+//    public Map<String,Object> shoucang_list(){
+//        Map<String,Object> res  =new HashMap<>();
+//        Map<String,Object> data  =new HashMap<>();
+//        List<Map<String, Object>> goods = jdbcTemplate.queryForList("select * from collect");
+//        List<Map<String, Object>> tiezi = jdbcTemplate.queryForList("select * from tieba");
+//        data.put("goods",goods);
+//        data.put("tiezi",tiezi);
+//
+//        res.put("data",data);
+//        res.put("code",0);
+//        res.put("msg","成功！");
+//        return res;
+//    }
     @GetMapping("/shoucang")
     public Map<String, Object> getCollect(){
         Map<String, Object> map = new HashMap<>();
@@ -159,7 +198,6 @@ public class GoodsController {
         goodsService.insertView(userId, goodsId, viewTime);
         return map;
     }
-
 
 
 }

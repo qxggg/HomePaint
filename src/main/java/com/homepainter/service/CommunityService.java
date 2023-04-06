@@ -41,7 +41,7 @@ public class CommunityService implements CommunityServiceImpl {
 
     @Override
     public List<Tieba> getTiebaById(int tiebaId) {
-        return tiebaMapper.getTiebaById(tiebaId);
+        return null;
     }
 
     @Override

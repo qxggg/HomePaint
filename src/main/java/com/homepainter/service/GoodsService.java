@@ -14,6 +14,8 @@ public interface GoodsService {
 
     Goods getGoodsById(int goodsId);
 
+    Goods getGoodsByIdNoAp(int goodsId);
+
     int insertGoods(Goods goods);
 
     List<Hot> selectHotByType(String type);
@@ -27,4 +29,6 @@ public interface GoodsService {
     int deleteCollect(int userId, String enumId, int collectId);
 
     void insertView(int userId, int goodsId, int viewTime);
+
+    List<Collect> getCollectById(int userId, String enumId);
 }

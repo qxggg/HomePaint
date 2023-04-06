@@ -27,6 +27,9 @@ public class GoodsServiceImpl implements GoodsService{
 
     @Autowired
     CollectMapper collectMapper;
+
+    @Autowired
+    TiebaMapper tiebaMapper;
     @Override
     public List<Goods> getAllGoods() {
         return goodsMapper.getAllGoods();
@@ -43,11 +46,17 @@ public class GoodsServiceImpl implements GoodsService{
         List<Goods_appraise> goods_appraises = goods.getAppraise();
         for (Goods_appraise goodsAppraise : goods_appraises) {
             User user = userMapper.getAllById(goodsAppraise.getUserId());
-            user.setPassword(null);
+            if (user != null)
+                user.setPassword(null);
             goodsAppraise.setUser(user);
         }
         goods.setAppraise(goods_appraises);
         return goods;
+    }
+
+    @Override
+    public Goods getGoodsByIdNoAp(int goodsId) {
+        return goodsMapper.getGoodsByIdNoAp(goodsId);
     }
 
     public int insertGoods(Goods goods) {
@@ -100,6 +109,20 @@ public class GoodsServiceImpl implements GoodsService{
     public void insertView(int userId, int goodsId, int viewTime) {
         behaveService.updateAddGoods(userId, goodsId, "randomView", viewTime);
         behaveService.updateAddStyle(userId, goodsId, "randomView", viewTime);
+    }
+
+    @Override
+    public List<Collect> getCollectById(int userId, String enumId) {
+        List<Collect> l = collectMapper.getGoodsById(userId, enumId);
+        if (enumId == "goods") {
+            for (Collect c : l)
+                c.setGoods(goodsMapper.getGoodsByIdNoAp(c.getCollectId()));
+        }
+        else {
+            for (Collect c : l)
+                c.setTieba(tiebaMapper.getTiebaByIdNoAp(c.getCollectId()));
+        }
+        return l;
     }
 
 }

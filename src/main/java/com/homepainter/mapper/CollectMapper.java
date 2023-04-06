@@ -1,10 +1,7 @@
 package com.homepainter.mapper;
 
 import com.homepainter.pojo.Collect;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +18,10 @@ public interface CollectMapper {
 
     @Delete("delete from collect where userId = #{userId} and enumId = #{enumId} and collectId = #{collectId}")
     int deleteCollect(int userId, String enumId, int collectId);
+
+    @Select("select * from collect where userId = #{userId} and enumId = #{enumId}")
+    List<Collect> getGoodsById(int userId, String enumId);
+
+
+
 }
