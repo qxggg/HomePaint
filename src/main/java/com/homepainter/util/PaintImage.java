@@ -34,8 +34,14 @@ public class PaintImage {
 
     public static File draw_lines(File file, String filename, Product[] products) throws IOException {
         File file_res = null;
+        String os = System.getProperty("os.name").toLowerCase();
 
-        String fullname = "./search_result/" + filename;
+        String fullname = "/search_result/" + filename;
+        if (os.indexOf("linux") != -1) {;
+            fullname = "/www/wwwroot" + fullname;
+        }else{
+            fullname = "."+fullname;
+        }
         BufferedImage img = ImageIO.read(file);
         Graphics2D graphics2D = img.createGraphics();
         graphics2D.setColor(Color.RED);

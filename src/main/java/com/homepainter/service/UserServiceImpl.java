@@ -57,5 +57,15 @@ public class UserServiceImpl implements UserService{
         return userMapper.selectIdByTel(telephone);
     }
 
+    @Override
+    public String getUserById( int userId) {
+        return userMapper.getUserById(userId);
+    }
+
+    @Override
+    public String getAvatarById( int userId) {
+        return userMapper.getAvatarById(userId);
+    }
+
 
 }

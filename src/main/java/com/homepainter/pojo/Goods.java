@@ -34,6 +34,7 @@ public class Goods {
 
     List<Goods_appraise> appraise;
 
+
     public Goods(int goodsId, String title, int storage, String detail, double price, String superCategory, String category, String subtitle, String style, String theme, String material, String modalId, List<Goods_image> imageUrl) {
         this.goodsId = goodsId;
         this.title = title;

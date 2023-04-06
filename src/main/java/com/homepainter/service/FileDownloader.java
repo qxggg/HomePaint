@@ -17,9 +17,9 @@ import static com.homepainter.util.ZipUtil.unzip;
 
 public class FileDownloader {
 
-    public static void get_zip(String fp_id, String format, String telephone) throws IOException {
+    public static void get_zip(String fp_id, String format, int telephone) throws IOException {
         long projectName = System.currentTimeMillis();
-        PictureBuilderController pictureBuilderController = new PictureBuilderController();
+        PictureBuilder pictureBuilderController = new PictureBuilder();
         String fileUrl = "https://www.gongchuangshijie.com:86/api/FileDownload/FileDownloadObj?fp_id=" + fp_id + "&format=" + format;
 
         String savePath = "download/" + telephone + "/" + projectName + "/" + projectName + ".zip" ;

@@ -31,7 +31,8 @@ public class BaseFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        if (request.getRequestURI().contains("/user"))  {filterChain.doFilter(servletRequest, servletResponse); return;}
+        String a = request.getRequestURI();
+        if (a.contains("/user") || a.contains("upload_image"))  {filterChain.doFilter(servletRequest, servletResponse); return;}
         HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
 //        MyRequestWrapper rp = new MyRequestWrapper(request);
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
@@ -40,7 +41,7 @@ public class BaseFilter implements Filter {
         String tokenInfo = JSONObject.toJSONString(redisUtil.get(token));
         if (tokenInfo == null) tokenInfo = "123";
         if (token == null) token = "adwniveoqw";
-        if ((token != null && redisUtil.hasKey(token)) && tokenInfo.contains("token") || token.equals("312") )   filterChain.doFilter(requestWrapper, servletResponse);
+        if ((token != null && redisUtil.hasKey(token)) && tokenInfo.contains("token"))   filterChain.doFilter(requestWrapper, servletResponse);
         else wrapper.sendRedirect("/user/error");
 
     }

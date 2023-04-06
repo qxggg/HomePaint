@@ -13,17 +13,26 @@ import java.util.*;
 @NoArgsConstructor
 public class Order {
     Date time;
-    String telephone;
+    int userId;
     int orderId;
     int addressId;
 
     int goodsId;
 
-    String count;
+    int count;
 
     String status;
 
     Address address;
+
+    public Order(Date time, int userId, int addressId, int goodsId, int count, String status) {
+        this.time = time;
+        this.userId = userId;
+        this.addressId = addressId;
+        this.goodsId = goodsId;
+        this.count = count;
+        this.status = status;
+    }
 
     Goods goods;
 

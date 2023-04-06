@@ -16,7 +16,6 @@ public class Tieba {
     String content;
     int tiebaId;
     String telephone;
-    int goodsId;
     String favorites;
     Date time;
     int collect;

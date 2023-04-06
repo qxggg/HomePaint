@@ -60,7 +60,7 @@ public class UserController {
             map.put("token", token);
             map.put("msg", "登陆成功！");
             redisUtil.set(token, "token" + userService.getIdByTel(telephone));
-            redisUtil.expire(token, 54000);
+            redisUtil.expire(token, 1540000);
         }
 
         else map.put("msg", "手机号或密码错误");
@@ -80,7 +80,7 @@ public class UserController {
             String token = TokenUtil.generateToken(new User(telephone));
             map.put("token", token);
             redisUtil.set(token, "token" + userService.getIdByTel(telephone));
-            redisUtil.expire(token, 54000);
+            redisUtil.expire(token, 1540000);
         }
         return map;
     }

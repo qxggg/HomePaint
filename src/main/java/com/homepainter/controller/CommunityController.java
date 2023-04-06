@@ -4,6 +4,7 @@ package com.homepainter.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.pojo.EvaluateImage;
 import com.homepainter.pojo.TiebaEvaluate;
+import com.homepainter.service.BehaveService;
 import com.homepainter.service.CommunityService;
 import com.homepainter.service.CommunityServiceImpl;
 import com.homepainter.service.TranslateService;
@@ -27,6 +28,8 @@ public class CommunityController {
 
     @Autowired
     TranslateService translateService;
+
+
 
     
     @PostMapping("/list")
@@ -71,7 +74,7 @@ public class CommunityController {
         String tel =(String) redisUtil.get(token);
         String telephone = tel.substring(5);
         int id = Integer.parseInt(telephone);
-        if (communityService.makeEvaluate(new TiebaEvaluate((String) data.get("detail"), forum_id, (String) data.get("username"), l, id))){
+        if (communityService.makeEvaluate(new TiebaEvaluate((String) data.get("detail"), forum_id, l, id))){
             map.put("code", 0);
             map.put("msg", "插入评论成功");
         }

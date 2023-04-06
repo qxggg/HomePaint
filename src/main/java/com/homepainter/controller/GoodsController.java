@@ -2,10 +2,12 @@ package com.homepainter.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.controller.DTO.InsertGoods;
+import com.homepainter.pojo.Collect;
 import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_image;
 import com.homepainter.service.GoodsService;
 import com.homepainter.service.TranslateService;
+import com.homepainter.service.UserService;
 import com.homepainter.util.RedisUtil;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class GoodsController {
 
     @Autowired
     GoodsService goodsService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     TranslateService translateService;
@@ -38,8 +43,10 @@ public class GoodsController {
     }
 
     @PostMapping("/post")
-    public Map<String, Object> getGoodsById(@RequestBody Map<String, Object> data){
+    public Map<String, Object> getGoodsById(@RequestBody Map<String, Object> data, @RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
         if (data.get("goods_id") == null) map.put("data", goodsService.getAllGoods());
         else map.put("data", goodsService.getGoodsById((int) data.get("goods_id")));
         map.put("code", 0);
@@ -96,6 +103,63 @@ public class GoodsController {
         map.put("data", goodsService.selectHotByType("swiperList"));
         return map;
     }
+
+    @PostMapping("/shoucang")
+    public Map<String, Object> collect(@RequestBody Map<String, Object> data,  @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        int collectId = (int) data.get("id");
+        String types = (String) data.get("types");
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        Date date = new Date();
+        if (goodsService.insertCollect(new Collect(userId, types, collectId, date)) == 1){
+            map.put("code", 0);
+            map.put("msg", "插入成功!");
+        }
+        else{
+            map.put("code", 1);
+            map.put("msg", "插入失败");
+        }
+        return map;
+    }
+
+    @GetMapping("/shoucang")
+    public Map<String, Object> getCollect(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 0);
+        map.put("msg", "查询成功");
+        map.put("data", goodsService.getAllCollect());
+        return map;
+    }
+    @PostMapping("/unshoucang")
+    public Map<String, Object> UnCollect(@RequestBody Map<String, Object> data,  @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        int collectId = (int) data.get("id");
+        String types = (String) data.get("types");
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        if (goodsService.deleteCollect(userId, types, collectId) == 1){
+            map.put("code", 0);
+            map.put("msg", "删除成功");
+        }
+        else {
+            map.put("code", 1);
+            map.put("msg", "删除失败");
+        }
+        return map;
+    }
+
+    @PostMapping("/Look_time")
+    public Map<String, Object> view(@RequestBody Map<String, Object> data,  @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        int goodsId = (int)data.get("id");
+        int viewTime = (int)data.get("time");
+        goodsService.insertView(userId, goodsId, viewTime);
+        return map;
+    }
+
 
 
 }

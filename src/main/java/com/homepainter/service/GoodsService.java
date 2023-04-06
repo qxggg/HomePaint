@@ -1,5 +1,6 @@
 package com.homepainter.service;
 
+import com.homepainter.pojo.Collect;
 import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_image;
 import com.homepainter.pojo.Hot;
@@ -17,5 +18,13 @@ public interface GoodsService {
 
     List<Hot> selectHotByType(String type);
 
+    Goods getGoodsByModal(String modalId);
 
+    int insertCollect(Collect collect);
+
+    List<Collect> getAllCollect();
+
+    int deleteCollect(int userId, String enumId, int collectId);
+
+    void insertView(int userId, int goodsId, int viewTime);
 }

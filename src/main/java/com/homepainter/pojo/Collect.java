@@ -5,24 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Goods_appraise {
-    int appraiseId;
-    int goodsId;
-    String appraise;
+public class Collect {
 
     int userId;
 
+    String enumId;
+
+    int collectId;
+
     Date time;
 
-    User user;
-
-    boolean ifCollect;
-
-    List<Appraise_image> imageUrl;
 
 }

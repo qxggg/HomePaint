@@ -15,6 +15,8 @@ public class User {
 
     int userId;
 
+    String avatar;
+
     public User(String telephone, String password){
         this.telephone = telephone;
         this.password = password;

@@ -1,6 +1,7 @@
 package com.homepainter.mapper;
 
 import com.homepainter.pojo.Goods_appraise;
+import com.homepainter.pojo.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +26,7 @@ public interface Goods_appraiseMapper {
     })
     List<Goods_appraise> getAllAppraise();
 
-    @Select("select * from goods_appraise where appraiseId = #{appraiseId}")
+    @Select("select * from goods_appraise where goodsId = #{goodsId}")
     @Results({
             @Result(
                     property = "imageUrl",
@@ -37,7 +38,10 @@ public interface Goods_appraiseMapper {
             @Result(
                     property = "appraiseId",
                     column = "appraiseId"
-            )
+            ),
+
+
+
     })
-    List<Goods_appraise> getAppraiseById(int appraiseId);
+    List<Goods_appraise> getAppraiseById(String appraiseId);
 }

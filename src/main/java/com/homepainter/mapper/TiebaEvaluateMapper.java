@@ -24,6 +24,6 @@ public interface TiebaEvaluateMapper {
     })
     List<TiebaEvaluate> getTiebaEvaluate(int tiebaId);
 
-    @Insert("insert into tiebaevaluate values (#{tiebaId}, #{detail}, #{evaluateId}, #{username}, #{userId})")
+    @Insert("insert into tiebaevaluate values (#{tiebaId}, #{detail}, #{evaluateId}, #{userId})")
     int insertEvaluate(TiebaEvaluate tiebaEvaluate);
 }

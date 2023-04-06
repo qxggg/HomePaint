@@ -16,4 +16,6 @@ public interface OrderService {
     List<Order> getOrderList();
 
     Order getOrderDetail(int orderId);
+
+    int insertOrder(Order order);
 }

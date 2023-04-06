@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.pojo.DTO.Imageinfos_withurl;
+import com.homepainter.pojo.Goods;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;
@@ -13,6 +14,9 @@ import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 
 import com.tencentcloudapi.tiia.v20190529.TiiaClient;
 import com.tencentcloudapi.tiia.v20190529.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
 
 import java.io.File;
@@ -31,7 +35,7 @@ public class Multimodal
 {
 
 
-    public static Map<String,Object> search_image(String image,boolean use_url) {
+    public static List<Imageinfos_withurl> search_image(String image,boolean use_url) {
         try{
             TiiaClient client = get_creadential();
             // 实例化一个请求对象,每个接口都会对应一个request对象
@@ -45,7 +49,7 @@ public class Multimodal
             // 返回的resp是一个SearchImageResponse的实例，与请求对象对应
             SearchImageResponse resp = client.SearchImage(req);
             // 输出json格式的字符串回包
-            System.out.println(SearchImageResponse.toJsonString(resp));
+            // System.out.println(SearchImageResponse.toJsonString(resp));
             // 执行成功 -- 数据处理 ：加图片url，解析JSON
             ImageInfo[] imageInfos = resp.getImageInfos();
             List<Imageinfos_withurl> imageInfos_withurls = new ArrayList<>();
@@ -69,7 +73,7 @@ public class Multimodal
             data.remove("ImageInfos");
 
             data.put("imageInfos",imageInfos_withurls);
-            return data;
+            return imageInfos_withurls;
         } catch (TencentCloudSDKException e) {
             System.out.println(e.toString());
         } catch (Exception e) {
@@ -77,6 +81,7 @@ public class Multimodal
         }
         return null;
     }
+
     public static void CreateImage(String Tags,String CustomContent,String GroupId,String EntityId,String PicName,String Imageurl) {
 
         try{

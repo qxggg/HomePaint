@@ -1,7 +1,7 @@
 package com.homepainter.util;
 
 import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Decoder;
+
 
 
 import java.io.*;
@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+
 
 public class File2Base64 {
     /**
@@ -52,27 +53,13 @@ public class File2Base64 {
         BufferedOutputStream bos = null;
         FileOutputStream fos = null;
         try {
-             BASE64Decoder decoder = new BASE64Decoder();
-             byte[] bytes =  decoder.decodeBuffer(base64);
+            byte[] decodedBytes = Base64.getDecoder().decode(base64);
 
-             fos = new FileOutputStream(file);
-             bos = new BufferedOutputStream(fos);
-             bos.write(bytes);
-        }finally {
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos);
+            bos.write(decodedBytes);
+        }catch (Exception e){
+            System.out.println("保存文件时出错：" + e.getMessage());
         }
         return file;
     }

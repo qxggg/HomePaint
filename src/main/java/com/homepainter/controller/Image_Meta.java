@@ -21,10 +21,10 @@ public class Image_Meta {
         Map<String,Object> res = new HashMap<>();
         Map<String,Object> data = new HashMap<>();
 
-        if(body.get("image_url")!=null)
-            data = search_image(body.get("image_url").toString(),true);
-        else
-            data = search_image(body.get("image").toString(),false);
+//        if(body.get("image_url")!=null)
+//            data = search_image(body.get("image_url").toString(),true);
+//        else
+//            data = search_image(body.get("image").toString(),false);
 
 
         if(data == null){

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface TiebaMapper {
 
-    @Select("select username, avatar, content, tiebaId, telephone, goodsId, favorites, time, collect from tieba")
+    @Select("select * from tieba")
     @Results({
             @Result(
                     property = "tiebaFlags",
@@ -34,7 +34,7 @@ public interface TiebaMapper {
     })
     List<Tieba> getTiebaList();
 
-    @Select("select username, avatar, content, tiebaId, telephone, goodsId, favorites, time, collect from tieba where tiebaId = #{tiebaId}")
+    @Select("select * from tieba where tiebaId = #{tiebaId}")
     @Results({
             @Result(
                     property = "tiebaFlags",

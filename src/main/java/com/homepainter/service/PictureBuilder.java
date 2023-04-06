@@ -2,10 +2,8 @@ package com.homepainter.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.homepainter.util.File2Base64;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import org.apache.http.ContentTooLongException;
+import com.homepainter.mapper.UserFurnitureMapper;
+import com.homepainter.pojo.UserFurniture;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,17 +17,18 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.tomcat.util.http.parser.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.AbstractDocument;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 @Service
-public class PictureBuilderController {
+public class PictureBuilder {
+
+    @Autowired
+    UserFurnitureMapper userFurnitureMapper;
 
     public String getToken() throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -51,7 +50,7 @@ public class PictureBuilderController {
         return token;
     }
 
-    public String createProject(String projectName, String token, String telephone) throws IOException {
+    public String createProject(String projectName, String token, int telephone) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet("https://www.gongchuangshijie.com:81/BoYa//fileFp/createProject.do?projectName=" + telephone + projectName);
         httpGet.setHeader("token", token);
@@ -129,32 +128,28 @@ public class PictureBuilderController {
     }
 
 
-    public void down(String fp_id, String format, String telephone) throws IOException {
-        PictureBuilderController pictureBuilderController = new PictureBuilderController();
+    public void down(String fp_id, String format, int telephone) throws IOException {
+        PictureBuilder pictureBuilderController = new PictureBuilder();
         unlocked(pictureBuilderController.getToken(), fp_id);
         FileDownloader.get_zip(fp_id, format, telephone);
+
     }
 
-    public void up(File zip, File picture, String projectName, String telephone, String handleType, String type, String photoInfo) throws IOException {
-        PictureBuilderController pictureBuilderController = new PictureBuilderController();
+    public void up(File zip, File picture, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException {
+        PictureBuilder pictureBuilderController = new PictureBuilder();
         String token = pictureBuilderController.getToken();
         String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
         String url = pictureBuilderController.getUrl(token, fp_id, photoInfo, handleType, type);
         pictureBuilderController.upload(token, url, fp_id, zip);
         pictureBuilderController.cover(token, fp_id, picture);
+        Date now = new Date();
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
     };
 
-
-    public static void main(String[] args) throws IOException {
-        PictureBuilderController pictureBuilderController = new PictureBuilderController();
-        String fp_id = pictureBuilderController.createProject("测试用", pictureBuilderController.getToken(), "19819605657");
-        String url = pictureBuilderController.getUrl(pictureBuilderController.getToken(), fp_id, "5000.0000000", "5", "1");
-        String pathname = "C:\\Users\\25697\\Desktop\\第十六届全国大学生软件创新大赛\\HomePaint\\download\\Model.zip";
-        File file = new File(pathname);
-        pictureBuilderController.upload(pictureBuilderController.getToken(), url, fp_id, file);
-        File picture = new File("C:\\Users\\25697\\Desktop\\第十六届全国大学生软件创新大赛\\HomePaint\\download\\model_m2.jpg");
-        pictureBuilderController.cover(pictureBuilderController.getToken(), fp_id, picture);
+    public int insert(UserFurniture userFurniture){
+        return userFurnitureMapper.insertUserFurniture(userFurniture);
     }
+
 
 }
 

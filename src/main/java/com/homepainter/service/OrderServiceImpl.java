@@ -18,6 +18,9 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     OrderMapper orderMapper;
 
+    @Autowired
+    BehaveService behaveService;
+
     @Override
     public int insertAddress(Address address) {
         return addressMapper.insertAddress(address);
@@ -45,6 +48,21 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public Order getOrderDetail(int orderId) {
-        return orderMapper.getOrderDetail(orderId);
+        Order order = orderMapper.getOrderDetail(orderId);
+        if (order != null) {
+            behaveService.updateAddGoods(order.getUserId(), order.getGoodsId(), "randomClick", 1);
+            behaveService.updateAddStyle(order.getUserId(), order.getGoodsId(), "randomClick", 1);
+        }
+        return order;
+    }
+
+    @Override
+    public int insertOrder(Order order) {
+        if (orderMapper.insertOrder(order) == 0) return 0;
+        else{
+            behaveService.updateGoods(order.getUserId(), order.getGoodsId(), "randomConsume", 1);
+            behaveService.updateAddStyle(order.getUserId(), order.getGoodsId(), "randomConsume", 1);
+            return 1;
+        }
     }
 }

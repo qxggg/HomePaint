@@ -24,6 +24,9 @@ public class CommunityService implements CommunityServiceImpl {
     @Autowired
     EvaluateImageMapper evaluateImageMapper;
 
+    @Autowired
+    BehaveService behaveService;
+
 
 
     @Override

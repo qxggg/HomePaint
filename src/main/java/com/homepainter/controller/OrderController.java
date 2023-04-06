@@ -1,10 +1,13 @@
 package com.homepainter.controller;
 
 import com.homepainter.pojo.Address;
+import com.homepainter.pojo.Order;
 import com.homepainter.service.OrderService;
+import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +17,9 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    RedisUtil redisUtil;
 
     @PostMapping
     public Map<String, Object> test(@RequestBody Map<String, Object> data){
@@ -99,4 +105,25 @@ public class OrderController {
         map.put("msg", "查询订单列表成功！");
         return map;
     }
+
+    @PostMapping("/add")
+    public Map<String, Object> addOrder(@RequestBody Map<String, Object> data, @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        int addressId = (int) data.get("address_id");
+        int count = (int) data.get("count");
+        int goods_id = (int) data.get("goods_id");
+        Date date = new Date();
+        if (orderService.insertOrder(new Order(date, userId, addressId, goods_id, count, "待支付")) == 1){
+            map.put("code", 0);
+            map.put("msg", "下单成功");
+        }
+        else{
+            map.put("code", 1);
+            map.put("msg", "下单失败");
+        }
+        return map;
+    }
+
 }

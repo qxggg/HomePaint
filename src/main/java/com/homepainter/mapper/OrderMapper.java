@@ -41,4 +41,7 @@ public interface OrderMapper {
 
     })
     Order getOrderDetail(int orderId);
+
+    @Insert("insert into `order` values(#{time}, #{userId}, #{orderId}, #{addressId}, #{goodsId}, #{count}, #{status})")
+    int insertOrder(Order order);
 }

@@ -3,7 +3,10 @@ package com.homepainter.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.pojo.DTO.Imageinfos_withurl;
+import com.homepainter.pojo.Goods;
+import com.homepainter.service.GoodsService;
 import com.tencentcloudapi.tiia.v20190529.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +27,8 @@ import static com.homepainter.util.object2map.Obj2Map;
 @RestController
 public class MultimodalController {
 
+    @Autowired
+    GoodsService goodsService;
 
     /*
         多模态检索API
@@ -46,9 +51,19 @@ public class MultimodalController {
         }
 
         // 图片匹配API
-        Map<String,Object> Image_Mate = search_image(image, use_imageurl);
-        if(Image_Mate == null)    return res;
-        res.put("Image_Mate",Image_Mate);
+
+
+        List<HashMap<String, Object>> list = new ArrayList<>();
+        List<Imageinfos_withurl> images_meta_result = search_image(image, use_imageurl);
+        for(int i=0;i<images_meta_result.size();i++) {
+            HashMap<String, Object> map = new HashMap<>();
+            System.out.println(images_meta_result.get(i).getEntityId());
+            map.put("images_meta_result", images_meta_result.get(i));
+            map.put("goods", goodsService.getGoodsByModal(images_meta_result.get(i).getEntityId()));
+            list.add(map);
+        }
+        if(images_meta_result == null)    return res;
+        res.put("Image_Mate", list);
 
         // 执行通用图像标签API
         DetectLabelProResponse detectLabelProResponse = DetectMLabelServie(image, use_imageurl);

@@ -18,6 +18,10 @@ public interface UserService {
 
     int getIdByTel(String telephone);
 
+    String getUserById( int userId);
+
+    String getAvatarById( int userId);
+
 
 
 }

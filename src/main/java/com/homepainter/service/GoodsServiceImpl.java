@@ -1,11 +1,7 @@
 package com.homepainter.service;
 
-import com.homepainter.mapper.GoodsMapper;
-import com.homepainter.mapper.Goods_imageMapper;
-import com.homepainter.mapper.HotMapper;
-import com.homepainter.pojo.Goods;
-import com.homepainter.pojo.Goods_image;
-import com.homepainter.pojo.Hot;
+import com.homepainter.mapper.*;
+import com.homepainter.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +11,9 @@ import java.util.List;
 public class GoodsServiceImpl implements GoodsService{
 
     @Autowired
+    BehaveService behaveService;
+
+    @Autowired
     GoodsMapper goodsMapper;
 
     @Autowired
@@ -22,6 +21,12 @@ public class GoodsServiceImpl implements GoodsService{
 
     @Autowired
     HotMapper hotMapper;
+
+    @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    CollectMapper collectMapper;
     @Override
     public List<Goods> getAllGoods() {
         return goodsMapper.getAllGoods();
@@ -34,7 +39,15 @@ public class GoodsServiceImpl implements GoodsService{
 
     @Override
     public Goods getGoodsById(int goodsId) {
-        return goodsMapper.getGoodsById(goodsId);
+        Goods goods = goodsMapper.getGoodsById(goodsId);
+        List<Goods_appraise> goods_appraises = goods.getAppraise();
+        for (Goods_appraise goodsAppraise : goods_appraises) {
+            User user = userMapper.getAllById(goodsAppraise.getUserId());
+            user.setPassword(null);
+            goodsAppraise.setUser(user);
+        }
+        goods.setAppraise(goods_appraises);
+        return goods;
     }
 
     public int insertGoods(Goods goods) {
@@ -49,5 +62,44 @@ public class GoodsServiceImpl implements GoodsService{
         return hotMapper.getHotById(type);
     }
 
+    @Override
+    public Goods getGoodsByModal(String modalId) {
+        return goodsMapper.getGoodsByModal(modalId);
+    }
+
+    @Override
+    public int insertCollect(Collect collect) {
+        if (collectMapper.insertCollect(collect) == 0)  return 0;
+        else {
+            if(collect.getEnumId().equals("goods")) {
+                behaveService.updateGoods(collect.getUserId(), collect.getCollectId(), "randomCollect", 1);
+                behaveService.updateAddStyle(collect.getUserId(), collect.getCollectId(),  "randomCollect",   1);
+            }
+            return 1;
+        }
+    }
+
+    @Override
+    public List<Collect> getAllCollect() {
+        return collectMapper.getAllCollect();
+    }
+
+    @Override
+    public int deleteCollect(int userId, String enumId, int collectId) {
+        if (collectMapper.deleteCollect(userId, enumId, collectId) == 0) return 0;
+        else {
+            if (enumId.equals("goods")) {
+                behaveService.updateGoods(userId, collectId, "randomCollect", 0);
+                behaveService.updateAddStyle(userId, collectId, "randomCollect", -1);
+            }
+            return 1;
+        }
+    }
+
+    @Override
+    public void insertView(int userId, int goodsId, int viewTime) {
+        behaveService.updateAddGoods(userId, goodsId, "randomView", viewTime);
+        behaveService.updateAddStyle(userId, goodsId, "randomView", viewTime);
+    }
 
 }

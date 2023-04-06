@@ -149,17 +149,7 @@
             <artifactId>httpcore</artifactId>
             <version>4.4.13</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
-        </dependency>
+
         <dependency>
             <systemPath>${project.basedir}/libs/java-sdk-core-3.2.0.jar</systemPath>
             <groupId>com.huawei.apigateway</groupId>
