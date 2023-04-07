@@ -16,6 +16,10 @@ public interface OrderMapper {
     @Select("select * from `order`")
     List<Order> getOrderList();
 
+    @Select("select * from `order` where userId = #{userId}")
+    List<Order> getOrderById(int userId);
+
+
     @Select("select * from `order`  where orderId = #{orderId}")
     @Results({
            @Result(
@@ -42,6 +46,6 @@ public interface OrderMapper {
     })
     Order getOrderDetail(int orderId);
 
-    @Insert("insert into `order` values(#{time}, #{userId}, #{orderId}, #{addressId}, #{goodsId}, #{count}, #{status})")
+    @Insert("insert into `order` values(#{time}, #{userId}, #{orderId}, #{addressId}, #{goodsId}, #{count}, #{status}, #{yunfei}, #{AllPrice})")
     int insertOrder(Order order);
 }

@@ -21,9 +21,15 @@ public class FileDownloader {
         long projectName = System.currentTimeMillis();
         PictureBuilder pictureBuilderController = new PictureBuilder();
         String fileUrl = "https://www.gongchuangshijie.com:86/api/FileDownload/FileDownloadObj?fp_id=" + fp_id + "&format=" + format;
+        String fullname = "download";
+        String fullname2 = "download";
 
-        String savePath = "download/" + telephone + "/" + projectName + "/" + projectName + ".zip" ;
-        Path path = Paths.get("download\\" + telephone + "\\" + projectName);
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+
+        String savePath = fullname + "/" + telephone + "/" + projectName + "/" + projectName + ".zip" ;
+        Path path = Paths.get(fullname + "\\"  + telephone + "\\" + projectName);
         Path pathCreate = Files.createDirectories(path);
 
 
@@ -58,20 +64,22 @@ public class FileDownloader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String zip = "download/" + telephone + "/" + projectName + "/";
+        String zip = fullname + "/" + telephone + "/" + projectName + "/";
+        String tmp = "download" + "/" + telephone + "/" + projectName + "/";
         unzip(savePath, zip);
+
 
         String filename = "model.obj";
         File file = new File(zip + filename);
-        PutObjectResult putObjectResult = putObject(filename, file,"modeling-result/" + zip);
+        PutObjectResult putObjectResult = putObject(filename, file,"modeling-result/" + tmp);
 
         filename = "model_m2.jpg";
         file = new File(zip + filename);
-        putObjectResult = putObject(filename, file,"modeling-result/" + zip);
+        putObjectResult = putObject(filename, file,"modeling-result/" + tmp);
 
         filename = "model.mtl";
         file = new File(zip + filename);
-        putObjectResult = putObject(filename,file,"modeling-result/" + zip);
+        putObjectResult = putObject(filename,file,"modeling-result/" + tmp);
     }
 
 }

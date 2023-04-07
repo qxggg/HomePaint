@@ -13,15 +13,21 @@ public interface AddressMapper {
     @Select("select * from address")
     List<Address> getAllAddress();
 
-    @Select("select * from address where addressId = #{addressId}")
-    Address getAddressById(int addressId);
+    @Select("select * from address where userId = #{userId}")
+    List<Address> getAddressById(int userId);
 
-    @Insert("insert into address values (#{addressId}, #{province}, #{city}, #{county}, #{address}, #{phone}, #{nickname})")
+    @Select("select * from address where addressId = #{addressId}")
+    Address getAddressByAddressId(int addressId);
+
+    @Insert("insert into address values (#{addressId}, #{addressCity}, #{address}, #{phone}, #{nickname}, #{userId}, #{isDefault})")
     int insertAddress(Address address);
 
-    @Update("update address set province = #{province}, city = #{city}, county = #{county}, address = #{address}, phone = #{phone}, nickname = #{nickname} where addressId = #{addressId}")
+    @Update("update address set addressCity = #{addressCity}, address = #{address}, phone = #{phone}, nickname = #{nickname}, isDefault = #{isDefault} where addressId = #{addressId}")
     int updateAddress(Address address);
 
     @Delete("delete from address where #{addressId} = addressId")
     int deleteAddress(int addressId);
+
+    @Select("select * from address where isDefault = true and userId = #{userId}")
+    Address getDefault(int userId);
 }

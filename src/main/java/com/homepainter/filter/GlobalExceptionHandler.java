@@ -1,5 +1,6 @@
 package com.homepainter.filter;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -63,6 +64,16 @@ public class GlobalExceptionHandler {
         Map<String, Object> map = new HashMap<>();
         map.put("code", 7);
         map.put("msg", "媒体错误，我用的是requestbody，不要传form——data，会报错，我只能收json");
+        return map;
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    @ResponseBody
+    public Map<String, Object> MybatisHandler(DataAccessException e){
+        e.printStackTrace();
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 8);
+        map.put("msg", "mybatis出错");
         return map;
     }
 

@@ -23,6 +23,16 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public int insertAddress(Address address) {
+        if (addressMapper.getAddressById(address.getUserId()).isEmpty())
+            address.setDefault(true);
+        else {
+            if (address.isDefault() == true && addressMapper.getDefault(address.getUserId()) != null) {
+                Address address1 = addressMapper.getDefault(address.getUserId());
+                address1.setDefault(false);
+                addressMapper.updateAddress(address1);
+            }
+        }
+        System.out.println(address.isDefault());
         return addressMapper.insertAddress(address);
     }
 
@@ -32,13 +42,35 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public List<Address> getAddressById(int userId) {
+        return addressMapper.getAddressById(userId);
+    }
+
+    @Override
     public int updateAddress(Address address) {
+        Address address1 = addressMapper.getDefault(address.getUserId());
+        if (address1 != null && address1.isDefault() == true){
+            address1.setDefault(false);
+            addressMapper.updateAddress(address1);
+        }
+        System.out.println(address);
         return addressMapper.updateAddress(address);
     }
 
     @Override
     public int deleteAddress(int addressId) {
-        return addressMapper.deleteAddress(addressId);
+        Address address = addressMapper.getAddressByAddressId(addressId);
+        if (addressMapper.deleteAddress(addressId) == 0) return 0;
+        List<Address> addresses = addressMapper.getAddressById(address.getUserId());
+        if (addresses.isEmpty());
+        else {
+            if (address.isDefault() == true){
+                Address address1 = addresses.get(0);
+                address1.setDefault(true);
+                addressMapper.updateAddress(address1);
+            }
+        }
+        return 1;
     }
 
     @Override
@@ -64,5 +96,15 @@ public class OrderServiceImpl implements OrderService{
             behaveService.updateAddStyle(order.getUserId(), order.getGoodsId(), "randomConsume", 1);
             return 1;
         }
+    }
+
+    @Override
+    public Address getDefault(int userId) {
+        return addressMapper.getDefault(userId);
+    }
+
+    @Override
+    public List<Order> getOrderById(int userId) {
+        return orderMapper.getOrderById(userId);
     }
 }

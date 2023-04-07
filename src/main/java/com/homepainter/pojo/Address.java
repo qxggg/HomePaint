@@ -10,19 +10,44 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Address {
     private int addressId;
-    private String province;
-    private String city;
-    private String county;
+    private String addressCity;
     private String address;
     private String phone;
     private String nickname;
+    int userId;
+    boolean isDefault;
 
-    public Address(String province, String city, String county, String address, String phone, String nickname) {
-        this.province = province;
-        this.city = city;
-        this.county = county;
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public Address(String addressCity , String address, String phone, String nickname, int userId) {
+        this.addressCity = addressCity;
         this.address = address;
         this.phone = phone;
         this.nickname = nickname;
+        this.userId = userId;
+    }
+
+    public Address(String addressCity , String address, String phone, String nickname, int userId, boolean isDefault) {
+        this.addressCity = addressCity;
+        this.address = address;
+        this.phone = phone;
+        this.nickname = nickname;
+        this.userId = userId;
+        this.isDefault = isDefault;
+    }
+
+    public Address(int addressId, String addressCity , String address, String phone, String nickname, int userId) {
+        this.addressId = addressId;
+        this.addressCity = addressCity;
+        this.address = address;
+        this.phone = phone;
+        this.nickname = nickname;
+        this.userId = userId;
     }
 }

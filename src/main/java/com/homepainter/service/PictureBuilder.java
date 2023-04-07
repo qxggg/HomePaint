@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.mapper.UserFurnitureMapper;
 import com.homepainter.pojo.UserFurniture;
+import com.homepainter.util.File2Base64;
+import com.qcloud.cos.model.PutObjectResult;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,14 +23,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static com.homepainter.service.Upload_File.putObject;
 
 @Service
 public class PictureBuilder {
 
     @Autowired
     UserFurnitureMapper userFurnitureMapper;
+
 
     public String getToken() throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -116,7 +131,7 @@ public class PictureBuilder {
         httpPost.setHeader("token", token);
         httpPost.setHeader("requestType-Content", "ModelingStand");
         httpPost.setHeader("Content-Type", "application/json");
-        String rawBody = "{\"fp_id\":" + "\"" + fp_id + "\"}" ;
+        String rawBody = "{\"fp_id\":" + "\"" + fp_id + "\"}";
         HttpEntity entity1 = new StringEntity(rawBody);
         httpPost.setEntity(entity1);
         HttpResponse response = httpClient.execute(httpPost);
@@ -128,23 +143,150 @@ public class PictureBuilder {
     }
 
 
-    public void down(String fp_id, String format, int telephone) throws IOException {
+    public void down(String fp_id, String format, int telephone, String projectName) throws IOException {
         PictureBuilder pictureBuilderController = new PictureBuilder();
         unlocked(pictureBuilderController.getToken(), fp_id);
         FileDownloader.get_zip(fp_id, format, telephone);
+        Date now = new Date();
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
 
     }
 
-    public void up(File zip, File picture, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException {
+
+    public String jpgHandler(List<String> httpurl, String fp_id) throws IOException {
+        int count = 0;
+        String fullname = "upload";
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+
+
+
+        Path path = Paths.get(fullname + "/" + fp_id);
+        Path pathCreate = Files.createDirectories(path);
+        List<String> files = new ArrayList<>();
+        for (String s : httpurl) {
+            File2Base64.GETFile_Image2Base64(s, fullname + "/"  + fp_id + "/temp" + count + ".jpg");
+            files.add(fullname + "/"  + fp_id + "/temp" + count + ".jpg");
+            count++;
+        }
+        FileOutputStream fos = new FileOutputStream(fullname + "/" + fp_id + "/" + fp_id + ".zip");
+        // 创建一个ZipOutputStream对象，用于将文件写入到zip文件中
+        ZipOutputStream zos = new ZipOutputStream(fos);
+
+        for (String file : files) {
+            FileInputStream fis = new FileInputStream(file);
+            // 创建一个ZipEntry对象，用于表示zip文件中的一个条目
+            ZipEntry entry = new ZipEntry(file);
+            // 将该条目添加到zip文件中
+            zos.putNextEntry(entry);
+            // 将待打包的文件内容写入到zip文件中
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                zos.write(buffer, 0, length);
+            }
+            // 关闭该条目
+            zos.closeEntry();
+            // 关闭输入流
+            fis.close();
+        }
+        return fullname + "/"  + fp_id + "/temp0"  + ".jpg";
+    }
+
+
+    public void zipFile(String sourceFile, String zipFile) {
+        try {
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            FileInputStream fis = new FileInputStream(sourceFile);
+            ZipEntry zipEntry = new ZipEntry(sourceFile);
+            zos.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zos.write(bytes, 0, length);
+            }
+            zos.closeEntry();
+            fis.close();
+            zos.close();
+            fos.close();
+            System.out.println("File compressed successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String args[]) throws IOException {
+        List<String> a = new ArrayList<>();
+        String url1 = "https://img1.baidu.com/it/u=1509442605,3952579348%26fm=253%26fmt=auto%26app=138%26f=JPEG?w=667%26h=500";
+        String url2 = "https://img1.baidu.com/it/u=1509442605,3952579348%26fm=253%26fmt=auto%26app=138%26f=JPEG?w=667%26h=500";
+        a.add(url2);
+        a.add(url1);
+        PictureBuilder pictureBuilder = new PictureBuilder();
+        pictureBuilder.jpgHandler(a, "qwdqngieiuqhoqwdjoqwjfiqowf");
+
+    }
+
+    public void deleteFolder(File folder) {
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    deleteFolder(file);
+                }
+            }
+        }
+        if (folder.getPath() != "upload" && folder.getPath() != "download")
+            folder.delete();
+    }
+
+    public String up(List<String> httpUrl, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException, InterruptedException {
         PictureBuilder pictureBuilderController = new PictureBuilder();
         String token = pictureBuilderController.getToken();
         String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
+        String picturePath = jpgHandler(httpUrl, fp_id);
+        File picture = new File(picturePath);
+        String fullname = "upload";
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+
+        String filepath = fullname + "/" + fp_id + "/" + fp_id + ".zip";
+        File zip = new File(filepath);
         String url = pictureBuilderController.getUrl(token, fp_id, photoInfo, handleType, type);
         pictureBuilderController.upload(token, url, fp_id, zip);
         pictureBuilderController.cover(token, fp_id, picture);
-        Date now = new Date();
-        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
-    };
+//        Date now = new Date();
+//        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+
+        PutObjectResult putObjectResult = putObject(fp_id + ".jpg", picture,"images/");
+
+        return fp_id;
+    }
+
+    ;
+
+    public String upVideo(File video, File picture, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException, InterruptedException {
+        PictureBuilder pictureBuilderController = new PictureBuilder();
+        String token = pictureBuilderController.getToken();
+        String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
+
+
+        String filepath = "upload/" + fp_id + "/" + fp_id + ".zip";
+
+        File zip = new File(filepath);
+
+        String url = pictureBuilderController.getUrl(token, fp_id, photoInfo, handleType, type);
+        pictureBuilderController.upload(token, url, fp_id, zip);
+        pictureBuilderController.cover(token, fp_id, picture);
+//        Date now = new Date();
+//        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+        return fp_id;
+    }
+
 
     public int insert(UserFurniture userFurniture){
         return userFurnitureMapper.insertUserFurniture(userFurniture);
