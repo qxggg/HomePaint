@@ -94,6 +94,8 @@ public interface GoodsMapper {
     })
     Goods getGoodsById(int goodsId);
 
+
+
     @Select("select * from goods where goodsId = #{goodsId}")
     @Results({
             @Result(

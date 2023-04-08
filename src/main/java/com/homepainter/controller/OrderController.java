@@ -5,6 +5,7 @@ import com.homepainter.pojo.Order;
 import com.homepainter.service.OrderService;
 import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -21,6 +22,8 @@ public class OrderController {
     @Autowired
     RedisUtil redisUtil;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
     @PostMapping
     public Map<String, Object> test(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
@@ -125,10 +128,11 @@ public class OrderController {
         int goods_id = (int) data.get("goods_id");
         String yunfeiS = (String) data.get("yunfei");
         String AllPriceS = (String) data.get("AllPrice");
+        String beizhu = (String) data.get("beizhu");
         double yunfei = Double.parseDouble(yunfeiS);
         double AllPrice = Double.parseDouble(AllPriceS);
         Date date = new Date();
-        if (orderService.insertOrder(new Order(date, userId, addressId, goods_id, count, yunfei, AllPrice, "待支付")) == 1){
+        if (orderService.insertOrder(new Order(date, userId, addressId, goods_id, count, yunfei, AllPrice, "待发货", beizhu)) == 1){
             map.put("code", 0);
             map.put("msg", "下单成功");
         }
@@ -138,5 +142,41 @@ public class OrderController {
         }
         return map;
     }
+
+    @PostMapping("/change_status")
+    public Map<String, Object> changeOrder(@RequestBody Map<String, Object> data, @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        int orderId = (int) data.get("orderId");
+        String status = (String) data.get("status");
+        String sql = "update `order` set status = ? where orderId = " + orderId;
+        if (jdbcTemplate.update(sql, status) == 1) {
+            map.put("code", 0);
+            map.put("msg", "修改成功");
+        }
+        else{
+            map.put("code", 0);
+            map.put("msg", "修改失败");
+        }
+        return map;
+    }
+
+    @PostMapping("deleteOrder")
+    public Map<String, Object> deleteOrder(@RequestBody Map<String, Object> data){
+        Map<String, Object> map = new HashMap<>();
+        int orderId = (int) data.get("orderId");
+        String sql = "delete from `order` where orderId = " + orderId;
+        if (jdbcTemplate.update(sql) == 1){
+            map.put("code", 0);
+            map.put("msg", "删除成功");
+        }
+        else{
+            map.put("code", 1);
+            map.put("msg", "删除失败");
+        }
+        return map;
+    }
+
 
 }

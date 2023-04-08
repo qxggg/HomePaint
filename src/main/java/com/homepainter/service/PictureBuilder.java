@@ -6,6 +6,7 @@ import com.homepainter.mapper.UserFurnitureMapper;
 import com.homepainter.pojo.UserFurniture;
 import com.homepainter.util.File2Base64;
 import com.qcloud.cos.model.PutObjectResult;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,10 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -62,7 +60,37 @@ public class PictureBuilder {
         String token = jsonObject.getString("token");
         System.out.println(token);
         httpClient.close();
+
         return token;
+    }
+
+    public List<HashMap<String, Object>> getList(int userId) throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("https://www.gongchuangshijie.com:81/BoYa/fileFp/findFPByUser.do?pageCurrent=1&pageMaxPer=100000000");
+        httpGet.setHeader("token", getToken());
+        httpGet.setHeader("requestType-Content", "Model" +
+                "ingStand");
+        HttpResponse response = httpClient.execute(httpGet);
+        HttpEntity entity = response.getEntity();
+        String result = EntityUtils.toString(entity, "UTF-8");
+        JSONObject jsonObject = JSON.parseObject(result);
+        List<Map<String, Object>> map = (List<Map<String, Object>>) jsonObject.get("list");
+
+        List<UserFurniture> userFurnitures = userFurnitureMapper.getById(userId);
+
+        List<HashMap<String, Object>> show = new ArrayList<>();
+        for (Map<String, Object> m : map){
+            for (UserFurniture userFurniture : userFurnitures){
+                if (m.get("fp_id").equals(userFurniture.getFpId())) {
+                    HashMap<String, Object> tmp = new HashMap<>();
+                    tmp.put("userFurniture", userFurniture);
+                    tmp.put("status", m.get("description"));
+                    tmp.put("imageUrl", m.get("thumb"));
+                    show.add(tmp);
+                }
+            }
+        }
+        return show;
     }
 
     public String createProject(String projectName, String token, int telephone) throws IOException {
@@ -110,6 +138,7 @@ public class PictureBuilder {
                 .build();
         httpPut.setEntity(reqEntity);
         CloseableHttpResponse response = httpClient.execute(httpPut);
+
     }
 
     public void cover(String token, String fp_id, File file) throws IOException {
@@ -143,13 +172,12 @@ public class PictureBuilder {
     }
 
 
-    public void down(String fp_id, String format, int telephone, String projectName) throws IOException {
+    public Map<String,Object> down(String fp_id, String format, int telephone, String projectName) throws IOException {
         PictureBuilder pictureBuilderController = new PictureBuilder();
         unlocked(pictureBuilderController.getToken(), fp_id);
-        FileDownloader.get_zip(fp_id, format, telephone);
-        Date now = new Date();
-        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+        Map<String,Object> res = FileDownloader.get_zip(fp_id, format, telephone);
 
+        return res;
     }
 
 
@@ -159,12 +187,14 @@ public class PictureBuilder {
 
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
 
 
 
         Path path = Paths.get(fullname + "/" + fp_id);
         Path pathCreate = Files.createDirectories(path);
+
+
         List<String> files = new ArrayList<>();
         for (String s : httpurl) {
             File2Base64.GETFile_Image2Base64(s, fullname + "/"  + fp_id + "/temp" + count + ".jpg");
@@ -219,27 +249,22 @@ public class PictureBuilder {
     }
 
     public static void main(String args[]) throws IOException {
-        List<String> a = new ArrayList<>();
-        String url1 = "https://img1.baidu.com/it/u=1509442605,3952579348%26fm=253%26fmt=auto%26app=138%26f=JPEG?w=667%26h=500";
-        String url2 = "https://img1.baidu.com/it/u=1509442605,3952579348%26fm=253%26fmt=auto%26app=138%26f=JPEG?w=667%26h=500";
-        a.add(url2);
-        a.add(url1);
         PictureBuilder pictureBuilder = new PictureBuilder();
-        pictureBuilder.jpgHandler(a, "qwdqngieiuqhoqwdjoqwjfiqowf");
 
     }
 
-    public void deleteFolder(File folder) {
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    deleteFolder(file);
+    public static void deleteFolder(File file) {
+        File[] files = file.listFiles();//将file子目录及子文件放进文件数组
+        if (files != null) {//如果包含文件进行删除操作
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile()) {//删除子文件
+                    files[i].delete();
+                } else if (files[i].isDirectory()) {//通过递归方法删除子目录的文件
+                   deleteFolder(files[i]);
                 }
+                files[i].delete();//删除子目录
             }
         }
-        if (folder.getPath() != "upload" && folder.getPath() != "download")
-            folder.delete();
     }
 
     public String up(List<String> httpUrl, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException, InterruptedException {
@@ -252,7 +277,7 @@ public class PictureBuilder {
 
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
 
         String filepath = fullname + "/" + fp_id + "/" + fp_id + ".zip";
         File zip = new File(filepath);
@@ -264,6 +289,10 @@ public class PictureBuilder {
 
         PutObjectResult putObjectResult = putObject(fp_id + ".jpg", picture,"images/");
 
+        File delete = new File(fullname);
+        PictureBuilder.deleteFolder(delete);
+        Date now = new Date();
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
         return fp_id;
     }
 

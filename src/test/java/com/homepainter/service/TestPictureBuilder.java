@@ -28,8 +28,7 @@ public class TestPictureBuilder {
     }
 
     @Test
-    public void testFolder(){
-        File file = new File("upload");
-        pictureBuilder.deleteFolder(file);
+    public void testFolder() throws IOException {
+        pictureBuilder.getList(1);
     }
 }

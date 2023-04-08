@@ -26,14 +26,14 @@ public class PictureBuilderController {
 
     @Autowired
     PictureBuilder pictureBuilder;
-    @PostMapping("/list")
-    public Map<String, Object> getList(@RequestHeader String token){
+    @GetMapping("/list")
+    public Map<String, Object> getList(@RequestHeader String token) throws IOException {
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
         map.put("code", 0);
         map.put("msg", "查询成功");
-        map.put("data", userFurnitureService.getById(userId));
+        map.put("data", pictureBuilder.getList(userId));
         return map;
     }
 
@@ -71,7 +71,8 @@ public class PictureBuilderController {
         String id =(String) redisUtil.get(token);
         String projectName = (String) data.get("name");
         int userId = Integer.parseInt(id.substring(5));
-        pictureBuilder.down(fp_id, "obj", userId, projectName);
+        Map<String,Object> temp = pictureBuilder.down(fp_id, "obj", userId, projectName);
+        map.put("data",temp);
         map.put("code", 0);
         map.put("msg", "下载成功");
         return map;

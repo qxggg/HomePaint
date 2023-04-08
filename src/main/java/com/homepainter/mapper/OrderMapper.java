@@ -17,6 +17,18 @@ public interface OrderMapper {
     List<Order> getOrderList();
 
     @Select("select * from `order` where userId = #{userId}")
+    @Results({
+            @Result(
+                    property = "goods",
+                    column = "goodsId",
+                    javaType = Goods.class,
+                    many = @Many(select = "com.homepainter.mapper.GoodsMapper.getGoodsByIdNoAp")
+            ),
+            @Result(
+                    property = "goodsId",
+                    column = "goodsId"
+            )
+    })
     List<Order> getOrderById(int userId);
 
 
@@ -32,7 +44,7 @@ public interface OrderMapper {
                     property = "address",
                     column = "addressId",
                     javaType = Address.class,
-                    many = @Many(select = "com.homepainter.mapper.AddressMapper.getAddressById")
+                    many = @Many(select = "com.homepainter.mapper.AddressMapper.getAddressByAddressId")
             ),
             @Result(
                     property = "addressId",
@@ -46,6 +58,6 @@ public interface OrderMapper {
     })
     Order getOrderDetail(int orderId);
 
-    @Insert("insert into `order` values(#{time}, #{userId}, #{orderId}, #{addressId}, #{goodsId}, #{count}, #{status}, #{yunfei}, #{AllPrice})")
+    @Insert("insert into `order` values(#{time}, #{userId}, #{orderId}, #{addressId}, #{goodsId}, #{count}, #{status}, #{yunfei}, #{AllPrice}, #{beizhu})")
     int insertOrder(Order order);
 }

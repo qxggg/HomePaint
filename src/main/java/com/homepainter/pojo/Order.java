@@ -25,10 +25,23 @@ public class Order {
 
     double AllPrice;
 
+    String beizhu;
+
     String status;
 
     Address address;
 
+    public Order(Date time, int userId, int addressId, int goodsId, int count, double yunfei, double allPrice, String status, String beizhu) {
+        this.time = time;
+        this.userId = userId;
+        this.addressId = addressId;
+        this.goodsId = goodsId;
+        this.count = count;
+        this.yunfei = yunfei;
+        AllPrice = allPrice;
+        this.beizhu = beizhu;
+        this.status = status;
+    }
 
     Goods goods;
 

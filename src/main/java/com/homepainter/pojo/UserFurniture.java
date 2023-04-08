@@ -14,7 +14,7 @@ public class UserFurniture {
 
     int userId;
 
-    String fp_id;
+    String fpId;
 
     String name;
 

@@ -199,5 +199,25 @@ public class GoodsController {
         return map;
     }
 
+    @PostMapping("evaluate")
+    public Map<String, Object> insertAppraise(@RequestBody Map<String, Object> data, @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        int goods_id = (int) data.get("goods_id");
+        String appraise = (String) data.get("comment");
+        String sql = "insert into goods_appraise values(?, ?, ?, ?, ?)";
+        Date date = new Date();
+        if (jdbcTemplate.update(sql, null, goods_id, appraise, userId, date) == 1){
+            map.put("code", 0);
+            map.put("msg", "插入成功");
+        }
+        else {
+            map.put("code", 1);
+            map.put("msg", "插入失败");
+        }
+        return map;
+    }
+
 
 }

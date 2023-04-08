@@ -25,7 +25,7 @@ public interface AddressMapper {
     @Update("update address set addressCity = #{addressCity}, address = #{address}, phone = #{phone}, nickname = #{nickname}, isDefault = #{isDefault} where addressId = #{addressId}")
     int updateAddress(Address address);
 
-    @Delete("delete from address where #{addressId} = addressId")
+    @Delete("delete from address where addressId = #{addressId}")
     int deleteAddress(int addressId);
 
     @Select("select * from address where isDefault = true and userId = #{userId}")

@@ -1,6 +1,8 @@
 package com.homepainter.service;
 
+
 import com.qcloud.cos.model.PutObjectResult;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,26 +13,34 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.homepainter.service.Upload_File.putObject;
 import static com.homepainter.util.ZipUtil.unzip;
 
 public class FileDownloader {
 
-    public static void get_zip(String fp_id, String format, int telephone) throws IOException {
+
+    public static Map<String,Object> get_zip(String fp_id, String format, int telephone) throws IOException {
+        PictureBuilder pictureBuilder = new PictureBuilder();
         long projectName = System.currentTimeMillis();
         PictureBuilder pictureBuilderController = new PictureBuilder();
+        Map<String,Object> res = new HashMap<>();
         String fileUrl = "https://www.gongchuangshijie.com:86/api/FileDownload/FileDownloadObj?fp_id=" + fp_id + "&format=" + format;
         String fullname = "download";
-        String fullname2 = "download";
 
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+        if (os.indexOf("linux") != -1) {
+            fullname = "/www/wwwroot/module/" + fullname;
+        }else{
+            fullname = "./" + fullname;
+        }
 
         String savePath = fullname + "/" + telephone + "/" + projectName + "/" + projectName + ".zip" ;
-        Path path = Paths.get(fullname + "\\"  + telephone + "\\" + projectName);
-        Path pathCreate = Files.createDirectories(path);
+        Path path = Paths.get(fullname + "/"  + telephone + "/" + projectName);
+        Files.createDirectories(path);
 
 
         try {
@@ -80,6 +90,9 @@ public class FileDownloader {
         filename = "model.mtl";
         file = new File(zip + filename);
         putObjectResult = putObject(filename,file,"modeling-result/" + tmp);
+
+
+        return res;
     }
 
 }
