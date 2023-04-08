@@ -82,15 +82,15 @@ public class FileDownloader {
         String filename = "model.obj";
         File file = new File(zip + filename);
         PutObjectResult putObjectResult = putObject(filename, file,"modeling-result/" + tmp);
-
+        res.put("OBJ","https://image-1304455659.cos.ap-nanjing.myqcloud.com/modeling-result/" + tmp +filename);
         filename = "model_m2.jpg";
         file = new File(zip + filename);
         putObjectResult = putObject(filename, file,"modeling-result/" + tmp);
-
+        res.put("jpg","https://image-1304455659.cos.ap-nanjing.myqcloud.com/modeling-result/" + tmp +filename);
         filename = "model.mtl";
         file = new File(zip + filename);
         putObjectResult = putObject(filename,file,"modeling-result/" + tmp);
-
+        res.put("mtl","https://image-1304455659.cos.ap-nanjing.myqcloud.com/modeling-result/" + tmp +filename);
 
         return res;
     }

@@ -111,6 +111,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>0.8</version>
+        </dependency>
+        <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
             <version>5.6.97</version>
@@ -119,7 +124,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/xuggle/xuggle-xuggler -->
 
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.5.2</version>
+        </dependency>
 
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -158,6 +174,7 @@
             <version>4.4.13</version>
         </dependency>
 
+
         <dependency>
             <systemPath>${project.basedir}/libs/java-sdk-core-3.2.0.jar</systemPath>
             <groupId>com.huawei.apigateway</groupId>
@@ -174,6 +191,11 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.70</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>1.5.5</version>
         </dependency>
 
     </dependencies>
@@ -195,6 +217,15 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+
         </plugins>
 
     </build>

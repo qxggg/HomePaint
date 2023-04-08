@@ -5,16 +5,17 @@ import com.homepainter.controller.DTO.InsertGoods;
 import com.homepainter.pojo.Collect;
 import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_image;
-import com.homepainter.service.GoodsService;
-import com.homepainter.service.TranslateService;
-import com.homepainter.service.UserService;
+import com.homepainter.service.*;
 import com.homepainter.util.RedisUtil;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
+
+import static com.homepainter.controller.AlgorithmController.commentInfo;
 
 @RestController
 @RequestMapping("/goods")
@@ -35,6 +36,11 @@ public class GoodsController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    Algorithm algorithm;
+
+    @Autowired
+    BehaveService behaveService;
 
     public static int goodsInsertCount = 1001;
 
@@ -200,7 +206,7 @@ public class GoodsController {
     }
 
     @PostMapping("evaluate")
-    public Map<String, Object> insertAppraise(@RequestBody Map<String, Object> data, @RequestHeader String token){
+    public Map<String, Object> insertAppraise(@RequestBody Map<String, Object> data, @RequestHeader String token) throws IOException {
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
@@ -211,6 +217,10 @@ public class GoodsController {
         if (jdbcTemplate.update(sql, null, goods_id, appraise, userId, date) == 1){
             map.put("code", 0);
             map.put("msg", "插入成功");
+            commentInfo = appraise;
+            float a = algorithm.sendComment();
+            behaveService.updateGoods(userId ,goods_id, "randomComment", a);
+            System.out.println(a);
         }
         else {
             map.put("code", 1);

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.homepainter.mapper.UserFurnitureMapper;
 import com.homepainter.pojo.UserFurniture;
 import com.homepainter.util.File2Base64;
+import com.homepainter.util.MultipartFile2File;
 import com.qcloud.cos.model.PutObjectResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -22,11 +23,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -226,6 +227,45 @@ public class PictureBuilder {
     }
 
 
+    public void videoHandler(MultipartFile f, String fp_id) throws IOException {
+
+
+        File file = MultipartFile2File.MultipartFileToFile(f);
+
+        String fullname = "upload";
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
+
+        Path path = Paths.get(fullname + "/" + fp_id);
+        Path pathCreate = Files.createDirectories(path);
+
+        String zipFilePath = fullname + "/" + fp_id + "/" + fp_id + ".zip";
+
+        try {
+            FileOutputStream fos = new FileOutputStream(zipFilePath);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            FileInputStream fis = new FileInputStream(file);
+            ZipEntry zipEntry = new ZipEntry(file.getName());
+            zos.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zos.write(bytes, 0, length);
+            }
+            zos.closeEntry();
+            fis.close();
+            zos.close();
+            fos.close();
+            System.out.println("File compressed successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     public void zipFile(String sourceFile, String zipFile) {
         try {
             FileOutputStream fos = new FileOutputStream(zipFile);
@@ -298,21 +338,50 @@ public class PictureBuilder {
 
     ;
 
-    public String upVideo(File video, File picture, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException, InterruptedException {
+    public String upVideo(MultipartFile video,  String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException, InterruptedException {
         PictureBuilder pictureBuilderController = new PictureBuilder();
         String token = pictureBuilderController.getToken();
         String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
 
+        videoHandler(video, fp_id);
 
-        String filepath = "upload/" + fp_id + "/" + fp_id + ".zip";
+        String fullname = "upload";
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
+
+        String filepath = fullname + "/" + fp_id + "/" + fp_id + ".zip";
 
         File zip = new File(filepath);
 
         String url = pictureBuilderController.getUrl(token, fp_id, photoInfo, handleType, type);
         pictureBuilderController.upload(token, url, fp_id, zip);
-        pictureBuilderController.cover(token, fp_id, picture);
+
 //        Date now = new Date();
 //        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+
+        Date now = new Date();
+
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+        return fp_id;
+    }
+
+    public String upVideoCover(File picture, String fp_id) throws IOException {
+        String fullname = "upload";
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
+        PictureBuilder pictureBuilderController = new PictureBuilder();
+        String token = pictureBuilderController.getToken();
+        pictureBuilderController.cover(token, fp_id, picture);
+
+        PutObjectResult putObjectResult = putObject(fp_id + ".jpg", picture,"images/");
+
+        File delete = new File(fullname);
+        PictureBuilder.deleteFolder(delete);
+
         return fp_id;
     }
 

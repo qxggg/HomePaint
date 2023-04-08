@@ -1,6 +1,12 @@
 server:
   port: 8095
 spring:
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 500MB
+
   datasource:
     url: jdbc:mysql://sh-cynosdbmysql-grp-2qr6s4ri.sql.tencentcdb.com:20461/homepainter?useSSL=false
     username: root

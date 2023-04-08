@@ -2,15 +2,13 @@ package com.homepainter.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
-import com.homepainter.util.File2Base64;
 import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.Map;
 

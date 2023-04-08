@@ -1,7 +1,13 @@
 package com.homepainter.util;
 
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class MultipartFile2File {
@@ -26,5 +32,11 @@ public class MultipartFile2File {
         }
         return null;
     }
+
+
+
+
+
+
 
 }
