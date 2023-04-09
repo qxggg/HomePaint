@@ -110,11 +110,7 @@
             <version>1.2.56</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
-            <version>0.8</version>
-        </dependency>
+
         <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
@@ -126,11 +122,6 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/xuggle/xuggle-xuggler -->
 
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv-platform</artifactId>
-            <version>1.5.5</version>
-        </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -146,6 +137,18 @@
             <groupId>com.aliyun</groupId>
             <artifactId>tea-openapi</artifactId>
             <version>0.2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>4.5.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-alinlp</artifactId>
+            <version>1.8.12</version>
         </dependency>
 
         <dependency>

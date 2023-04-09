@@ -6,6 +6,7 @@ import com.homepainter.util.File2Base64;
 import com.homepainter.util.RedisUtil;
 import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,9 @@ public class PictureBuilderController {
 
     @Autowired
     PictureBuilder pictureBuilder;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
     @GetMapping("/list")
     public Map<String, Object> getList(@RequestHeader String token) throws IOException {
         Map<String, Object> map = new HashMap<>();
@@ -110,6 +114,22 @@ public class PictureBuilderController {
         map.put("code", 0);
         map.put("msg", "上传封面成功");
         map.put("fp_id", fp_id);
+        return map;
+    }
+
+    @PostMapping("delete")
+    public Map<String, Object> delete(@RequestBody Map<String, Object> data) throws IOException{
+        Map<String, Object> map = new HashMap<>();
+        String fp_id = (String) data.get("fp_id");
+        String sql = "delete from userfurniture where fpId = ?";
+        if (jdbcTemplate.update(sql, fp_id) == 1){
+            map.put("code", 0);
+            map.put("msg", "删除成功");
+        }
+        else{
+            map.put("code", 1);
+            map.put("msg", "删除失败");
+        }
         return map;
     }
 }

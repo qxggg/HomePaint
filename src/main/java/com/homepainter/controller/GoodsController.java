@@ -1,6 +1,8 @@
 package com.homepainter.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.exceptions.ClientException;
+import com.homepainter.controller.DTO.GoodsPlus;
 import com.homepainter.controller.DTO.InsertGoods;
 import com.homepainter.pojo.Collect;
 import com.homepainter.pojo.Goods;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.homepainter.controller.AlgorithmController.commentInfo;
+import static com.homepainter.service.Search_Service.kmpSearch;
 
 @RestController
 @RequestMapping("/goods")
@@ -47,7 +50,29 @@ public class GoodsController {
     @GetMapping("/get_list")
     public Map<String, Object> getAllList(){
         Map<String, Object> map = new HashMap<>();
-        map.put("data", goodsService.getAllGoods());
+        List<Goods> goods = goodsService.getAllGoods();
+        List<GoodsPlus> goodsPluses = new ArrayList<>();
+        for (Goods good : goods){
+            GoodsPlus goodsPlus = new GoodsPlus();
+            goodsPlus.setGoodsId(good.getGoodsId());
+            goodsPlus.setCategory(good.getCategory());
+            goodsPlus.setAppraise(good.getAppraise());
+            goodsPlus.setDetail(good.getDetail());
+            goodsPlus.setMaterial(good.getMaterial());
+            if (!good.getImageUrl().isEmpty()) goodsPlus.setImageURL(good.getImageUrl().get(0).getImageUrl());
+            goodsPlus.setStorage(good.getStorage());
+            goodsPlus.setPrice(good.getPrice());
+            goodsPlus.setStyle(good.getStyle());
+            goodsPlus.setSubtitle(good.getSubtitle());
+            goodsPlus.setModalId(good.getModalId());
+            goodsPlus.setTheme(good.getTheme());
+            goodsPlus.setTitle(good.getTitle());
+            goodsPlus.setSuperCategory(good.getSuperCategory());
+            goodsPlus.setMaterial(good.getMaterial());
+            goodsPluses.add(goodsPlus);
+        }
+
+        map.put("data", goodsPluses);
         map.put("code", 0);
         map.put("msg", "查询商品成功！");
         return map;
@@ -73,15 +98,12 @@ public class GoodsController {
         return map;
     }
     @PostMapping("get_list")
-    public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data){
+    public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data) throws ClientException {
         Map<String, Object> map = new HashMap<>();
         if (data.get("search_content") == null) map.put("data", goodsService.getAllGoods());
         else {
-            if (!redisUtil.hasKey("search_content")) {
-                List<Goods> goods = goodsService.getGoodsByContent("search_content");
-                map.put("data", goodsService.getGoodsByContent((String) data.get("search_content")));
-
-            }
+            if (!redisUtil.hasKey("search_content"))
+                map.put("data", kmpSearch((String) data.get("search_content")));
         }
 
         map.put("code", 0);
@@ -220,6 +242,7 @@ public class GoodsController {
             commentInfo = appraise;
             float a = algorithm.sendComment();
             behaveService.updateGoods(userId ,goods_id, "randomComment", a);
+            behaveService.updateStyle(userId, goods_id, "randomComment", a);
             System.out.println(a);
         }
         else {

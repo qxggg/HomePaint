@@ -86,7 +86,7 @@ public class FamilyController {
         String sql = "select familyId from family where userId =" + userId;
         Map<String, Object> res = jdbcTemplate.queryForMap(sql);
         int familyId = (int) res.get("familyId");
-        String sql2 = "select family.userId, telephone, avatar, nickName from family inner join user on family.userId = `user`.userId where family.userId = " + userId;
+        String sql2 = "select familyName, family.userId, family.familyName, telephone, avatar, nickName, imageUrl from family inner join user on family.userId = `user`.userId inner join house on family.familyId = house.familyId where family.userId = " + userId;
         map.put("code", 0);
         map.put("data", jdbcTemplate.queryForList(sql2));
         map.put("msg", "查询成功");

@@ -27,6 +27,12 @@ public class ReadJson {
 
             Resource resource = null;
             InputStream stream = null;
+            String os = System.getProperty("os.name").toLowerCase();
+            if(os.indexOf("linux")!=-1){
+                filepath = "/www/wwwroot/"+filename;
+            }else{
+                filepath = ".\\"+filename;
+            }
             filepath = ".\\"+filename;
             resource = resolver.getResource(filepath);
             stream = resource.getInputStream();

@@ -91,7 +91,6 @@ public class BehaveService {
         map.put(behave, list);
         List<Object> idx = (List<Object>) map.get("idx");
         if (!idx.contains(styleId)) idx.add(styleId);
-        System.out.println(idx);
         redisUtil.set("styleBehave" + userId, map);
     }
 
