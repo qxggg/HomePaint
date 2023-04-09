@@ -1,12 +1,16 @@
 package com.homepainter.controller;
 
 import com.homepainter.service.Algorithm;
+import com.homepainter.service.UserService;
 import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.incrementer.HsqlMaxValueIncrementer;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -15,9 +19,6 @@ public class AlgorithmController {
 
     public static String commentInfo;
 
-    public static int recommendId;
-
-    public static String recommendType;
 
     @Autowired
     Algorithm algorithm;
@@ -25,31 +26,32 @@ public class AlgorithmController {
     @Autowired
     RedisUtil redisUtil;
 
-    @GetMapping("comment")
-    public Map<String, Object> comment(){
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+
+    @GetMapping("goodsBehave")
+    public Object goodsBehave(){
         HashMap<String, Object> map = new HashMap<>();
-        map.put("comment", commentInfo);
-        return map;
+        String sql = "select userId from user order by userId desc limit 1";
+        List<Object> list = new ArrayList<>();
+        Map<String, Object> m = jdbcTemplate.queryForMap(sql);
+        int userId = (int) m.get("userId");
+        for (int i = 1; i <= userId; ++i)
+            list.add(redisUtil.get("goodsBehave" + i));
+        return list;
     }
 
-    @GetMapping("get_rec")
-    public Map<String, Object> get_rec(){
-        HashMap<String, Object> map = new HashMap<>();
-        return map;
+    @GetMapping("styleBehave")
+    public Object styleBehave(){
+        String sql = "select userId from user order by userId desc limit 1";
+        List<Object> list = new ArrayList<>();
+        Map<String, Object> m = jdbcTemplate.queryForMap(sql);
+        int userId = (int) m.get("userId");
+        for (int i = 1; i <= userId; ++i)
+            list.add(redisUtil.get("styleBehave" + i));
+        return list;
     }
 
-    @GetMapping("recommandation")
-    public Map<String, Object> recommdation(){
-        HashMap<String, Object> map = new HashMap<>();
-        return map;
-    }
-
-    @GetMapping("/recommandationId")
-    public Map<String, Object> recommdationId(){
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("type", recommendType);
-        map.put("userId", recommdationId());
-        return map;
-    }
 
 }

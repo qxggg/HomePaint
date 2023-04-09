@@ -98,12 +98,22 @@ public class GoodsController {
         return map;
     }
     @PostMapping("get_list")
-    public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data) throws ClientException {
+    public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data, @RequestHeader String token) throws ClientException {
         Map<String, Object> map = new HashMap<>();
+
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
         if (data.get("search_content") == null) map.put("data", goodsService.getAllGoods());
         else {
-            if (!redisUtil.hasKey("search_content"))
-                map.put("data", kmpSearch((String) data.get("search_content")));
+            List<JSONObject> list= kmpSearch((String) data.get("search_content"));
+            for (JSONObject j : list){
+                String a = (String) j.get("goodsId");
+                int goodsId = Integer.parseInt(a);
+                System.out.println(goodsId);
+                behaveService.updateAddStyle(userId, goodsId, "randomSearchClick", 1);
+                System.out.println(a);
+            }
+            map.put("data", list);
         }
 
         map.put("code", 0);
