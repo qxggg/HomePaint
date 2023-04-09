@@ -84,18 +84,11 @@ public class PictureBuilderController {
     @PostMapping("/CreateMoudleVideo")
     public Map<String, Object> pictureBuilderVideo(@RequestHeader String token, @RequestParam MultipartFile video, @RequestParam String projectName) throws IOException, InterruptedException {
         Map<String, Object> map = new HashMap<>();
-
         String fullname = "upload";
-
         String os = System.getProperty("os.name").toLowerCase();
-
         if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
-
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
-
-
-
         String fp_id = pictureBuilder.upVideo(video, projectName, userId, "5", "1", "0.7");
 
         map.put("code", 0);
