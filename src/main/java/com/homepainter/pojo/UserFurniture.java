@@ -20,4 +20,6 @@ public class UserFurniture {
 
     Date time;
 
+    boolean isDIY;
+
 }

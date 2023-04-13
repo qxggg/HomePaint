@@ -6,6 +6,11 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 500MB
+  redis:
+    timeout: 8000
+    jedis:
+      pool:
+        max-wait: 10s
 
   datasource:
     url: jdbc:mysql://sh-cynosdbmysql-grp-2qr6s4ri.sql.tencentcdb.com:20461/homepainter?useSSL=false
@@ -16,6 +21,8 @@ spring:
     tomcat:
       #设定tomcat的basedir目录，如果没有指定则使用临时目录
       basedir: /home/app/tomcat_upload_temp
+
+
 
 
 mybatis:

@@ -2,6 +2,7 @@ package com.homepainter.mapper;
 
 
 import com.homepainter.pojo.Tieba;
+import com.homepainter.pojo.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -30,6 +31,16 @@ public interface TiebaMapper {
             @Result(
                     property = "tiebaId",
                     column = "tiebaId"
+            ),
+            @Result(
+                    property = "user",
+                    column = "userId",
+                    javaType = User.class,
+                    one = @One(select = "com.homepainter.mapper.UserMapper.getAllById")
+            ),
+            @Result(
+                    property = "userId",
+                    column = "userId"
             )
     })
     List<Tieba> getTiebaList();

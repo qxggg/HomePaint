@@ -95,29 +95,36 @@ public class Search_Service {
             }
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            List<Integer> list = kmp(content,jsonObject.getString("title").toString());
+            List<Integer> list = kmp(jsonObject.getString("title").toString(),content);
+
+            // System.out.println(jsonObject.getString("title").toString()+list.size());
             List<Integer> list1 = new ArrayList<>();
             List<Integer> list2 = new ArrayList<>();
             List<Integer> list3 = new ArrayList<>();
             List<Integer> list4 = new ArrayList<>();
 
             if(jsonObject.getString("category").toString().length()!=0)
-                list1 = kmp(content,jsonObject.getString("category").toString());
+                list1 = kmp(jsonObject.getString("category").toString(),content);
             if(jsonObject.getString("superCategory").toString().length()!=0)
-                list2 = kmp(content,jsonObject.getString("superCategory").toString());
+                list2 = kmp(jsonObject.getString("superCategory").toString(),content);
             if(jsonObject.getString("theme").toString().length()!=0)
-                list3 = kmp(content,jsonObject.getString("theme").toString());
+                list3 = kmp(jsonObject.getString("theme").toString(),content);
             if(jsonObject.getString("material").toString().length()!=0)
-                list4 = kmp(content,jsonObject.getString("material").toString());
+                list4 = kmp(jsonObject.getString("material").toString(),content);
             if(list.size()!=0||list1.size()!=0||list2.size()!=0||list3.size()!=0||list4.size()!=0){
                 // System.out.println(list);
                 data.add(jsonObject);
+            }
+            if(list.size()!=0){
+                System.out.println(list.size());
+                for(int j=0;j<list.size();j++){
+                    System.out.print(list.get(j)+"  ");
+                }
             }
 
         }
         return data;
     }
-
     public static int[] computePrefixFunction(String pattern) {
         int[] prefix = new int[pattern.length()];
         int j = 0;

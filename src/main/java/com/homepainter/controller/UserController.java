@@ -5,13 +5,16 @@ import com.homepainter.service.BehaveService;
 import com.homepainter.service.UserService;
 import com.homepainter.util.RedisUtil;
 import com.homepainter.util.TokenUtil;
+import com.homepainter.util.getStyleUtils;
 import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,6 +33,9 @@ public class UserController {
     @Autowired
     private BehaveService behaveService;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @GetMapping("/error")
     public Map<String, Object> error(){
         Map<String, Object> map = new HashMap<>();
@@ -47,7 +53,7 @@ public class UserController {
     @PostMapping("/login")
     public Map<String, Object> loginByPass(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 0);
+        map.put("code", 1);
         String telephone = (String) data.get("telephone");
         String password = (String) data.get("password");
         if (StringUtils.isEmptyOrWhitespaceOnly(telephone) || StringUtils.isEmptyOrWhitespaceOnly(password)){
@@ -56,7 +62,7 @@ public class UserController {
         }
         if (userService.getPassByTelephone(telephone).equals(password)){
             String token = TokenUtil.generateToken(new User(telephone, password));
-            map.put("code", 1);
+            map.put("code", 0);
             map.put("token", token);
             map.put("msg", "登陆成功！");
             redisUtil.set(token, "token" + userService.getIdByTel(telephone));
@@ -75,7 +81,7 @@ public class UserController {
         String verifyCode = (String) data.get("verifyCode");
         if (!redisUtil.get("tel" + telephone).equals(verifyCode)) map.put("msg", "验证码错误！");
         else{
-            map.put("code", 1);
+            map.put("code", 0);
             map.put("msg", "登陆成功！");
             String token = TokenUtil.generateToken(new User(telephone));
             map.put("token", token);
@@ -88,10 +94,10 @@ public class UserController {
     @PostMapping("/loginSendCode")
     public Map<String, Object> sendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 0);
+        map.put("code", 1);
         if (userService.ifExistsTel((String) data.get("telephone"))) {map.put("msg", "该手机号未注册！"); return map;}
         userService.sendCode((String) data.get("telephone"));
-        map.put("code", 1);
+        map.put("code", 0);
         map.put("msg", "发送成功");
 
         return map;
@@ -100,20 +106,34 @@ public class UserController {
     @PostMapping("/register")
     public Map<String, Object> register(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 0);
+        map.put("code", 1);
         String telephone = (String) data.get("telephone");
         String verifyCode = (String) data.get("verifyCode");
         String username = (String) data.get("username");
         String password = (String) data.get("password");
-        User user = new User(username, password, telephone);
+        List<String> styles = (List<String>) data.get("style");
+        boolean HaveHouse = (boolean) data.get("HaveHouse");
+        String sql = "insert into style values(?, ?)";
+        if (verifyCode.isEmpty()){
+            map.put("code", 1);
+            map.put("msg", "请先发送验证码！");
+            return map;
+        }
+        User user = new User(username, password, telephone, HaveHouse);
         System.out.println(telephone);
         if (redisUtil.get("tel" + telephone).equals(verifyCode)) {
             if (userService.insertUser(user) == true) {
-                map.put("code", 1);
+                map.put("code", 0);
                 map.put("msg", "注册成功！");
                 int id = userService.getIdByTel(telephone);
                 behaveService.initStyle(id);
                 behaveService.initGoods(id);
+                for (String style : styles)
+                    jdbcTemplate.update(sql, id, getStyleUtils.getId(style));
+                String token = TokenUtil.generateToken(new User(telephone));
+                map.put("token", token);
+                redisUtil.set(token, "token" + userService.getIdByTel(telephone));
+                redisUtil.expire(token, 1540000);
             } else map.put("msg", "网络错误！");
         }
         else map.put("msg", "验证码错误！");
@@ -123,11 +143,11 @@ public class UserController {
     @PostMapping("/registerSendCode")
     public Map<String, Object> registerSendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 0);
+        map.put("code", 1);
         if (!userService.ifExistsTel((String) data.get("telephone"))){ map.put("msg", "该手机已注册！"); return map;}
         else {
             userService.sendCode((String) data.get("telephone"));
-            map.put("code", 1);
+            map.put("code", 0);
             map.put("msg", "发送成功");
         }
         return map;

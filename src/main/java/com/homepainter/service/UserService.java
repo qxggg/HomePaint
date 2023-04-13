@@ -22,6 +22,8 @@ public interface UserService {
 
     String getAvatarById( int userId);
 
+    User getAllById(int userId);
+
 
 
 }

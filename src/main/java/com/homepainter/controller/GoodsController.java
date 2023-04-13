@@ -7,18 +7,24 @@ import com.homepainter.controller.DTO.InsertGoods;
 import com.homepainter.pojo.Collect;
 import com.homepainter.pojo.Goods;
 import com.homepainter.pojo.Goods_image;
+import com.homepainter.pojo.UserFurniture;
 import com.homepainter.service.*;
 import com.homepainter.util.RedisUtil;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 import static com.homepainter.controller.AlgorithmController.commentInfo;
 import static com.homepainter.service.Search_Service.kmpSearch;
+import static com.homepainter.util.getStyleUtils.getStyle;
 
 @RestController
 @RequestMapping("/goods")
@@ -45,36 +51,48 @@ public class GoodsController {
     @Autowired
     BehaveService behaveService;
 
+    @Autowired
+    PictureBuilder pictureBuilder;
+
     public static int goodsInsertCount = 1001;
 
     @GetMapping("/get_list")
-    public Map<String, Object> getAllList(){
+    public Map<String, Object> getAllList(@RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
-        List<Goods> goods = goodsService.getAllGoods();
-        List<GoodsPlus> goodsPluses = new ArrayList<>();
-        for (Goods good : goods){
-            GoodsPlus goodsPlus = new GoodsPlus();
-            goodsPlus.setGoodsId(good.getGoodsId());
-            goodsPlus.setCategory(good.getCategory());
-            goodsPlus.setAppraise(good.getAppraise());
-            goodsPlus.setDetail(good.getDetail());
-            goodsPlus.setMaterial(good.getMaterial());
-            if (!good.getImageUrl().isEmpty()) goodsPlus.setImageURL(good.getImageUrl().get(0).getImageUrl());
-            goodsPlus.setStorage(good.getStorage());
-            goodsPlus.setPrice(good.getPrice());
-            goodsPlus.setStyle(good.getStyle());
-            goodsPlus.setSubtitle(good.getSubtitle());
-            goodsPlus.setModalId(good.getModalId());
-            goodsPlus.setTheme(good.getTheme());
-            goodsPlus.setTitle(good.getTitle());
-            goodsPlus.setSuperCategory(good.getSuperCategory());
-            goodsPlus.setMaterial(good.getMaterial());
-            goodsPluses.add(goodsPlus);
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+
+        String sql = "select styleId from style where userId = userId";
+        List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+        List<Goods> goods = new ArrayList<>();
+        if(list.isEmpty()){
+            Map<String, Object> m1 = new HashMap<>();
+            m1.put("styleId", 0);
+            list.add(m1);
+        }
+        else {
+            String querySql = "select * from goods where style in (";
+            for (Map<String, Object> m : list)
+                querySql += "\'" + getStyle((int) m.get("styleId")) + "\'" + ",";
+            String Qsql = querySql.substring(0, querySql.length() - 1) + ") limit 20";
+            List<Map<String, Object>> m = jdbcTemplate.queryForList(Qsql);
+            for (Map<String, Object> mm : m){
+                String sql1 = "select * from goods_appraise where goodsId = " + mm.get("goodsId");
+                String sql2 = "select * from goods_image where goodsId = " + mm.get("goodsId");
+                mm.put("goods_appraise", jdbcTemplate.queryForList(sql1));
+                List<Map<String, Object>> l = new ArrayList<>();
+                l = jdbcTemplate.queryForList(sql2);
+                mm.put("goods_image", l);
+                mm.put("imageURL", l.get(0).get("imageUrl"));
+            }
+
+            map.put("data", m);
+            map.put("code", 0);
+            map.put("msg", "查询商品成功！");
+            return map;
         }
 
-        map.put("data", goodsPluses);
-        map.put("code", 0);
-        map.put("msg", "查询商品成功！");
+
         return map;
     }
 
@@ -261,6 +279,23 @@ public class GoodsController {
         }
         return map;
     }
-
-
+    @PostMapping("WareHouse")
+    public Map<String, Object> wareHouse(@RequestBody Map<String, Object> data, @RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        int goods_id = (int) data.get("goods_id");
+        String name = (String) data.get("name");
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        Date date = new Date();
+        String fp_Id = userId + String.valueOf(System.currentTimeMillis());
+        if (pictureBuilder.insert(new UserFurniture(userId, fp_Id, name, date, false)) == 1){
+            map.put("code", 0);
+            map.put("msg", "插入成功");
+        }
+        else{
+            map.put("code", 1);
+            map.put("msg", "插入失败");
+        }
+        return map;
+    }
 }

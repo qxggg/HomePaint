@@ -103,6 +103,24 @@ public class PictureBuilderController {
     }
 
 
+    @PostMapping("/CreateMoudleVideoWithImage")
+    public Map<String, Object> CreateMoudleVideoWithImage(@RequestHeader String token, @RequestParam MultipartFile video, @RequestParam String projectName, @RequestParam String image) throws IOException, InterruptedException {
+        Map<String, Object> map = new HashMap<>();
+        String fullname = "upload";
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        String fp_id = pictureBuilder.upVideo(video, projectName, userId, "5", "1", "0.7");
+        File picture = File2Base64.Base64ToFile(image);
+        pictureBuilder.upVideoCover(picture, fp_id);
+        map.put("code", 0);
+        map.put("msg", "上传成功");
+        map.put("fp_id", fp_id);
+
+        return map;
+    }
+
     @PostMapping("/CreateModuleVideoCover")
     public Map<String, Object> pictureBuilderVideoCover(@RequestBody Map<String, Object> data) throws IOException {
         Map<String, Object> map = new HashMap<>();

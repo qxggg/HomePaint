@@ -11,18 +11,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Tieba {
-    String username;
-    String avatar;
+    String userId;
     String content;
     int tiebaId;
-    String telephone;
     String favorites;
     Date time;
     int collect;
+
+    String title;
 
     List<TiebaFlags> tiebaFlags;
 
     List<TiebaImage> tiebaImage;
 
     List<TiebaEvaluate> tiebaEvaluates;
+
+    User user;
 }

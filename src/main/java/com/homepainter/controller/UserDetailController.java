@@ -1,5 +1,7 @@
 package com.homepainter.controller;
 
+import com.homepainter.pojo.User;
+import com.homepainter.service.UserService;
 import com.homepainter.util.File2Base64;
 import com.homepainter.util.RedisUtil;
 import com.qcloud.cos.model.PutObjectResult;
@@ -24,6 +26,9 @@ public class UserDetailController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    UserService userService;
+
     @PostMapping("change_avatar")
     public Map<String, Object> insertAvatar(@RequestBody Map<String, Object> data, @RequestHeader String token) throws IOException {
         Map<String, Object> map = new HashMap<>();
@@ -43,6 +48,19 @@ public class UserDetailController {
             map.put("msg", "修改失败");
         }
 
+        return map;
+    }
+
+    @GetMapping("get")
+    public Map<String, Object> get(@RequestHeader String token){
+        Map<String, Object> map = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        User user = userService.getAllById(userId);
+        user.setPassword(null);
+        map.put("code", 0);
+        map.put("msg", "查询成功");
+        map.put("data", user);
         return map;
     }
 }

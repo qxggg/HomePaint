@@ -67,5 +67,10 @@ public class UserServiceImpl implements UserService{
         return userMapper.getAvatarById(userId);
     }
 
+    @Override
+    public User getAllById(int userId) {
+        return userMapper.getAllById(userId);
+    }
+
 
 }

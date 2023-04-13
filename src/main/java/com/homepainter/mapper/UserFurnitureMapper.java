@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface UserFurnitureMapper {
 
-    @Insert("insert into userfurniture values (#{userId}, #{fpId}, #{name}, #{time})")
+    @Insert("insert into userfurniture values (#{userId}, #{fpId}, #{name}, #{time}, #{isDIY})")
     int insertUserFurniture(UserFurniture userFurniture);
 
     @Select("select * from userfurniture where userId = #{userId}")

@@ -236,7 +236,7 @@ public class PictureBuilder {
 
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
 
         Path path = Paths.get(fullname + "/" + fp_id);
         Path pathCreate = Files.createDirectories(path);
@@ -332,7 +332,7 @@ public class PictureBuilder {
         File delete = new File(fullname);
         PictureBuilder.deleteFolder(delete);
         Date now = new Date();
-        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true));
         return fp_id;
     }
 
@@ -349,7 +349,7 @@ public class PictureBuilder {
 
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/module" + fullname;
+        if (os.indexOf("linux") != -1) fullname = "/www/wwwroot/" + fullname;
 
         String filepath = fullname + "/" + fp_id + "/" + fp_id + ".zip";
 
@@ -363,7 +363,7 @@ public class PictureBuilder {
 
         Date now = new Date();
 
-        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true));
         return fp_id;
     }
 
@@ -379,8 +379,6 @@ public class PictureBuilder {
 
         PutObjectResult putObjectResult = putObject(fp_id + ".jpg", picture,"images/");
 
-        File delete = new File(fullname);
-        PictureBuilder.deleteFolder(delete);
 
         return fp_id;
     }

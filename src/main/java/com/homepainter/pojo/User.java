@@ -17,6 +17,10 @@ public class User {
 
     String avatar;
 
+    String gender;
+
+    boolean HaveHouse;
+
     public User(String telephone, String password){
         this.telephone = telephone;
         this.password = password;
@@ -26,9 +30,10 @@ public class User {
         this.telephone = telephone;
     }
 
-    public User(String username, String password, String telephone) {
+    public User(String username, String password, String telephone, boolean HaveHouse) {
         this.username = username;
         this.password = password;
         this.telephone = telephone;
+        this.HaveHouse = HaveHouse;
     }
 }

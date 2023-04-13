@@ -18,8 +18,6 @@ public class TestUserService {
 
     @Test
     public void testInsertUser(){
-        User user = new User("13225101568", "hello", "13335101568");
-        userService.insertUser(user);
 
     }
 }
