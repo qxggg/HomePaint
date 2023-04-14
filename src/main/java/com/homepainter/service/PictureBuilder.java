@@ -308,9 +308,12 @@ public class PictureBuilder {
     }
 
     public String up(List<String> httpUrl, String projectName, int telephone, String handleType, String type, String photoInfo) throws IOException, InterruptedException {
+
         PictureBuilder pictureBuilderController = new PictureBuilder();
         String token = pictureBuilderController.getToken();
         String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
+        Date now = new Date();
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true, -1));
         String picturePath = jpgHandler(httpUrl, fp_id);
         File picture = new File(picturePath);
         String fullname = "upload";
@@ -331,8 +334,8 @@ public class PictureBuilder {
 
         File delete = new File(fullname);
         PictureBuilder.deleteFolder(delete);
-        Date now = new Date();
-        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true));
+
+
         return fp_id;
     }
 
@@ -342,7 +345,8 @@ public class PictureBuilder {
         PictureBuilder pictureBuilderController = new PictureBuilder();
         String token = pictureBuilderController.getToken();
         String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
-
+        Date now = new Date();
+        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true, -1));
         videoHandler(video, fp_id);
 
         String fullname = "upload";
@@ -361,9 +365,8 @@ public class PictureBuilder {
 //        Date now = new Date();
 //        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now));
 
-        Date now = new Date();
 
-        userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true));
+
         return fp_id;
     }
 

@@ -44,14 +44,14 @@ public class PaintImage {
         }
         BufferedImage img = ImageIO.read(file);
         Graphics2D graphics2D = img.createGraphics();
-        graphics2D.setColor(Color.RED);
-        graphics2D.setStroke(new BasicStroke(2f));
+        graphics2D.setColor(Color.PINK);
+        graphics2D.setStroke(new BasicStroke(3f));
 
 
-        for (int i = 0; i < products.length; ++i){
+        for (int i = 0; i < products.length; ++i)
             //这个地方需要改一下路径
             drawline(img,filename,graphics2D, products[i].getXMin().intValue(), products[i].getXMax().intValue(), products[i].getYMin().intValue(), products[i].getYMax().intValue(), products[i].getName());
-        }
+
 
         //返回路径需要改一下
         if(ImageIO.write(img, "JPEG", new FileOutputStream(fullname)))

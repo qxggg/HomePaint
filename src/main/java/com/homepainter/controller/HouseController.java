@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,8 +113,11 @@ public class HouseController {
         int familyId = (int) res.get("familyId");
 
         String sql2 = "select * from house where familyId = " + familyId;
-
-        map.put("data", jdbcTemplate.queryForMap(sql2));
+        String a = "";
+        if(jdbcTemplate.queryForList(sql2).isEmpty())
+            map.put("data", a);
+        else
+           map.put("data", jdbcTemplate.queryForMap(sql2));
         map.put("code", 0);
         map.put("msg", "查询成功！");
 

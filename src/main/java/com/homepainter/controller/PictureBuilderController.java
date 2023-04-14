@@ -13,10 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Watchable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/Module")
@@ -38,9 +35,31 @@ public class PictureBuilderController {
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
+        String sql = "select * from userfurniture where userId =" + userId  + " and diy = 0";
+
+        List<Map<String, Object>> m = jdbcTemplate.queryForList(sql);
+        List<Map<String, Object>> fi = new ArrayList<>();
+
+        for (Map<String, Object> o : m){
+            Map<String, Object> f2 = new HashMap<>();
+            f2.put("userFurniture", o);
+            String image = "select goods_image.imageUrl from goods_image inner join userfurniture on goods_image.goodsId = userfurniture.goodsId where diy = 0 and userfurniture.fpId = ? ";
+            List<Map<String, Object>> m2 = jdbcTemplate.queryForList(image, o.get("fpId").toString());
+            if (!m2.isEmpty()) {
+                String imageUrl = (String) m2.get(0).get("imageUrl");
+                f2.put("imageUrl", imageUrl);
+                f2.put("status", 0);
+            }
+            fi.add(f2);
+        }
+        List<HashMap<String, Object>> d = pictureBuilder.getList(userId);
+        for (Map<String, Object> p : d)
+            fi.add(p);
+
         map.put("code", 0);
         map.put("msg", "查询成功");
-        map.put("data", pictureBuilder.getList(userId));
+        map.put("data", fi)
+        ;
         return map;
     }
 

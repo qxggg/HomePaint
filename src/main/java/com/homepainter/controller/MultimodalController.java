@@ -59,7 +59,9 @@ public class MultimodalController {
             HashMap<String, Object> map = new HashMap<>();
             System.out.println(images_meta_result.get(i).getEntityId());
             map.put("images_meta_result", images_meta_result.get(i));
-            map.put("goods", goodsService.getGoodsByModal(images_meta_result.get(i).getEntityId()));
+            Goods goods = goodsService.getGoodsByModal(images_meta_result.get(i).getEntityId());
+            map.put("goods", goods);
+            map.put("imageURL", goods.getImageUrl().get(0).getImageUrl());
             list.add(map);
         }
         if(images_meta_result == null)    return res;

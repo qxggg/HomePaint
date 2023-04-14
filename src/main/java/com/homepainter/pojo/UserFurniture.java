@@ -20,6 +20,8 @@ public class UserFurniture {
 
     Date time;
 
-    boolean isDIY;
+    boolean diy;
+
+    int goodsId;
 
 }

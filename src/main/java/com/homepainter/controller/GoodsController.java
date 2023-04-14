@@ -287,8 +287,9 @@ public class GoodsController {
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
         Date date = new Date();
-        String fp_Id = userId + String.valueOf(System.currentTimeMillis());
-        if (pictureBuilder.insert(new UserFurniture(userId, fp_Id, name, date, false)) == 1){
+        Map<String, Object> res = jdbcTemplate.queryForMap("select * from goods where goodsId = " + goods_id);
+        String fp_Id = (String) res.get("modalId");
+        if (pictureBuilder.insert(new UserFurniture(userId, fp_Id, name, date, false, goods_id)) == 1){
             map.put("code", 0);
             map.put("msg", "插入成功");
         }
