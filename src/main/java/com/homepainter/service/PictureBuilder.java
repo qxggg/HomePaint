@@ -313,6 +313,7 @@ public class PictureBuilder {
         String token = pictureBuilderController.getToken();
         String fp_id = pictureBuilderController.createProject(projectName, token, telephone);
         Date now = new Date();
+        System.out.println(projectName);
         userFurnitureMapper.insertUserFurniture(new UserFurniture(telephone, fp_id, projectName, now, true, -1));
         String picturePath = jpgHandler(httpUrl, fp_id);
         File picture = new File(picturePath);

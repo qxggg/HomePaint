@@ -46,9 +46,17 @@ public class FamilyController {
 
         int family_id = (int) data.get("family_id");
         String nickname = (String) data.get("nickname");
+
+        String sq = "select * from family where userId = " + userId;
+        if (!jdbcTemplate.queryForList(sq).isEmpty()){
+            map.put("code", 1);
+            map.put("msg", "该用户已有家庭");
+            return map;
+        }
+
         String sqls = "select familyName from family where familyId = " + family_id;
-        Map<String, Object> res = jdbcTemplate.queryForMap(sqls);
-        String family_name = (String) res.get("familyName");
+        List<Map<String, Object>> res = jdbcTemplate.queryForList(sqls);
+        String family_name = (String) res.get(0).get("familyName");
         Date date = new Date();
         String sql = "insert into family values (?, ?, ?, ?, ?, ?)";
         if (jdbcTemplate.update(sql, family_id, family_name, userId, nickname, false, date) == 1){

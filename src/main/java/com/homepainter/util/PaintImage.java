@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
  */
 public class PaintImage {
     public static void drawline(BufferedImage img,String filename,Graphics2D graphics2D, int xmin, int xmax, int ymin, int ymax, String content) throws IOException {
-        Font font = new Font("楷体", Font.BOLD, 35);
+        Font font = new Font("楷体", Font.BOLD, 100);
         // xmin xmax ymin ymax
         graphics2D.drawLine(xmin, ymax, xmax, ymax);
         graphics2D.drawLine(xmin, ymax, xmin, ymin);
@@ -45,7 +45,9 @@ public class PaintImage {
         BufferedImage img = ImageIO.read(file);
         Graphics2D graphics2D = img.createGraphics();
         graphics2D.setColor(Color.PINK);
-        graphics2D.setStroke(new BasicStroke(3f));
+        graphics2D.setStroke(new BasicStroke(10f));
+
+
 
 
         for (int i = 0; i < products.length; ++i)

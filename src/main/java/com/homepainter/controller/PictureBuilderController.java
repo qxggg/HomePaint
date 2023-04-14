@@ -58,8 +58,7 @@ public class PictureBuilderController {
 
         map.put("code", 0);
         map.put("msg", "查询成功");
-        map.put("data", fi)
-        ;
+        map.put("data", fi);
         return map;
     }
 
@@ -87,6 +86,7 @@ public class PictureBuilderController {
         map.put("fp_id", fp_id);
         map.put("date", date);
         map.put("imageUrl", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/images/"+ fp_id + ".jpg");
+        System.out.println(map);
         return map;
     }
 
@@ -117,7 +117,7 @@ public class PictureBuilderController {
         map.put("code", 0);
         map.put("msg", "上传成功");
         map.put("fp_id", fp_id);
-
+        System.out.println(map.get("code"));
         return map;
     }
 
@@ -136,7 +136,7 @@ public class PictureBuilderController {
         map.put("code", 0);
         map.put("msg", "上传成功");
         map.put("fp_id", fp_id);
-
+        System.out.println(map.get("code"));
         return map;
     }
 
@@ -151,6 +151,7 @@ public class PictureBuilderController {
         map.put("code", 0);
         map.put("msg", "上传封面成功");
         map.put("fp_id", fp_id);
+        System.out.println(map.get("code"));
         return map;
     }
 

@@ -29,6 +29,12 @@ public class AlgorithmController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @GetMapping("comment")
+    public Object comment(){
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("comment", commentInfo);
+        return map;
+    }
 
     @GetMapping("goodsBehave")
     public Object goodsBehave(){
