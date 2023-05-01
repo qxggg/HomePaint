@@ -101,7 +101,7 @@ public class HouseIdentifyHandler {
                     wallList.add(wall1);
                     wallList.add(wall2);
                     wallList.remove(k);
-                    System.out.println("让我插个墙");
+
 
                     JSONObject wallpoint = new JSONObject();
                     wallpoint.put("id", dsid);
@@ -134,7 +134,7 @@ public class HouseIdentifyHandler {
                     wallList.add(wall1);
                     wallList.add(wall2);
                     wallList.remove(k);
-                    System.out.println("让我插个墙, 这个墙有点斜着");
+
 
 
 
@@ -228,7 +228,7 @@ public class HouseIdentifyHandler {
                     wallList.add(wall1);
                     wallList.add(wall2);
                     wallList.remove(k);
-                    System.out.println("让我插个窗");
+
 
                     JSONObject wallpoint = new JSONObject();
                     wallpoint.put("id", dsid);
@@ -260,7 +260,7 @@ public class HouseIdentifyHandler {
                     wallList.add(wall1);
                     wallList.add(wall2);
                     wallList.remove(k);
-                    System.out.println("让我插个窗, 这个窗有点斜着");
+
 
                     JSONObject wallpoint = new JSONObject();
                     wallpoint.put("id", dsid);

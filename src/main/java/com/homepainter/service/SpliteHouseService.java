@@ -39,26 +39,23 @@ public class SpliteHouseService {
         WallPoints = (List<Map<String, Object>>) temp.get("WallPoints");
         Walls = (List<Map<String, Object>>) temp.get("Walls");
 
-        System.out.println("开始执行start方法"+new Date().toString());
+
         start();
 
-        System.out.println("开始执行remove_degree_one_nodes方法"+new Date().toString());
         adj_matrix = remove_degree_one_nodes(adj_matrix);
 
-        System.out.println("开始执行find_closed_spaces方法"+new Date().toString());
         find_closed_spaces();
 
-        System.out.println("开始执行remove2方法"+new Date().toString());
         closed_spaces = remove2(closed_spaces);
 
-        System.out.println("开始执行getAllHouse方法"+new Date().toString());
+
         // 获取每个房间的面积
         List<Map<String,Object>> RoomArea = getAllHouse();
         // 最大的为整个房间的面积
         Map<String,Object> house = RoomArea.get(0);
         RoomArea.remove(0);
         // 获取房间名称
-        System.out.println("开始执行getAllRoomName方法"+new Date().toString());
+
         RoomArea = getAllRoomName(RoomArea);
 
         Map<String,Object> res = new HashMap<>();
@@ -250,7 +247,7 @@ public class SpliteHouseService {
             if(num_adjacent[i]>1){
                 List<Integer> path = new ArrayList<>();
                 path.add(i);
-                System.out.println("开始执行dfs方法"+new Date().toString());
+
                 dfs(i,path,0);
             }
 
