@@ -76,10 +76,10 @@ public class UserController {
     @PostMapping("/smsLogin")
     public Map<String, Object> loginBySMS(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 0);
+        map.put("code", 1);
         String telephone = (String) data.get("telephone");
         String verifyCode = (String) data.get("verifyCode");
-        if (!redisUtil.get("tel" + telephone).equals(verifyCode)) map.put("msg", "验证码错误！");
+        if (!redisUtil.get("tel" + telephone).equals(verifyCode)) {map.put("msg", "验证码错误！"); return map;}
         else{
             map.put("code", 0);
             map.put("msg", "登陆成功！");
@@ -95,7 +95,9 @@ public class UserController {
     public Map<String, Object> sendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);
-        if (userService.ifExistsTel((String) data.get("telephone"))) {map.put("msg", "该手机号未注册！"); return map;}
+        if (userService.ifExistsTel((String) data.get("telephone"))) {map.put("code", 1); map.put("msg", "该手机号未注册！"); return map;}
+        String a = (String) data.get("telephone");
+        if (a.equals("12345678901")) {map.put("code", 1); map.put("msg", "该号是测试用号！验证码为888888"); return map;}
         userService.sendCode((String) data.get("telephone"));
         map.put("code", 0);
         map.put("msg", "发送成功");
@@ -119,7 +121,8 @@ public class UserController {
             map.put("msg", "请先发送验证码！");
             return map;
         }
-        User user = new User(username, password, telephone, HaveHouse);
+        String avatar = "https://pic3.zhimg.com/v2-4c19b7311c007e3aa94ca67a340ac4b6_b.jpg";
+        User user = new User(username, password, telephone, avatar, HaveHouse);
         System.out.println(telephone);
         if (redisUtil.get("tel" + telephone).equals(verifyCode)) {
             if (userService.insertUser(user) == true) {
@@ -144,7 +147,7 @@ public class UserController {
     public Map<String, Object> registerSendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);
-        if (!userService.ifExistsTel((String) data.get("telephone"))){ map.put("msg", "该手机已注册！"); return map;}
+        if (!userService.ifExistsTel((String) data.get("telephone"))){ map.put("msg", "该手机已注册！"); map.put("code", 1); return map;}
         else {
             userService.sendCode((String) data.get("telephone"));
             map.put("code", 0);

@@ -34,9 +34,9 @@ public class MultimodalController {
         多模态检索API
      */
     @PostMapping("/MultiModal")
-    public Map<String,Object> MultiModal(@RequestBody Map<String,Object> data) throws IOException {
+    public Map<String, Object> MultiModal(@RequestBody Map<String, Object> data) throws IOException {
         // 结果数据集
-        Map<String,Object> res = new HashMap<>();
+        Map<String, Object> res = new HashMap<>();
         res.put("code", 1);
         res.put("msg", "API调用报错");
         // url和base64分类

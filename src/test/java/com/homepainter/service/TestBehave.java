@@ -11,7 +11,7 @@ public class TestBehave{
     BehaveService behaveService;
     @Test
     public void behave(){
-       behaveService.initGoods(105);
-       behaveService.initGoods(1);
+       behaveService.initGoods(117);
+       behaveService.initStyle(117);
     }
 }

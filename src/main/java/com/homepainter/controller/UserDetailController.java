@@ -36,8 +36,9 @@ public class UserDetailController {
         int userId = Integer.parseInt(id.substring(5));
         String base64 = (String) data.get("image");
         File f = File2Base64.Base64ToFile(base64);
-        PutObjectResult putObjectResult = putObject(userId + ".jpg", f,"avatar/");
-        String imageUrl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/avatar/" + userId + ".jpg";
+        double a = System.currentTimeMillis();
+        PutObjectResult putObjectResult = putObject(a + ".jpg", f,"avatar/");
+        String imageUrl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/avatar/" + a + ".jpg";
         String sql = "update user set avatar = ? where userId = ?";
         if (jdbcTemplate.update(sql, imageUrl, userId) == 1){
             map.put("code", 0);

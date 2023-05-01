@@ -36,4 +36,12 @@ public class User {
         this.telephone = telephone;
         this.HaveHouse = HaveHouse;
     }
+
+    public User(String username, String password, String telephone, String avatar, boolean haveHouse) {
+        this.username = username;
+        this.password = password;
+        this.telephone = telephone;
+        this.avatar = avatar;
+        HaveHouse = haveHouse;
+    }
 }
