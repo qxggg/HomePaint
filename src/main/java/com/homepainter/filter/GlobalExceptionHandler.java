@@ -1,21 +1,17 @@
 package com.homepainter.filter;
 
-import ch.qos.logback.core.spi.ScanException;
-import org.omg.CORBA.SystemException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;

@@ -15,22 +15,21 @@ import java.util.List;
 
 import static com.homepainter.util.ReadJson.get_json;
 
+
 public class Search_Service {
 
-    public static List<JSONObject> kmpSearch(String args) throws ClientException {
-        // 测试运行
+    public static List<JSONObject> kmpSearch(String args,int skip) throws ClientException {
+        int cnt = 0;
+        // 调用分词
         GetPosChEcomResponse response = fenci(args);
         // 获取分词结果
         String fenci_result = response.getData();
-
+        System.out.println("分词结果："+fenci_result);
         // 获取结果数组
         JSONArray jsonArray = JSON.parseArray(JSON.parseObject(fenci_result).getString("result"));
         // 结果集
         List<JSONObject> data = new ArrayList<>();
         for(int i=0;i<jsonArray.size();i++){
-            if(data.size()>=20){
-                break;
-            }
             // 单个结果集转Object
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             // 获取搜索结果
@@ -51,9 +50,11 @@ public class Search_Service {
                 }
             }
         }
+        // 执行分页
+        System.out.println("size"+data.size());
+        data = data.subList(Math.min(skip,data.size()),Math.min(skip+20,data.size()));
         // 查看结果集
         for(int i=0;i<data.size();i++){
-//            System.out.println(data.get(i).getString("modalId"));
             data.get(i).put("imageURL","https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/"+data.get(i).getString("modalId")+"/image.jpg");
         }
         return data;
@@ -77,8 +78,6 @@ public class Search_Service {
         long start = System.currentTimeMillis();
         //获取请求结果，注意这里的GetPosChEcom也需要替换
         GetPosChEcomResponse response = client.getAcsResponse(request);
-        System.out.println(response.hashCode());
-        System.out.println(response.getRequestId() + "\n" + response.getData() + "\n" + "cost:" + (System.currentTimeMillis()- start));
         return response;
     }
 
@@ -90,37 +89,38 @@ public class Search_Service {
         JSONArray jsonArray =  JSON.parseArray(Alljson.getString("RECORDS"));
 
         for(int i=0;i< jsonArray.size();i++){
-            if(data.size()>=20){
-                break;
-            }
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            List<Integer> list = kmp(jsonObject.getString("title").toString(),content);
 
-            // System.out.println(jsonObject.getString("title").toString()+list.size());
+            Boolean have = false;
+            List<Integer> list = kmp(jsonObject.getString("title").toString(),content);
             List<Integer> list1 = new ArrayList<>();
             List<Integer> list2 = new ArrayList<>();
             List<Integer> list3 = new ArrayList<>();
             List<Integer> list4 = new ArrayList<>();
 
-            if(jsonObject.getString("category").toString().length()!=0)
+            if(list.size()!=0)  have = true;
+
+            if(jsonObject.getString("category").toString().length()!=0&&!have)
                 list1 = kmp(jsonObject.getString("category").toString(),content);
-            if(jsonObject.getString("superCategory").toString().length()!=0)
+            if(list1.size()!=0)  have = true;
+
+            if(jsonObject.getString("superCategory").toString().length()!=0&&!have)
                 list2 = kmp(jsonObject.getString("superCategory").toString(),content);
-            if(jsonObject.getString("theme").toString().length()!=0)
+            if(list2.size()!=0)  have = true;
+
+            if(jsonObject.getString("theme").toString().length()!=0&&!have)
                 list3 = kmp(jsonObject.getString("theme").toString(),content);
-            if(jsonObject.getString("material").toString().length()!=0)
+            if(list3.size()!=0)  have = true;
+
+            if(jsonObject.getString("material").toString().length()!=0&&!have)
                 list4 = kmp(jsonObject.getString("material").toString(),content);
-            if(list.size()!=0||list1.size()!=0||list2.size()!=0||list3.size()!=0||list4.size()!=0){
-                // System.out.println(list);
+            if(list4.size()!=0)  have = true;
+
+            if(have){
                 data.add(jsonObject);
             }
-            if(list.size()!=0){
-                System.out.println(list.size());
-                for(int j=0;j<list.size();j++){
-                    System.out.print(list.get(j)+"  ");
-                }
-            }
+
 
         }
         return data;

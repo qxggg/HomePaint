@@ -1,20 +1,18 @@
 package com.homepainter.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import com.homepainter.pojo.EvaluateImage;
 import com.homepainter.pojo.Tieba;
 import com.homepainter.pojo.TiebaEvaluate;
-import com.homepainter.service.BehaveService;
+
 import com.homepainter.service.CommunityService;
-import com.homepainter.service.CommunityServiceImpl;
+
 import com.homepainter.service.TranslateService;
 import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.rmi.CORBA.Tie;
 import java.util.*;
 import java.util.HashMap;
 import java.util.Map;

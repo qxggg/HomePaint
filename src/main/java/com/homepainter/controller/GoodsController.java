@@ -56,11 +56,24 @@ public class GoodsController {
 
     public static int goodsInsertCount = 1001;
 
+    /*
+       用于分页的重载
+     */
+
+
+
     @GetMapping("/get_list")
-    public Map<String, Object> getAllList(@RequestHeader String token){
+    public Map<String, Object> getAllList(@RequestParam(value="skip",required = false) String skipString ,@RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
+        /*
+            必须接受String再转为int ,because int cant be null
+         */
+        int skip = 0;
+        if(skipString!=null){
+            skip = Integer.parseInt(skipString);
+        }
 
         String sql = "select styleId from style where userId = userId";
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
@@ -74,7 +87,7 @@ public class GoodsController {
             String querySql = "select * from goods where style in (";
             for (Map<String, Object> m : list)
                 querySql += "\'" + getStyle((int) m.get("styleId")) + "\'" + ",";
-            String Qsql = querySql.substring(0, querySql.length() - 1) + ") limit 20";
+            String Qsql = querySql.substring(0, querySql.length() - 1) + ") limit "+skip+",20";
             List<Map<String, Object>> m = jdbcTemplate.queryForList(Qsql);
             for (Map<String, Object> mm : m){
                 String sql1 = "select * from goods_appraise where goodsId = " + mm.get("goodsId");
@@ -119,17 +132,22 @@ public class GoodsController {
     public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data, @RequestHeader String token) throws ClientException {
         Map<String, Object> map = new HashMap<>();
 
+        int skip = 0;
+        if(data.get("skip")!=null){
+            skip = Integer.parseInt(data.get("skip").toString());
+        }
+
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
         if (data.get("search_content") == null) map.put("data", goodsService.getAllGoods());
         else {
-            List<JSONObject> list= kmpSearch((String) data.get("search_content"));
+            List<JSONObject> list= kmpSearch((String) data.get("search_content"),skip);
             for (JSONObject j : list){
                 String a = (String) j.get("goodsId");
                 int goodsId = Integer.parseInt(a);
-                System.out.println(goodsId);
+
                 behaveService.updateAddStyle(userId, goodsId, "randomSearchClick", 1);
-                System.out.println(a);
+
             }
             map.put("data", list);
         }
@@ -159,8 +177,7 @@ public class GoodsController {
         }
         map.put("code", 0);
         map.put("msg", "插入成功");
-        for (InsertGoods good : goods)
-            System.out.println(good);
+
       return map;
     }
 
@@ -271,7 +288,7 @@ public class GoodsController {
             float a = algorithm.sendComment();
             behaveService.updateGoods(userId ,goods_id, "randomComment", a);
             behaveService.updateStyle(userId, goods_id, "randomComment", a);
-            System.out.println(a);
+
         }
         else {
             map.put("code", 1);
