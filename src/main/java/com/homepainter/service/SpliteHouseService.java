@@ -63,6 +63,7 @@ public class SpliteHouseService {
         res.put("Room",RoomArea);
         res.put("House",house);
         res.put("size",closed_spaces.size());
+        res.put("WallHeight",2.8);
         return res;
     }
 

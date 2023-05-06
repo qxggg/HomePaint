@@ -32,7 +32,7 @@ public class BaseFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String a = request.getRequestURI();
-        if (a.contains("/user") || a.contains("upload_image") || a.contains("algorithm"))  {filterChain.doFilter(servletRequest, servletResponse); return;}
+        if (a.contains("/user") || a.contains("upload_image") || a.contains("algorithm") || a.contains("/picture"))  {filterChain.doFilter(servletRequest, servletResponse); return;}
         HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
 //        MyRequestWrapper rp = new MyRequestWrapper(request);
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);

@@ -23,6 +23,12 @@ import static com.homepainter.util.File2Base64.Base64ToFile;
 @RequestMapping("/identify")
 public class HouseIdentifyController {
 
+    /**
+     * 户型图识别算法
+     * @param data
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/upload")
     public Object houseIdentify(@RequestBody Map<String,Object> data) throws Exception {
         // 结果数据集
