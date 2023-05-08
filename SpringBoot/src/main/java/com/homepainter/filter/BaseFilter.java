@@ -1,6 +1,5 @@
 package com.homepainter.filter;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.BufferedReader;
 import java.io.IOException;
 
 @Component

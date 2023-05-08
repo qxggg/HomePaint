@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
 import com.homepainter.service.SpliteHouseService;
 import com.homepainter.util.HouseIdentifyHandler;
+import com.homepainter.util.RedisUtil;
 import com.qcloud.cos.model.PutObjectResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,6 +25,12 @@ import static com.homepainter.util.File2Base64.Base64ToFile;
 @RequestMapping("/identify")
 public class HouseIdentifyController {
 
+    @Autowired
+    RedisUtil redisUtil;
+
+    @Autowired
+    SpliteHouseService spliteHouse;
+
     /**
      * 户型图识别算法
      * @param data
@@ -30,7 +38,10 @@ public class HouseIdentifyController {
      * @throws Exception
      */
     @PostMapping("/upload")
-    public Object houseIdentify(@RequestBody Map<String,Object> data) throws Exception {
+    public Object houseIdentify(@RequestBody Map<String,Object> data, @RequestHeader String token) throws Exception {
+        // 获取userId
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
         // 结果数据集
         JSONObject res = new JSONObject();
         res.put("code", 1);
@@ -52,8 +63,7 @@ public class HouseIdentifyController {
         String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/module/" + filename;
         JSONObject r = HouseIdentify.houseIdentify(Imageurl);
 
-        SpliteHouseService spliteHouse = new SpliteHouseService();
-        Map<String,Object> house = spliteHouse.SpliteHouseController(r);
+        Map<String,Object> house = spliteHouse.SpliteHouseController(r,userId);
 
         res.put("house",house);
         res.put("data", r);

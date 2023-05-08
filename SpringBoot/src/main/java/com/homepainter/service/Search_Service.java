@@ -9,15 +9,65 @@ import com.aliyuncs.alinlp.model.v20200629.GetPosChEcomRequest;
 import com.aliyuncs.alinlp.model.v20200629.GetPosChEcomResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.homepainter.util.ReadJson.get_json;
+import static com.homepainter.util.getStyleUtils.getStyle;
 
-
+@Service
 public class Search_Service {
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
+    public String[] styleMenu = {"东南亚","现代","日式","复古","地中海","韩式","轻奢华","极简主义","工业","北欧","美式","新中式","欧洲","新古典主义","中国风","明清","其他","儿童","古典欧洲"};
+    public List<Map<String, Object>> searchByStyle(List<Map<String, Object>> StyleList,int skip){
+        List<Map<String, Object>> res = new ArrayList<>();
+
+        // 空值检查
+        if(StyleList.isEmpty()){
+            Map<String, Object> m1 = new HashMap<>();
+            m1.put("styleId", 0);
+            StyleList.add(m1);
+        }
+
+        // 根据风格搜索家具
+        String querySql = "select * from goods where style in (";
+        for (Map<String, Object> m : StyleList)
+            querySql += "\'" + getStyle((int) m.get("styleId")) + "\'" + ",";
+        String Qsql = querySql.substring(0, querySql.length() - 1) + ") limit "+skip+",20";
+        res = jdbcTemplate.queryForList(Qsql);
+
+
+        // 添加评价信息和图片
+        for (Map<String, Object> item : res){
+            String sql1 = "select * from goods_appraise where goodsId = " + item.get("goodsId");
+            String sql2 = "select * from goods_image where goodsId = " + item.get("goodsId");
+            item.put("goods_appraise", jdbcTemplate.queryForList(sql1));
+            List<Map<String, Object>> l = new ArrayList<>();
+            l = jdbcTemplate.queryForList(sql2);
+            item.put("goods_image", l);
+            item.put("imageURL", l.get(0).get("imageUrl"));
+        }
+
+        return res;
+
+    }
+
+
+    /**
+     * kmp搜索
+     * @param args 搜索内容
+     * @param skip 分页
+     * @return
+     * @throws ClientException
+     */
     public static List<JSONObject> kmpSearch(String args,int skip) throws ClientException {
         int cnt = 0;
         // 调用分词
@@ -60,6 +110,12 @@ public class Search_Service {
         return data;
     }
 
+    /**
+     * 分词接口
+     * @param text 要分词的内容
+     * @return
+     * @throws ClientException
+     */
     public static GetPosChEcomResponse fenci(String text) throws ClientException {
         DefaultProfile defaultProfile = DefaultProfile.getProfile(
                 "cn-hangzhou",
@@ -81,6 +137,11 @@ public class Search_Service {
         return response;
     }
 
+    /**
+     * 检索接口，根据要检索的内容，在goods.json中查找
+     * @param content
+     * @return
+     */
     public static List<JSONObject> searchByname(String content){
 
         List<JSONObject>  data = new ArrayList<>();
@@ -125,6 +186,34 @@ public class Search_Service {
         }
         return data;
     }
+
+    /**
+     * 根据list在json中查找对应的家具，并分页
+     * @param inputList
+     * @param skip 分页
+     * @return
+     */
+    public static List<Map<String,Object>> searchByList(List<Integer> inputList,int skip){
+
+        List<Map<String,Object>>  data = new ArrayList<>();
+
+        String json = get_json("goods.json");
+        JSONObject Alljson = JSON.parseObject(json);
+        JSONArray jsonArray =  JSON.parseArray(Alljson.getString("RECORDS"));
+
+        for(int i=skip;i<inputList.size();i++){
+            data.add( (Map<String,Object>)jsonArray.getJSONObject(inputList.get(i)) );
+        }
+
+        return data;
+    }
+
+
+    /**
+     * 计算前缀数组
+     * @param pattern
+     * @return
+     */
     public static int[] computePrefixFunction(String pattern) {
         int[] prefix = new int[pattern.length()];
         int j = 0;
@@ -140,6 +229,12 @@ public class Search_Service {
         return prefix;
     }
 
+    /**
+     * KMP算法
+     * @param text
+     * @param pattern
+     * @return
+     */
     public static List<Integer> kmp(String text, String pattern) {
         List<Integer> matches = new ArrayList<Integer>();
         if (pattern.length() == 0) {
@@ -157,6 +252,67 @@ public class Search_Service {
             }
         }
         return matches;
+    }
+
+
+    /**
+     * 根据风格 list 进行排序
+     * @param list
+     * @param style
+     * @return
+     */
+    public List<JSONObject> SortByStyleList(List<JSONObject> list,List<Map<String, Object>> style){
+        List<JSONObject> res = new ArrayList<>();
+
+        // 首先将style的加入
+        for(int i=0;i<list.size();i++){
+            boolean havesameStyle =false;
+            for (Map<String, Object> item : style)
+                if(list.get(i).get("style").toString().equals( getStyle( Integer.parseInt( item.get("styleId").toString() ) ) )){
+                    havesameStyle = true;
+                    break;
+                }
+            if(havesameStyle)   res.add(list.get(i));
+        }
+        // 将其他的加入
+        for(int i=0;i<list.size();i++){
+            boolean havesameStyle =false;
+            for (Map<String, Object> item : style)
+                if(list.get(i).get("style").toString().equals( getStyle( Integer.parseInt( item.get("styleId").toString() ) ))){
+                    havesameStyle = true;
+                    break;
+                }
+            if(!havesameStyle)   res.add(list.get(i));
+        }
+        return res;
+    }
+
+
+    public List<JSONObject> SortByFurnitureList(List<JSONObject> list,List<Integer> furnitureList){
+        List<JSONObject> res = new ArrayList<>();
+
+        // 首先将匹配的加入
+        for(int i=0;i<list.size();i++){
+            boolean havesame =false;
+            for (Integer item : furnitureList)
+                if(list.get(i).get("goodsId").toString().equals( String.valueOf(item) ) ){
+                    havesame = true;
+                    break;
+                }
+            if(havesame)   res.add(list.get(i));
+        }
+
+        // 将其他的加入
+        for(int i=0;i<list.size();i++){
+            boolean havesame =false;
+            for (Integer item : furnitureList)
+                if(list.get(i).get("goodsId").toString().equals( String.valueOf(item) ) ){
+                    havesame = true;
+                    break;
+                }
+            if(!havesame)   res.add(list.get(i));
+        }
+        return res;
     }
 
 }

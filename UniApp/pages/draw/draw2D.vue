@@ -49,13 +49,17 @@
 				</view>
 
 				<view style="display: flex;align-items: center;margin-top: 10rpx;">
-					<view style="width: 20px;height: 2px;background-color: red;"></view>
+					<view style="width: 20px;height: 2px;background-color: #caa473;"></view>
 					<view style="font-size: 14px;">门</view>
 				</view>
 
 				<view style="display: flex;align-items: center;margin-top: 10rpx;">
-					<view style="width: 20px;height: 2px;background-color: blue;"></view>
+					<view style="width: 20px;height: 2px;background-color: #3b5bfe;"></view>
 					<view style="font-size: 14px;">窗</view>
+				</view>
+				
+				<view style="display: flex;align-items: center;margin-top: 10rpx;color: red;font-size: 15px;" v-if="now_room!=-1">
+					{{house.Room[now_room].area.toFixed(2)}}m²
 				</view>
 
 
@@ -188,7 +192,8 @@
 				NowRoomType: 0,
 				root: null,
 				house: null,
-				now_room: -1
+				now_room: -1,
+				touching:false
 			}
 		},
 		onReady: function(e) {
@@ -211,13 +216,14 @@
 				this.house = {
 					...this.root.house
 				};
+				
 				uni.setStorageSync('Fangwu', this.result);
 				console.log(this.result);
 				uni.setStorageSync('result_file', this.result);
-
 				// #ifdef APP-PLUS
 				plus.screen.lockOrientation("landscape-primary");
 				// #endif
+
 
 				this.ctx = uni.createCanvasContext('firstCanvas')
 
@@ -248,6 +254,44 @@
 			changeStyleType(e){
 				this.StyleNow = e;
 				this.house.Room[this.now_room].style = this.StyleMenu[e]; 
+			},
+			CalDistance(point1,point2){
+				  const xDiff = point2.x - point1.x;
+				  const yDiff = point2.y - point1.y;
+				  const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+				  return distance;
+			},
+			PointXifu(e){
+				for(var i=0;i<this.result.WallPoints.length;i++){
+					var temp = {
+						x:this.fangsuo_x(this.result.WallPoints[i].x),
+						y:this.fangsuo_y(this.result.WallPoints[i].y)
+					}
+					console.log(temp);
+					if(this.CalDistance(e,temp)<50)
+						return temp;
+				}
+				return e;
+			},
+			GetWallsPointmaxId(){
+				var maxx = -100;
+				for(var i=0;i<this.result.WallPoints.length;i++){
+					if(this.result.WallPoints[i].id>maxx)	maxx = this.result.WallPoints[i].id;
+				}
+				return maxx;
+			},
+			AddWallToSave(){				
+				var id = this.GetWallsPointmaxId() + 10;
+
+				this.result.WallPoints.push({x:this.NiFangsuo_x( this.draw_deatil.start.x ),y:this.Nifangsuo_y( this.draw_deatil.start.y ),id:id});
+				this.result.WallPoints.push({x:this.NiFangsuo_x( this.draw_deatil.end.x ),y:this.Nifangsuo_y( this.draw_deatil.end.y ),id:id+1});
+
+				this.result.Walls.push({start_point:id,end_point:id+1,id:id+2});
+			},
+			RoMoveAddedWall(){
+				this.result.WallPoints.pop();
+				this.result.WallPoints.pop();
+				this.result.Walls.pop();
 			},
 			changeScale() {
 				// 改变比例尺
@@ -319,13 +363,16 @@
 						console.log(res.tempFilePath)
 					}
 				});
-				this.request(this.server_url+'houseData/save',temp,'POST').then((res)=>{
+				this.root.house = this.house;
+				this.root.DWW = this.result;
+				console.log(this.root);
+				this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
 					if(res.code==0){
 						uni.showToast({
 							title: '保存成功!'
 						});
 					}
-				})
+				});
 
 			},
 			save_qiang() {
@@ -359,6 +406,7 @@
 					});
 					return;
 				} else {
+					this.RoMoveAddedWall();
 					this.store_draw_detail.pop();
 					this.store_draw_detail_length--;
 					this.huifu();
@@ -372,7 +420,9 @@
 					this.change_toolbox(-1);
 				} else {
 					// 画墙操作
-					this.draw_deatil.start = e.changedTouches[0];
+					this.touching = true;
+					this.draw_deatil.start = this.PointXifu(e.changedTouches[0]);
+					console.log(this.draw_deatil);
 					this.store_draw_detail.push(this.draw_deatil);
 				}
 
@@ -429,16 +479,19 @@
 			touchmove(e) {
 				if (!this.is_huaqiang) return;
 				this.draw_deatil.end = e.changedTouches[0];
-				this.store_draw_detail[this.store_draw_detail_length] = {
-					...this.draw_deatil
-				};
 				this.huifu();
-
 			},
 			touchend(e) {
 				if (!this.is_huaqiang) return;
-				console.log(e);
+				this.touching = false;
+				this.draw_deatil.end = this.PointXifu(e.changedTouches[0]);
+				this.store_draw_detail[this.store_draw_detail_length] = {
+					...this.draw_deatil
+				};
+				
 				this.store_draw_detail_length++;
+				
+				this.AddWallToSave();
 			},
 			change_showtext() {
 				console.log('--------------')
@@ -475,17 +528,21 @@
 
 				this.FillRoom();
 
-
-				for (var i = 0; i < this.store_draw_detail_length + 1 && i < this.store_draw_detail.length; i++) {
-					var temp = this.store_draw_detail[i];
-					this.ctx.beginPath();
-
-					this.ctx.moveTo(temp.start.x, temp.start.y);
-					this.ctx.lineTo(temp.end.x, temp.end.y);
-					this.ctx.setLineWidth(3);
-					this.ctx.setStrokeStyle('black')
-					this.ctx.stroke()
+					
+				if(this.touching){
+					for (var i = 0; i < this.store_draw_detail_length + 1 && i < this.store_draw_detail.length; i++) {
+						var temp = this.store_draw_detail[i];
+						this.ctx.beginPath();
+					
+						this.ctx.moveTo(temp.start.x, temp.start.y);
+						this.ctx.lineTo(temp.end.x, temp.end.y);
+						this.ctx.setLineWidth(3);
+						this.ctx.setStrokeStyle('black')
+						this.ctx.stroke()
+					}
 				}
+
+				
 				this.AddHouseName();
 				this.ctx.save();
 				this.ctx.draw();
@@ -534,8 +591,6 @@
 				this.minx = minx;
 				this.maxy = maxy;
 				this.miny = miny;
-
-
 				// this.screenWidth = this.screen_height;
 				// this.screenHeight = this.screen_width;
 				this.screenWidth = this.screen_width;
@@ -598,7 +653,7 @@
 					this.ctx.moveTo(this.fangsuo_x(temp_start.x), this.fangsuo_y(temp_start.y));
 					this.ctx.lineTo(this.fangsuo_x(temp_end.x), this.fangsuo_y(temp_end.y));
 					this.ctx.setLineWidth(3);
-					this.ctx.setStrokeStyle('blue')
+					this.ctx.setStrokeStyle('#3b5bfe')
 					this.ctx.stroke()
 				}
 				this.ctx.save();
@@ -619,11 +674,12 @@
 				for (var i = 0; i < this.result.Doors.length; i++) {
 					this.ctx.beginPath();
 					var text = '单开门';
-					if (this.result.Doors[i].category == 1) {
+					var category = this.result.Doors[i].category;
+					if (category == 1) {
 						text = '双开门'
-					} else if (this.result.Doors[i].category == 2) {
+					} else if (category == 2) {
 						text = '子母门'
-					} else if (this.result.Doors[i].category == 3) {
+					} else if (category == 3) {
 						text = '移门'
 					}
 					var temp_start = this.get_Doorspoint(this.result.Doors[i].start_point);
@@ -632,12 +688,81 @@
 						this.ctx.fillText(text, (this.fangsuo_x(temp_start.x) + this.fangsuo_x(temp_end.x)) / 2, (this
 							.fangsuo_y(temp_start.y) + this.fangsuo_y(temp_end.y)) / 2 + 10)
 					this.ctx.setFontSize(10);
+					const x1 = this.fangsuo_x(temp_start.x);
+					const y1 = this.fangsuo_y(temp_start.y);
+					const x2 = this.fangsuo_x(temp_end.x);
+					const y2 = this.fangsuo_y(temp_end.y);
+					this.ctx.moveTo(x1,y1 );
+					this.ctx.lineTo(x2,y2 );
+					if(category==0){
+						const vX2 = x2 + (y2 - y1);
+						const vY2 = y2 + (x1 - x2);
+						// 计算角度
+						const startAngle = Math.atan2(y1 - y2, x1 - x2);
+						const endAngle = Math.atan2(vY2 - y2, vX2 - x2);
+						this.ctx.moveTo(x2,y2 );
+						this.ctx.lineTo(vX2, vY2);
+						this.ctx.setLineWidth(2);
+						this.ctx.setStrokeStyle('#caa473')
+						this.ctx.stroke()
+						this.ctx.save();
+						this.ctx.beginPath()
+						this.ctx.arc(x2, y2,this.CalDistance({x:x1,y:y1},{x:x2,y:y2}),startAngle,endAngle);
+					}else if(category==1){
+						// 计算中心点
+						var centerx = (x1+x2) / 2;
+						var centery = (y1+y2) / 2;
+						// 计算边长
+						var bian = this.CalDistance({x:x1,y:y1},{x:x2,y:y2});
+						// 左上点
+						const leftx = x1 + (y1 - centery);
+						const lefty = y1 + (centerx - x1);
+						// 右上点
+						const rightx = x2 + (centery - y2);
+						const righty = y2 + (x2 - centerx);
+						// 画左边垂直直线
+						this.ctx.moveTo(x1,y1 );
+						this.ctx.lineTo(leftx, lefty);
+						// 计算左侧圆弧角度
+						const leftstartAngle = Math.atan2(centery - y2, centerx - x2);
+						const leftendAngle = Math.atan2(righty - y2, rightx - x2);
+						// 画左边圆弧
+						this.ctx.setLineWidth(2);
+						this.ctx.setStrokeStyle('#caa473')
+						this.ctx.stroke()
+						this.ctx.save();
+						this.ctx.beginPath()
+						if(Math.abs(leftendAngle-leftstartAngle)<Math.PI)
+							this.ctx.arc(x2, y2,bian/2,leftstartAngle,leftendAngle);
+						else
+							this.ctx.arc(x2, y2,bian/2,leftstartAngle,leftendAngle,true);
+						// 画右边垂直直线
+						this.ctx.setLineWidth(2);
+						this.ctx.setStrokeStyle('#caa473')
+						this.ctx.stroke()
+						this.ctx.save();
+						this.ctx.beginPath()
+						this.ctx.moveTo(x2,y2 );
+						this.ctx.lineTo(rightx, righty);
+						// 计算右侧圆弧角度
+						const rightstartAngle = Math.atan2(centery - y1, centerx - x1);
+						const rightendAngle = Math.atan2(lefty - y1, leftx - x1);
+						// 画右边圆弧
+						this.ctx.setLineWidth(2);
+						this.ctx.setStrokeStyle('#caa473')
+						this.ctx.stroke()
+						this.ctx.save();
+						this.ctx.beginPath()
 
-					this.ctx.moveTo(this.fangsuo_x(temp_start.x), this.fangsuo_y(temp_start.y));
-					this.ctx.lineTo(this.fangsuo_x(temp_end.x), this.fangsuo_y(temp_end.y));
-					this.ctx.setLineWidth(3);
-					this.ctx.setStrokeStyle('red')
+						if(Math.abs(rightendAngle-rightstartAngle)<Math.PI)
+							this.ctx.arc(x1, y1,bian/2,rightstartAngle,rightendAngle);
+						else
+							this.ctx.arc(x1, y1,bian/2,rightstartAngle,rightendAngle,true);
+					}
+					this.ctx.setLineWidth(2);
+					this.ctx.setStrokeStyle('#caa473')
 					this.ctx.stroke()
+					
 				}
 				this.ctx.save();
 				// this.ctx.draw();
@@ -682,6 +807,12 @@
 				// y轴放缩移动
 				return e * this.fangda_y + this.pingyi_y;
 			},
+			NiFangsuo_x(e){
+				return (e - this.pingyi_x)/this.fangda_x ;
+			},
+			Nifangsuo_y(e){
+				return (e - this.pingyi_y)/this.fangda_y ;
+			}
 
 		}
 	}

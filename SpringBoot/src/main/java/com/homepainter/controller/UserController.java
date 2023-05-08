@@ -2,6 +2,7 @@ package com.homepainter.controller;
 
 import com.homepainter.pojo.User;
 import com.homepainter.service.BehaveService;
+import com.homepainter.service.UltraGCN;
 import com.homepainter.service.UserService;
 import com.homepainter.util.RedisUtil;
 import com.homepainter.util.TokenUtil;
@@ -35,6 +36,9 @@ public class UserController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    UltraGCN ultraGCN;
 
     @GetMapping("/error")
     public Map<String, Object> error(){
@@ -122,9 +126,11 @@ public class UserController {
             return map;
         }
         String avatar = "https://pic3.zhimg.com/v2-4c19b7311c007e3aa94ca67a340ac4b6_b.jpg";
-        User user = new User(username, password, telephone, avatar, HaveHouse);
+
         System.out.println(telephone);
-        if (redisUtil.get("tel" + telephone).equals(verifyCode)) {
+        if (redisUtil.hasKey("tel" + telephone)&&redisUtil.get("tel" + telephone).equals(verifyCode)) {
+            // 验证码正确
+            User user = new User(username, password, telephone, avatar, HaveHouse);
             if (userService.insertUser(user) == true) {
                 map.put("code", 0);
                 map.put("msg", "注册成功！");
@@ -137,6 +143,9 @@ public class UserController {
                 map.put("token", token);
                 redisUtil.set(token, "token" + userService.getIdByTel(telephone));
                 redisUtil.expire(token, 1540000);
+
+                // 添加到待训练列表
+                ultraGCN.AddUser(id);
             } else map.put("msg", "网络错误！");
         }
         else map.put("msg", "验证码错误！");

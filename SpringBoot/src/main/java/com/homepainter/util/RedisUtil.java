@@ -23,6 +23,15 @@ public final class RedisUtil {
     private RedisTemplate<String, Object> redisTemplate;
 
     // =============================common============================
+
+    /**
+     * 获取redis的所有Key值
+     * @return
+     */
+    public Set<String> getAllKeys() {
+        return  redisTemplate.keys("*");
+    }
+
     /**
      * 指定缓存失效时间
      * @param key 键

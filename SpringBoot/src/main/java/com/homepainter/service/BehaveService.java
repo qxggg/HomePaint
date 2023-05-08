@@ -1,12 +1,11 @@
 package com.homepainter.service;
 
 import com.homepainter.mapper.GoodsMapper;
+
 import com.homepainter.util.RedisUtil;
 import com.homepainter.util.getStyleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +14,18 @@ import java.util.Map;
 @Service
 public class BehaveService {
 
+    public static void main(String args[]){
+        BehaveService behaveService = new BehaveService();
+        behaveService.initStyle(117);
+    }
+
     @Autowired
     RedisUtil redisUtil;
 
     @Autowired
     GoodsMapper goodsMapper;
+
+
 
     public void initStyle(int userId){
         List<Integer> intList = new ArrayList<>();

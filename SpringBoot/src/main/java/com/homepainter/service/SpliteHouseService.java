@@ -2,6 +2,8 @@ package com.homepainter.service;
 
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
 import java.util.*;
@@ -9,9 +11,11 @@ import java.util.*;
 
 
 
-
+@Service
 public class SpliteHouseService {
 
+    @Autowired
+    UltraGCN ultraGCN;
 
     public List<Map<String,Object>> WallPoints;
     public List<Map<String,Object>> Walls;
@@ -27,8 +31,13 @@ public class SpliteHouseService {
 
     public List<List<Integer>> closed_spaces = new ArrayList<>();
 
-
-    public Map<String,Object> SpliteHouseController(JSONObject json) throws Exception {
+    /**
+     * 户型图 分房算法 总入口
+     * @param json 识别出来的结果
+     * @return
+     * @throws Exception
+     */
+    public Map<String,Object> SpliteHouseController(JSONObject json,int userId) throws Exception {
 
 
         Map<String,Object> temp =  json;
@@ -55,8 +64,10 @@ public class SpliteHouseService {
         Map<String,Object> house = RoomArea.get(0);
         RoomArea.remove(0);
         // 获取房间名称
-
         RoomArea = getAllRoomName(RoomArea);
+        // 获取风格
+        String style = ultraGCN.GetUserStyle(userId);
+
 
         Map<String,Object> res = new HashMap<>();
         res.put("code",0);
@@ -64,9 +75,15 @@ public class SpliteHouseService {
         res.put("House",house);
         res.put("size",closed_spaces.size());
         res.put("WallHeight",2.8);
+        res.put("style",style);
         return res;
     }
 
+    /**
+     * 计算每个房间的名称
+     * @param rooms
+     * @return
+     */
     public List<Map<String,Object>>  getAllRoomName(List<Map<String,Object>> rooms){
         rooms.get(0).put("name","客厅");
 
@@ -341,6 +358,11 @@ public class SpliteHouseService {
         return -1;
     }
 
+    /**
+     * 计算 矩阵 顶点 组成的多边形的面积
+     * @param matrix
+     * @return
+     */
     public double getArea(double[][] matrix) {
         double area = 0.0;
         int n = matrix.length;
@@ -354,4 +376,6 @@ public class SpliteHouseService {
         area /= 2.0;
         return Math.abs(area);
     }
+
+
 }
