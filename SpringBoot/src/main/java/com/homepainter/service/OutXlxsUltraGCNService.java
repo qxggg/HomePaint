@@ -18,7 +18,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.xml.crypto.Data;
+
 
 
 @Component
@@ -37,7 +37,7 @@ public class OutXlxsUltraGCNService {
         }else{
             filepath = FileUtils.Read_FOLDER_win;
         }
-        filepath += "UltraGCN/";
+        filepath += "UltraGCN/data/my/";
 
         String[] menu = {"randomConsume","randomSearchClick","randomComment","randomUse","randomClick","randomView","randomCollect"};
         // 读取Excel文件
@@ -86,7 +86,7 @@ public class OutXlxsUltraGCNService {
         }else{
             filepath = FileUtils.Read_FOLDER_win;
         }
-        filepath += "UltraGCN/";
+        filepath += "UltraGCN/data/my/";
 
         String[] menu = {"randomConsume","randomComment","randomUse","randomClick","randomView","randomCollect"};
         // 读取Excel文件

@@ -5,6 +5,7 @@ public class getStyleUtils {
     public static String getStyle(int styleId){
         String res = "其他";
         switch (styleId){
+            case 0 : res = "东南亚"; break;
             case 1 : res = "现代"; break;
             case 2 : res = "日式"; break;
             case 3 : res = "复古"; break;
@@ -17,13 +18,12 @@ public class getStyleUtils {
             case 10 : res = "美式"; break;
             case 11 : res = "新中式"; break;
             case 12 : res = "欧洲"; break;
-            case 13 : res = "东南亚"; break;
-            case 14 : res = "新古典主义"; break;
-            case 15 : res = "中国风"; break;
-            case 16 : res = "明清"; break;
-            case 17 : res = "其他"; break;
-            case 18 : res = "儿童"; break;
-            case 0 : res = "古典欧洲"; break;
+            case 13 : res = "新古典主义"; break;
+            case 14 : res = "中国风"; break;
+            case 15 : res = "明清"; break;
+            case 16 : res = "其他"; break;
+            case 17 : res = "儿童"; break;
+            case 18 : res = "古典欧洲"; break;
             default : res = "其他";
         }
         return res;

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.homepainter.util.ReadJson.get_json;
+import static com.homepainter.util.ReadJson.readJson;
 import static com.homepainter.util.getStyleUtils.getStyle;
 
 @Service
@@ -145,7 +146,7 @@ public class Search_Service {
     public static List<JSONObject> searchByname(String content){
 
         List<JSONObject>  data = new ArrayList<>();
-        String json = get_json("goods.json");
+        String json = readJson("goods.json","");
         JSONObject Alljson = JSON.parseObject(json);
         JSONArray jsonArray =  JSON.parseArray(Alljson.getString("RECORDS"));
 
@@ -197,11 +198,12 @@ public class Search_Service {
 
         List<Map<String,Object>>  data = new ArrayList<>();
 
-        String json = get_json("goods.json");
+        String json = readJson("goods.json","");
         JSONObject Alljson = JSON.parseObject(json);
         JSONArray jsonArray =  JSON.parseArray(Alljson.getString("RECORDS"));
-
-        for(int i=skip;i<inputList.size();i++){
+        int len = inputList.size();
+        for(int i=skip;i<skip+20;i++){
+            i = i%len;
             data.add( (Map<String,Object>)jsonArray.getJSONObject(inputList.get(i)) );
         }
 

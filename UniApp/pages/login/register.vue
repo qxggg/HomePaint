@@ -103,6 +103,7 @@
 						image:'https://image-1304455659.cos.ap-nanjing.myqcloud.com/HomePaint/style/现代.jpg',
 						select:false
 					},
+					
 					{
 						name:'日式',
 						image:'https://image-1304455659.cos.ap-nanjing.myqcloud.com/HomePaint/style/日式.jpg',

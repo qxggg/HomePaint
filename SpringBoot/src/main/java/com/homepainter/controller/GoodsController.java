@@ -94,6 +94,7 @@ public class GoodsController {
         }else{
             System.out.println("老用户id:"+userId+"开始从UltraGCN调取数据"+new Date().toString());
             // 老用户，根据推荐算法去拿
+
             // 调用 UltraGCN 算法
             List<Integer> UltraGCN_res = GetFurniture(userId);
             FurnitureList = searchByList(UltraGCN_res,skip);
