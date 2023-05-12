@@ -241,5 +241,23 @@ public class HouseDataController {
         return Math.abs(area);
     }
 
+    public static Map<String,Object> GetUserHouse(Integer id){
+        Map<String,Object> res = new HashMap<>();
+        try {
+            String dir = "HouseData/"+id+"/";
+            String resString = readJson("HouseData.json",dir);
+            res = JSON.parseObject(resString);
+        }catch (Exception e){
+            res.put("code",11);
+            res.put("Exception",e);
+            res.put("msg","保存出错");
+            return res;
+        }
+        return res;
+    }
+
+    public static void main(String args[]){
+        System.out.println( GetUserHouse(105) );
+    }
 
 }
