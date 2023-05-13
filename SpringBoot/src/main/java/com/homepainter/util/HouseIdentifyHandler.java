@@ -18,11 +18,9 @@ public class
 
 HouseIdentifyHandler {
     public static int count = 10000;
-    public static Object getResult(JSONObject data) {
+    public static Object getResult(JSONObject data2) {
 
 
-        JSONObject data1 = (JSONObject) data.get("data");
-        JSONObject data2 = (JSONObject) data1.get("data");
 
         JSONArray doorList = (JSONArray) data2.get("Doors");
         JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
@@ -329,8 +327,8 @@ HouseIdentifyHandler {
         for (Object jj : wallAdd)
             wallPoints.add(jj);
 
-        data1.put("remove", remove);
-        return data;
+        data2.put("remove", remove);
+        return data2;
     }
 
     public static double toDouble(BigDecimal a){
