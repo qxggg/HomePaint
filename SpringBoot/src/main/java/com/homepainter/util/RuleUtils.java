@@ -73,18 +73,35 @@ public class RuleUtils {
         }
 
         for (Double i : z)
-            if (i > up || i < 0) return false;
+            if (i > up || i < 0) {return false;}
 
         for (HashMap<String, Object> idx : index)
-            if (!pnpolyAlgorithm(x, y, (Float) idx.get("x"), (Float)idx.get("y")))
+            if (!pnpolyAlgorithm(x, y, (double) idx.get("x"), (double)idx.get("y"))) {
+                System.out.println(x);
+                System.out.println(y);
+                System.out.println(idx);
                 return false;
+            }
 
         return true;
 
     }
 
-    public static void inputGoods(List<HashMap<String, Object>> goods, double x, double y, double z){
+    public static boolean inputGoods(List<HashMap<String, Object>> goods, List<HashMap<String, Object>> wallPoints, float up, List<HashMap<String, Object>> index, double x, double y, double z){
+        for (HashMap<String, Object> idx : index){
+            double ix = (double) idx.get("x");
+            double iy = (double) idx.get("y");
+            double iz = (double) idx.get("z");
 
+            idx.put("x", ix + x);
+            idx.put("y", iy + y);
+            idx.put("z", iz + z);
+        }
+        if (isInHouse(index, wallPoints, up) && checkIndex(goods, index)) {
+            recordIndex(goods, index);
+            return true;
+        }
+        else return false;
     }
 
     public static boolean test(JSONObject data){
@@ -127,10 +144,15 @@ public class RuleUtils {
                  JSONObject r = (JSONObject) remove.get(i);
                  int wsid = (int) r.get("wsid");
                  int weid = (int) r.get("weid");
+
+
               //   System.out.println(s + " " + e + " ws " + wsid + " " + weid);
                  if (wsid == s && weid == e || wsid == e && weid == s) {
-                     System.out.println("1333333");
                      wall.put("category", r.get("category"));
+                     wall.put("dx1", r.get("dx1") );
+                     wall.put("dx2", r.get("dx2") );
+                     wall.put("dy1", r.get("dy1") );
+                     wall.put("dy2", r.get("dy2") );
                  }
              }
              walls.add(wall);
@@ -223,67 +245,92 @@ public class RuleUtils {
         JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
 
         String style = (String) data2.get("style");
-        JSONObject house = (JSONObject) data1.get("house");
-        System.out.println(house);
-//        JSONArray rooms = (JSONArray) house.get("Room");
-//
-//        JSONArray remove = (JSONArray) data1.get("remove");
+        JSONObject house = (JSONObject) j.get("house");
 
-//        roomHandler((JSONObject) rooms.get(0), remove);
+       JSONArray rooms = (JSONArray) house.get("Room");
+
+       JSONArray remove = (JSONArray) data1.get("remove");
+//       roomHandler((JSONObject) rooms.get(8), remove);
 
 
-//      List<HashMap<String, Object>> l = new ArrayList<>();
-//      HashMap<String, Object> x = new HashMap<>();
-//      HashMap<String, Object> y = new HashMap<>();
-//      HashMap<String, Object> z = new HashMap<>();
-//      x.put("start", 1.1);
-//      x.put("end", 5.5);
-//      y.put("start", 1.1);
-//      y.put("end", 5.5);
-//      z.put("start", 1.1);
-//      z.put("end", 5.5);
-//
-//      HashMap<String, Object> m = new HashMap<>();
-//      m.put("x", x);
-//      m.put("y", y);
-//      m.put("z", z);
-//
-//      l.add(m);
-//
-//      x = new HashMap<>();
-//     y = new HashMap<>();
-//        z = new HashMap<>();
-//        x.put("start", 7.7);
-//        x.put("end", 8.8);
-//        y.put("start", 7.7);
-//        y.put("end", 8.8);
-//        z.put("start", 7.7);
-//        z.put("end", 8.8);
-//
-//        m = new HashMap<>();
-//        m.put("x", x);
-//        m.put("y", y);
-//        m.put("z", z);
-//
-//        l.add(m);
-//
-//      List<HashMap<String, Object>> indexs = new ArrayList<>();
-//        HashMap<String, Object> index = new HashMap<>();
-//        index.put("x", 3.14);
-//        index.put("y", 3.14);
-//        index.put("z", 5.6);
-//        indexs.add(index);
-//
-//         index = new HashMap<>();
-//        index.put("x", 7.9);
-//        index.put("y",7.9);
-//        index.put("z", 7.1);
-//
-//        indexs.add(index);
-//
-//        System.out.println(checkIndex(l, indexs));
-//        recordIndex(l, indexs);
-//        System.out.println(l);
+      List<HashMap<String, Object>> l = new ArrayList<>();
+      HashMap<String, Object> x = new HashMap<>();
+      HashMap<String, Object> y = new HashMap<>();
+      HashMap<String, Object> z = new HashMap<>();
+      x.put("start", 1.1);
+      x.put("end", 5.5);
+      y.put("start", 1.1);
+      y.put("end", 5.5);
+      z.put("start", 1.1);
+      z.put("end", 5.5);
+
+      HashMap<String, Object> m = new HashMap<>();
+      m.put("x", x);
+      m.put("y", y);
+      m.put("z", z);
+
+      l.add(m);
+
+      x = new HashMap<>();
+     y = new HashMap<>();
+        z = new HashMap<>();
+        x.put("start", 7.7);
+        x.put("end", 8.8);
+        y.put("start", 7.7);
+        y.put("end", 8.8);
+        z.put("start", 7.7);
+        z.put("end", 8.8);
+
+        m = new HashMap<>();
+        m.put("x", x);
+        m.put("y", y);
+        m.put("z", z);
+
+        l.add(m);
+
+      List<HashMap<String, Object>> indexs = new ArrayList<>();
+        HashMap<String, Object> index = new HashMap<>();
+        index.put("x", 3.14);
+        index.put("y", 3.14);
+        index.put("z", 5.6);
+        indexs.add(index);
+
+         index = new HashMap<>();
+        index.put("x", 7.9);
+        index.put("y",7.9);
+        index.put("z", 7.2);
+
+        indexs.add(index);
+
+        List<HashMap<String, Object>> wa = new ArrayList<>();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("x", 10.0);
+        map.put("y", 10.0);
+        wa.add(map);
+
+        map = new HashMap<>();
+        map.put("x", 0.0);
+        map.put("y", 10.0);
+        wa.add(map);
+
+        map = new HashMap<>();
+        map.put("x", 0.0);
+        map.put("y", 0.0);
+        wa.add(map);
+
+        map = new HashMap<>();
+        map.put("x", 10.0);
+        map.put("y", 0.0);
+        wa.add(map);
+
+
+//        List<Double> dx = new ArrayList<>(); dx.add(0.0);dx.add(10.0);dx.add(10.0);dx.add(0.0);
+//        List<Double> dy = new ArrayList<>(); dy.add(0.0);dy.add(0.0);dy.add(10.0);dy.add(10.0);
+        System.out.println(checkIndex(l, indexs));
+//        System.out.println(pnpolyAlgorithm(dx, dy, 3.14, 9.99));
+        System.out.println(isInHouse(indexs, wa, 10f));
+        System.out.println(inputGoods(l, wa, 9f, indexs, 1, 1, 1));
+        System.out.println(indexs);
     }
 }
 
