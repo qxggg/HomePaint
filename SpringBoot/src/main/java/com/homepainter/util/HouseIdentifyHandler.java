@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 
-public class HouseIdentifyHandler {
+public class
+
+HouseIdentifyHandler {
     public static int count = 10000;
     public static Object getResult(JSONObject data) {
 
@@ -31,6 +33,7 @@ public class HouseIdentifyHandler {
         JSONArray windowList = (JSONArray) data2.get("Windows");
         JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
 
+       JSONArray remove = new JSONArray();
         JSONArray wallAdd = new JSONArray();
 
         for (int i = 0; i < doorList.size(); ++i){
@@ -61,6 +64,7 @@ public class HouseIdentifyHandler {
             JSONArray addList = new JSONArray();
 
             for (int k = 0; k < wallList.size(); ++k){
+
                 JSONObject wall = (JSONObject) wallList.get(k);
                 int wstart = (int) wall.get("start_point");
                 int wend = (int) wall.get("end_point");
@@ -87,6 +91,7 @@ public class HouseIdentifyHandler {
 
 
                 if (wx1 == dx1 && wx2 == dx2 && wy2 > dy2 && wy1 < dy1 || wy1 == dy1 && wy2 == dy2 && wx1 < dx1 && wx2 > dx2){
+
                     JSONObject wall1 = new JSONObject();
                     wall1.put("start_point", wsid);
                     wall1.put("end_point", dsid);
@@ -100,6 +105,15 @@ public class HouseIdentifyHandler {
 
                     wallList.add(wall1);
                     wallList.add(wall2);
+                    JSONObject m = new JSONObject();
+                    m.put("category", 1);
+                    m.put("wsid", wsid);
+                    m.put("weid", weid);
+                    m.put("dx1", dx1);
+                    m.put("dy1", dy1);
+                    m.put("dx2", dx2);
+                    m.put("dy2", dy2);
+                    remove.add(m);
                     wallList.remove(k);
 
 
@@ -133,6 +147,16 @@ public class HouseIdentifyHandler {
 
                     wallList.add(wall1);
                     wallList.add(wall2);
+
+                    JSONObject m = new JSONObject();
+                    m.put("category", 1);
+                    m.put("wsid", wsid);
+                    m.put("weid", weid);
+                    m.put("dx1", dx1);
+                    m.put("dy1", dy1);
+                    m.put("dx2", dx2);
+                    m.put("dy2", dy2);
+                    remove.add(m);
                     wallList.remove(k);
 
 
@@ -227,6 +251,16 @@ public class HouseIdentifyHandler {
 
                     wallList.add(wall1);
                     wallList.add(wall2);
+
+                    JSONObject m = new JSONObject();
+                    m.put("category", 2);
+                    m.put("wsid", wsid);
+                    m.put("weid", weid);
+                    m.put("dx1", dx1);
+                    m.put("dy1", dy1);
+                    m.put("dx2", dx2);
+                    m.put("dy2", dy2);
+                    remove.add(m);
                     wallList.remove(k);
 
 
@@ -259,6 +293,17 @@ public class HouseIdentifyHandler {
 
                     wallList.add(wall1);
                     wallList.add(wall2);
+
+                    JSONObject m = new JSONObject();
+
+                    m.put("category", 2);
+                    m.put("wsid", wsid);
+                    m.put("weid", weid);
+                    m.put("dx1", dx1);
+                    m.put("dy1", dy1);
+                    m.put("dx2", dx2);
+                    m.put("dy2", dy2);
+                    remove.add(m);
                     wallList.remove(k);
 
 
@@ -284,8 +329,7 @@ public class HouseIdentifyHandler {
         for (Object jj : wallAdd)
             wallPoints.add(jj);
 
-
-
+        data1.put("remove", remove);
         return data;
     }
 
@@ -297,7 +341,9 @@ public class HouseIdentifyHandler {
     public static void main(String[] args) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get("C:\\Users\\25697\\Desktop\\第十六届全国大学生软件创新大赛\\HomePaint\\json.json")));
         JSONObject j = (JSONObject) JSONObject.parse(content);
-       HouseIdentifyHandler.getResult(j);
+        HouseIdentifyHandler.getResult(j);
+
+
     }
 
 }
