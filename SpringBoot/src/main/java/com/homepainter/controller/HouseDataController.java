@@ -138,10 +138,10 @@ public class HouseDataController {
             // remove
             List<Map<String,Object>> remove = (List<Map<String, Object>>) DWW.get("remove");
             for(int i=0;i<remove.size();i++){
-                remove.get(i).put("dx1",Double.parseDouble( WindowPoints.get(i).get("dx1").toString() )*scale) ;
-                remove.get(i).put("dx2",Double.parseDouble( WindowPoints.get(i).get("dx2").toString() )*scale) ;
-                remove.get(i).put("dy1",Double.parseDouble( WindowPoints.get(i).get("dy1").toString() )*scale) ;
-                remove.get(i).put("dy2",Double.parseDouble( WindowPoints.get(i).get("dy2").toString() )*scale) ;
+                remove.get(i).put("dx1",Double.parseDouble( remove.get(i).get("dx1").toString() )*scale) ;
+                remove.get(i).put("dx2",Double.parseDouble( remove.get(i).get("dx2").toString() )*scale) ;
+                remove.get(i).put("dy1",Double.parseDouble( remove.get(i).get("dy1").toString() )*scale) ;
+                remove.get(i).put("dy2",Double.parseDouble( remove.get(i).get("dy2").toString() )*scale) ;
             }
             DWW.put("remove",remove);
 
