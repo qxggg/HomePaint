@@ -1,13 +1,10 @@
 package com.homepainter.util;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.homepainter.controller.HouseIdentifyController;
-import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
+import org.bouncycastle.pqc.jcajce.provider.qtesla.SignatureSpi;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -18,20 +15,33 @@ import static com.homepainter.util.HouseIdentifyHandler.toDouble;
 
 public class RuleUtils {
 
-    /**
-     * <p>
-     * Principle of pnpoly algorithm: draw a ray from a target point,
-     * and count the number of intersections between this ray and the pair of deformations.
-     * If there are an odd number of intersections, the target point is inside the polygon,
-     * and if there are even intersections, it is outside
-     * </p>
-     *
-     * @param vertX polygon coordinates latitudes
-     * @param vertY polygon coordinates longitudes
-     * @param x     longitude
-     * @param y     latitude
-     * @return true indicate inside of the polygon， false indicate outside of the polygon
-     */
+
+
+    public static double clockwiseAngle(double[] a, double[] b) {
+        // 计算向量的点积
+        double dotProduct = a[0] * b[0] + a[1] * b[1];
+        // 计算向量的叉积
+        double crossProduct = a[0] * b[1] - a[1] * b[0];
+        // 判断向量 b 在向量 a 的顺时针方向还是逆时针方向
+        if (crossProduct > 0)
+            // b 在 a 的逆时针方向，夹角为负值
+            return 2 * Math.PI - Math.abs(Math.atan2(crossProduct, dotProduct));
+        else {
+            // b 在 a 的顺时针方向，夹角为正值
+            return Math.abs(Math.atan2(crossProduct, dotProduct));
+        }
+    }
+
+    public static double[] rotate(double[] pivot, double[] point, double angle) {
+        double[] rotatedPoint = new double[2];
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+        rotatedPoint[0] = cos * (point[0] - pivot[0]) - sin * (point[1] - pivot[1]) + pivot[0];
+        rotatedPoint[1] = sin * (point[0] - pivot[0]) + cos * (point[1] - pivot[1]) + pivot[1];
+        return rotatedPoint;
+    }
+
+
     private static boolean pnpolyAlgorithm(List<Double> vertX, List<Double> vertY, double x, double y) {
         if (CollectionUtils.isEmpty(vertX) || CollectionUtils.isEmpty(vertY)) {
             return false;
@@ -58,45 +68,41 @@ public class RuleUtils {
         return result;
     }
 
-    public static boolean isInHouse(List<HashMap<String, Object>> index, List<HashMap<String, Object>> wallPoints, float up){
+    public static boolean isInHouse(JSONArray index, JSONArray wallPoints, float up){
 
         List<Double> x = new ArrayList<>();
         List<Double> y = new ArrayList<>();
         List<Double> z = new ArrayList<>();
 
-        for (HashMap<String, Object> idx : index)
-            z.add((double) idx.get("z"));
-
-        for (HashMap<String, Object> wallPoint : wallPoints){
-            x.add((double) wallPoint.get("x"));
-            y.add((double) wallPoint.get("y"));
+        for (int i = 0; i < index.size(); ++i) {
+            JSONObject idx = index.getJSONObject(i);
+            y.add((double) idx.get("y"));
         }
 
-        for (Double i : z)
+        for (int i = 0; i < wallPoints.size(); ++i){
+            JSONObject wallPoint = wallPoints.getJSONObject(i);
+            x.add( toDouble((BigDecimal) wallPoint.get("x")));
+            z.add(toDouble((BigDecimal) wallPoint.get("y")));
+        }
+
+        for (Double i : y)
             if (i > up || i < 0) {return false;}
 
-        for (HashMap<String, Object> idx : index)
-            if (!pnpolyAlgorithm(x, y, (double) idx.get("x"), (double)idx.get("y"))) {
+        for (int i = 0; i < index.size(); ++i) {
+            JSONObject idx = index.getJSONObject(i);
+            if (!pnpolyAlgorithm(x, z, (double) idx.get("x"), (double) idx.get("z"))) {
                 System.out.println(x);
-                System.out.println(y);
+                System.out.println(z);
                 System.out.println(idx);
                 return false;
             }
+        }
 
         return true;
 
     }
 
-    public static boolean inputGoods(List<HashMap<String, Object>> goods, List<HashMap<String, Object>> wallPoints, float up, List<HashMap<String, Object>> index, double x, double y, double z){
-        for (HashMap<String, Object> idx : index){
-            double ix = (double) idx.get("x");
-            double iy = (double) idx.get("y");
-            double iz = (double) idx.get("z");
-
-            idx.put("x", ix + x);
-            idx.put("y", iy + y);
-            idx.put("z", iz + z);
-        }
+    public static boolean inputGoods(List<HashMap<String, Object>> goods, JSONArray wallPoints, float up, JSONArray index){
         if (isInHouse(index, wallPoints, up) && checkIndex(goods, index)) {
             recordIndex(goods, index);
             return true;
@@ -127,47 +133,84 @@ public class RuleUtils {
         return false;
     }
 
-     public static List roomHandler(JSONObject room, JSONArray remove){
+    public static String getDirection(JSONArray points) {
+        int n = points.size();
+        double sum = 0;
+        for (int i = 0; i < n; i++) {
+            JSONObject p1 = points.getJSONObject(i);
+            JSONObject p2 = points.getJSONObject((i + 1) % n);
+            double x1 = p1.getDouble("x");
+            double y1 = p1.getDouble("y");
+            double x2 = p2.getDouble("x");
+            double y2 = p2.getDouble("y");
+            sum += (x2 - x1) * (y2 + y1);
+        }
+        if (sum > 0) {
+            return "逆时针";
+        } else {
+            return "顺时针";
+        }
+    }
+
+
+    public static JSONArray roomHandler(JSONObject room, JSONArray remove){
         JSONArray points = (JSONArray) room.get("point");
-         List<Object> walls = new ArrayList<>();
-         for (int a = 0; a < points.size() - 1; ++a) {
-             Map<String, Object> wall = new HashMap<>();
-             JSONObject p1 = (JSONObject) points.get(a);
-             JSONObject p2 = (JSONObject) points.get(a + 1);
-             int s = (int) p1.get("id");
-             int e = (int) p2.get("id");
-             wall.put("p1", p1);
-             wall.put("p2", p2);
-             wall.put("category", 0);
+         JSONArray walls = new JSONArray();
 
-             for (int i = 0; i < remove.size(); ++i){
-                 JSONObject r = (JSONObject) remove.get(i);
-                 int wsid = (int) r.get("wsid");
-                 int weid = (int) r.get("weid");
-
-
-              //   System.out.println(s + " " + e + " ws " + wsid + " " + weid);
-                 if (wsid == s && weid == e || wsid == e && weid == s) {
-                     wall.put("category", r.get("category"));
-                     wall.put("dx1", r.get("dx1") );
-                     wall.put("dx2", r.get("dx2") );
-                     wall.put("dy1", r.get("dy1") );
-                     wall.put("dy2", r.get("dy2") );
-                 }
+         if (getDirection(points).equals("顺时针")) {
+             for (int a = 0; a < points.size() - 1; ++a) {
+                 JSONObject wall = new JSONObject();
+                 JSONObject p1 = (JSONObject) points.get(a);
+                 JSONObject p2 = (JSONObject) points.get(a + 1);
+                 roomHandlerUtil(remove, walls, wall, p1, p2);
              }
-             walls.add(wall);
+         }
+         else{
+             for (int a = points.size() - 1; a > 0; --a) {
+                 JSONObject wall = new JSONObject();
+                 JSONObject p1 = (JSONObject) points.get(a);
+                 JSONObject p2 = (JSONObject) points.get(a - 1);
+                 roomHandlerUtil(remove, walls, wall, p1, p2);
+             }
          }
          System.out.println(walls);
         return walls;
     }
 
+    private static void roomHandlerUtil(JSONArray remove, JSONArray walls, JSONObject wall, JSONObject p1, JSONObject p2) {
+        int s = (int) p1.get("id");
+        int e = (int) p2.get("id");
 
-    public static void recordIndex(List<HashMap<String, Object>> goods, List<HashMap<String, Object>> index){
+        wall.put("p1", p1);
+        wall.put("p2", p2);
+        wall.put("category", 0);
+
+        for (int i = 0; i < remove.size(); ++i) {
+            JSONObject r = (JSONObject) remove.get(i);
+            int wsid = (int) r.get("wsid");
+            int weid = (int) r.get("weid");
+
+
+            //   System.out.println(s + " " + e + " ws " + wsid + " " + weid);
+            if (wsid == s && weid == e || wsid == e && weid == s) {
+                wall.put("category", r.get("category"));
+                wall.put("dx1", r.get("dx1"));
+                wall.put("dx2", r.get("dx2"));
+                wall.put("dy1", r.get("dy1"));
+                wall.put("dy2", r.get("dy2"));
+            }
+        }
+        walls.add(wall);
+    }
+
+
+    public static void recordIndex(List<HashMap<String, Object>> goods, JSONArray index){
         List<Double> xtmp = new ArrayList<>();
         List<Double> ytmp = new ArrayList<>();
         List<Double> ztmp = new ArrayList<>();
 
-        for (HashMap<String, Object> idx : index) {
+        for (int i = 0; i < index.size(); ++i) {
+            JSONObject idx = index.getJSONObject(i);
             xtmp.add((Double) idx.get("x"));
             ytmp.add((Double) idx.get("y"));
             ztmp.add((Double) idx.get("z"));
@@ -195,8 +238,9 @@ public class RuleUtils {
         goods.add(good);
     }
 
-    public static boolean checkIndex(List<HashMap<String, Object>> goods, List<HashMap<String, Object>> index){
-        for (HashMap<String, Object> idx : index) {
+    public static boolean checkIndex(List<HashMap<String, Object>> goods, JSONArray index){
+        for (int i = 0; i < index.size(); ++i) {
+            JSONObject idx = index.getJSONObject(i);
             double x = (double) idx.get("x");
             double y = (double) idx.get("y");
             double z = (double) idx.get("z");
@@ -219,11 +263,109 @@ public class RuleUtils {
         return true;
     }
 
-    public static void findWall(List<HashMap<String, Object>> wallPoints, List<HashMap<String, Object>> remove){
-        for (HashMap<String, Object> wall : wallPoints){
+    public static JSONObject insertWallGoods(JSONArray index, JSONObject wall, JSONObject center){
+        double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
+        for (int i = 0; i < index.size(); ++i){
+            JSONObject idx = index.getJSONObject(i);
+            double x = (double) idx.get("x");
+            double y = (double) idx.get("y");
+            double z = (double) idx.get("z");
 
+            if (x > 0 && z > 0 && y < 0){
+                x1 = x; y1 = y; z1 = z;
+            }
+
+            if (x > 0 && z < 0 && y < 0){
+                x2 = x; y2 = y; z2 = z;
+            }
         }
+
+        double x = (x1 + x2) / 2.0, y = (y1 + y2) / 2.0, z = (z1 + z2) / 2.0;
+
+        System.out.println("下面输出一下原来物体最下方那个点的坐标");
+        System.out.println(x);
+        System.out.println(y);
+        System.out.println(z);
+        System.out.println();
+
+        double cx = (double) center.get("x");
+        double cy = (double) center.get("y");
+        double cz = (double) center.get("z");
+        System.out.println("下面输出中心点");
+        System.out.println(cx);
+        System.out.println(cy);
+        System.out.println(cz);
+        System.out.println();
+        double fx = x - cx, fy = y - cy, fz = z - cz;
+
+        JSONObject p1 = wall.getJSONObject("p1");
+        JSONObject p2 = wall.getJSONObject("p2");
+
+        double wx1 = (double) p1.get("x");
+        double wy1 = (double) p1.get("y");
+        double wx2 = (double) p2.get("x");
+        double wy2 = (double) p2.get("y");
+
+        double xtmp = (wx1 + wx2) / 2.0;
+        double ztmp = (wy1 + wy2) / 2.0;
+        System.out.println("下面输出一下目标点");
+        System.out.println(xtmp);
+        System.out.println(ztmp);
+        System.out.println();
+
+
+
+        double cfx = xtmp - fx;
+        double cfy = 0 - fy;
+        double cfz = ztmp - fz;
+
+        double[] point = {cfx, cfz};
+        double[] pivot = {xtmp, ztmp};
+
+
+
+        System.out.println(cfx);
+        System.out.println(cfy);
+        System.out.println(cfz);
+
+
+        double []a = {0.0, 1.0};
+        double []b = new double[2];
+        b[0] = wx2 - wx1; b[1] = wy2 - wy1;
+        System.out.println("wx2 " + b[0]);
+        System.out.println("wx1 " + b[1]);
+        System.out.println("最终坐标");
+        double angle = 2 * Math.PI - clockwiseAngle(b, a);
+        double[] res = rotate(pivot, point, angle);
+        System.out.println();
+        System.out.println(res[0] + " " + res[1]);
+        System.out.println();
+        calPoints(index, pivot, angle);
+        JSONObject j = new JSONObject();
+        j.put("x", res[0]);
+        j.put("y", cfy);
+        j.put("z", res[1]);
+        j.put("angle", angle * 180 / Math.PI);
+        return j;
     }
+
+    public static JSONArray calPoints(JSONArray index, double[] pivot, double angle){
+        for (int i = 0; i < index.size(); ++i){
+            JSONObject idx = index.getJSONObject(i);
+            double x = (double)idx.get("x");
+            double y = (double)idx.get("y");
+            double z = (double)idx.get("z");
+
+            double[] point = {x, z};
+            double[] res = rotate(pivot, point, 2 * Math.PI - angle);
+
+            idx.put("x", res[0]);
+            idx.put("z", res[1]);
+        }
+
+        return index;
+    }
+
 
 
 
@@ -234,6 +376,7 @@ public class RuleUtils {
 
         JSONObject data1 = (JSONObject) j.get("data");
         JSONObject data2 = (JSONObject) data1.get("RWW");
+
 
         JSONArray doorList = (JSONArray) data2.get("Doors");
         JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
@@ -247,90 +390,97 @@ public class RuleUtils {
         String style = (String) data2.get("style");
         JSONObject house = (JSONObject) j.get("house");
 
-       JSONArray rooms = (JSONArray) house.get("Room");
+        JSONArray rooms = (JSONArray) house.get("Room");
 
-       JSONArray remove = (JSONArray) data1.get("remove");
-//       roomHandler((JSONObject) rooms.get(8), remove);
+        JSONArray remove = (JSONArray) data1.get("remove");
+        JSONArray www = roomHandler(rooms.getJSONObject(0), remove);
+        JSONObject room = rooms.getJSONObject(0);
+        JSONArray array = room.getJSONArray("point");
+//        System.out.println(array);
+//        System.out.println(roomHandler(rooms.getJSONObject(0), remove));
+        JSONObject wa = new JSONObject();
+        JSONObject p1 = new JSONObject();
+        JSONObject p2 = new JSONObject();
+        p2.put("x", 3.0);
+        p2.put("y", 5.0);
+        p1.put("x", 3.0);
+        p1.put("y", 19.0);
 
+        wa.put("p1", p1);
+        wa.put("p2", p2);
+//
+        JSONArray indexs = new JSONArray();
+        JSONObject idx = new JSONObject();
+        idx.put("x", 4.0);
+        idx.put("y", 4.0);
+        idx.put("z", 4.0);
 
-      List<HashMap<String, Object>> l = new ArrayList<>();
-      HashMap<String, Object> x = new HashMap<>();
-      HashMap<String, Object> y = new HashMap<>();
-      HashMap<String, Object> z = new HashMap<>();
-      x.put("start", 1.1);
-      x.put("end", 5.5);
-      y.put("start", 1.1);
-      y.put("end", 5.5);
-      z.put("start", 1.1);
-      z.put("end", 5.5);
+        indexs.add(idx);
 
-      HashMap<String, Object> m = new HashMap<>();
-      m.put("x", x);
-      m.put("y", y);
-      m.put("z", z);
+        idx = new JSONObject();
+        idx.put("x", 4.0);
+        idx.put("y", 4.0);
+        idx.put("z", -4.0);
 
-      l.add(m);
+        indexs.add(idx);
 
-      x = new HashMap<>();
-     y = new HashMap<>();
-        z = new HashMap<>();
-        x.put("start", 7.7);
-        x.put("end", 8.8);
-        y.put("start", 7.7);
-        y.put("end", 8.8);
-        z.put("start", 7.7);
-        z.put("end", 8.8);
+        idx = new JSONObject();
+        idx.put("x", 4.0);
+        idx.put("y", -4.0);
+        idx.put("z", 4.0);
 
-        m = new HashMap<>();
-        m.put("x", x);
-        m.put("y", y);
-        m.put("z", z);
+        indexs.add(idx);
 
-        l.add(m);
+        idx = new JSONObject();
+        idx.put("x", -4.0);
+        idx.put("y", 4.0);
+        idx.put("z", 4.0);
 
-      List<HashMap<String, Object>> indexs = new ArrayList<>();
-        HashMap<String, Object> index = new HashMap<>();
-        index.put("x", 3.14);
-        index.put("y", 3.14);
-        index.put("z", 5.6);
-        indexs.add(index);
+        indexs.add(idx);
 
-         index = new HashMap<>();
-        index.put("x", 7.9);
-        index.put("y",7.9);
-        index.put("z", 7.2);
+        idx = new JSONObject();
+        idx.put("x", -4.0);
+        idx.put("y", -4.0);
+        idx.put("z", 4.0);
 
-        indexs.add(index);
-
-        List<HashMap<String, Object>> wa = new ArrayList<>();
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("x", 10.0);
-        map.put("y", 10.0);
-        wa.add(map);
-
-        map = new HashMap<>();
-        map.put("x", 0.0);
-        map.put("y", 10.0);
-        wa.add(map);
-
-        map = new HashMap<>();
-        map.put("x", 0.0);
-        map.put("y", 0.0);
-        wa.add(map);
-
-        map = new HashMap<>();
-        map.put("x", 10.0);
-        map.put("y", 0.0);
-        wa.add(map);
+        indexs.add(idx);
 
 
-//        List<Double> dx = new ArrayList<>(); dx.add(0.0);dx.add(10.0);dx.add(10.0);dx.add(0.0);
-//        List<Double> dy = new ArrayList<>(); dy.add(0.0);dy.add(0.0);dy.add(10.0);dy.add(10.0);
-        System.out.println(checkIndex(l, indexs));
-//        System.out.println(pnpolyAlgorithm(dx, dy, 3.14, 9.99));
-        System.out.println(isInHouse(indexs, wa, 10f));
-        System.out.println(inputGoods(l, wa, 9f, indexs, 1, 1, 1));
-        System.out.println(indexs);
+        idx = new JSONObject();
+        idx.put("x",-4.0);
+        idx.put("y", 4.0);
+        idx.put("z", -4.0);
+
+        indexs.add(idx);
+
+        idx = new JSONObject();
+        idx.put("x", 4.0);
+        idx.put("y", -4.0);
+        idx.put("z", -4.0);
+
+        indexs.add(idx);
+
+        idx = new JSONObject();
+        idx.put("x", -4.0);
+        idx.put("y", -4.0);
+        idx.put("z", -4.0);
+
+        indexs.add(idx);
+
+
+
+        JSONObject center = new JSONObject();
+        center.put("x", 2.0);
+        center.put("y", 2.0);
+        center.put("z", 2.0);
+
+
+        System.out.println(insertWallGoods(indexs, wa, center));
+
+
+
+
+
     }
 }
 
