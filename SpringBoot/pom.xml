@@ -30,8 +30,12 @@
             <artifactId>httpmime</artifactId>
             <version>4.5</version>
         </dependency>
-
-
+        <!--csv-->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.5.2</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>

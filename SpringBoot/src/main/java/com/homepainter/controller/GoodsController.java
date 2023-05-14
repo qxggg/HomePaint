@@ -85,6 +85,7 @@ public class GoodsController {
         if(ultraGCN.IsUserInFurnitureWaitTrainNewUser(userId)==true){
             System.out.println("新用户id:"+userId+"开始从风格调取数据"+new Date().toString());
             // 新用户注册，根据注册风格去拿
+
             // 查询注册风格
             String sql = "select styleId from style where userId = userId";
             List<Map<String, Object>> StyleList = jdbcTemplate.queryForList(sql);

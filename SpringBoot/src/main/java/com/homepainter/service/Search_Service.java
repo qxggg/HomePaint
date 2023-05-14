@@ -28,6 +28,7 @@ public class Search_Service {
     JdbcTemplate jdbcTemplate;
 
     public String[] styleMenu = {"东南亚","现代","日式","复古","地中海","韩式","轻奢华","极简主义","工业","北欧","美式","新中式","欧洲","新古典主义","中国风","明清","其他","儿童","古典欧洲"};
+
     public List<Map<String, Object>> searchByStyle(List<Map<String, Object>> StyleList,int skip){
         List<Map<String, Object>> res = new ArrayList<>();
 
