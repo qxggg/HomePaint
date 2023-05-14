@@ -9,14 +9,12 @@ import com.aliyuncs.alinlp.model.v20200629.GetPosChEcomRequest;
 import com.aliyuncs.alinlp.model.v20200629.GetPosChEcomResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
+import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.homepainter.util.ReadJson.get_json;
 import static com.homepainter.util.ReadJson.readJson;
@@ -26,6 +24,9 @@ import static com.homepainter.util.getStyleUtils.getStyle;
 public class Search_Service {
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    RedisUtil redisUtil;
 
     public String[] styleMenu = {"东南亚","现代","日式","复古","地中海","韩式","轻奢华","极简主义","工业","北欧","美式","新中式","欧洲","新古典主义","中国风","明清","其他","儿童","古典欧洲"};
 
@@ -70,35 +71,34 @@ public class Search_Service {
      * @return
      * @throws ClientException
      */
-    public static List<JSONObject> kmpSearch(String args,int skip) throws ClientException {
+    public List<Map<String,Object>> kmpSearch(String args,int skip) throws ClientException {
         int cnt = 0;
         // 调用分词
         GetPosChEcomResponse response = fenci(args);
         // 获取分词结果
         String fenci_result = response.getData();
-        System.out.println("分词结果："+fenci_result);
+        System.out.println("分词结果："+fenci_result + new Date().toString());
         // 获取结果数组
         JSONArray jsonArray = JSON.parseArray(JSON.parseObject(fenci_result).getString("result"));
         // 结果集
-        List<JSONObject> data = new ArrayList<>();
+        List<Map<String,Object>> data = new ArrayList<>();
         for(int i=0;i<jsonArray.size();i++){
             // 单个结果集转Object
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             // 获取搜索结果
-            List<JSONObject> temp = searchByname(jsonObject.getString("word"));
+            List<Map<String,Object>> temp = searchByname(jsonObject.getString("word"),skip+20);
+            System.out.println("多模态 文字 搜索完毕"+new Date().toString());
             // 筛选是否已有
-            for(int j=0;j<temp.size();j++){
+            for(Map<String,Object> item :temp){
                 boolean is_have = false;
-                JSONObject temp_j = temp.get(j);
-                for(int k=0;k<data.size();k++){
-                    JSONObject temp_k = data.get(k);
-                    if(temp_k.get("goodsId").toString().equals(temp_j.get("goodsId").toString())){
+                for(Map<String,Object> it :data){
+                    if(it.get("goodsId").toString().equals(item.get("goodsId").toString())){
                         is_have = true;
                         break;
                     }
                 }
                 if(!is_have){
-                    data.add(temp_j);
+                    data.add(item);
                 }
             }
         }
@@ -107,7 +107,7 @@ public class Search_Service {
         data = data.subList(Math.min(skip,data.size()),Math.min(skip+20,data.size()));
         // 查看结果集
         for(int i=0;i<data.size();i++){
-            data.get(i).put("imageURL","https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/"+data.get(i).getString("modalId")+"/image.jpg");
+            data.get(i).put("imageURL","https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/"+data.get(i).get("modalId")+"/image.jpg");
         }
         return data;
     }
@@ -144,47 +144,22 @@ public class Search_Service {
      * @param content
      * @return
      */
-    public static List<JSONObject> searchByname(String content){
+    public  List<Map<String,Object>> searchByname(String content,int search_cnt){
 
-        List<JSONObject>  data = new ArrayList<>();
-        String json = readJson("goods.json","");
-        JSONObject Alljson = JSON.parseObject(json);
-        JSONArray jsonArray =  JSON.parseArray(Alljson.getString("RECORDS"));
+        List<Map<String,Object>>  data = new ArrayList<>();
+        // 打开JSON信息表
+        List<Map<String,Object>> goodsData = (List<Map<String, Object>>) redisUtil.get("JSON_GOODS");
 
-        for(int i=0;i< jsonArray.size();i++){
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
+        System.out.println("打开了JSON"+new Date().toString());
+        for(Map<String,Object> item :goodsData){
 
-
-            Boolean have = false;
-            List<Integer> list = kmp(jsonObject.getString("title").toString(),content);
-            List<Integer> list1 = new ArrayList<>();
-            List<Integer> list2 = new ArrayList<>();
-            List<Integer> list3 = new ArrayList<>();
-            List<Integer> list4 = new ArrayList<>();
-
-            if(list.size()!=0)  have = true;
-
-            if(jsonObject.getString("category").toString().length()!=0&&!have)
-                list1 = kmp(jsonObject.getString("category").toString(),content);
-            if(list1.size()!=0)  have = true;
-
-            if(jsonObject.getString("superCategory").toString().length()!=0&&!have)
-                list2 = kmp(jsonObject.getString("superCategory").toString(),content);
-            if(list2.size()!=0)  have = true;
-
-            if(jsonObject.getString("theme").toString().length()!=0&&!have)
-                list3 = kmp(jsonObject.getString("theme").toString(),content);
-            if(list3.size()!=0)  have = true;
-
-            if(jsonObject.getString("material").toString().length()!=0&&!have)
-                list4 = kmp(jsonObject.getString("material").toString(),content);
-            if(list4.size()!=0)  have = true;
-
-            if(have){
-                data.add(jsonObject);
+            List<Integer> list = kmp(item.get("title").toString(),content);
+            if(list.size()!=0){
+                data.add(item);
             }
-
-
+            if(data.size()>=search_cnt){
+                break;
+            }
         }
         return data;
     }
@@ -264,8 +239,8 @@ public class Search_Service {
      * @param style
      * @return
      */
-    public List<JSONObject> SortByStyleList(List<JSONObject> list,List<Map<String, Object>> style){
-        List<JSONObject> res = new ArrayList<>();
+    public List<Map<String,Object>> SortByStyleList(List<Map<String,Object>> list,List<Map<String, Object>> style){
+        List<Map<String,Object>> res = new ArrayList<>();
 
         // 首先将style的加入
         for(int i=0;i<list.size();i++){
@@ -290,9 +265,41 @@ public class Search_Service {
         return res;
     }
 
+    /**
+     * 重载
+     * @param list
+     * @param style
+     * @return
+     */
+    public List<Map<String,Object>> SortByStyleList_String(List<Map<String,Object>> list,List<String> style){
+        List<Map<String,Object>> res = new ArrayList<>();
 
-    public List<JSONObject> SortByFurnitureList(List<JSONObject> list,List<Integer> furnitureList){
-        List<JSONObject> res = new ArrayList<>();
+        // 首先将style的加入
+        for(int i=0;i<list.size();i++){
+            boolean havesameStyle =false;
+            for (String item : style)
+                if(list.get(i).get("style").toString().equals(item) ) {
+                    havesameStyle = true;
+                    break;
+                }
+            if(havesameStyle)   res.add(list.get(i));
+        }
+        // 将其他的加入
+        for(int i=0;i<list.size();i++){
+            boolean havesameStyle =false;
+            for (String item : style)
+                if(list.get(i).get("style").toString().equals( item)){
+                    havesameStyle = true;
+                    break;
+                }
+            if(!havesameStyle)   res.add(list.get(i));
+        }
+        return res;
+    }
+
+
+    public List<Map<String,Object>> SortByFurnitureList(List<Map<String,Object>> list,List<Integer> furnitureList){
+        List<Map<String,Object>> res = new ArrayList<>();
 
         // 首先将匹配的加入
         for(int i=0;i<list.size();i++){

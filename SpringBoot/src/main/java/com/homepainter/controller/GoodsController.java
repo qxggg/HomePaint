@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.homepainter.controller.AlgorithmController.commentInfo;
-import static com.homepainter.service.Search_Service.kmpSearch;
+
 import static com.homepainter.service.Search_Service.searchByList;
 import static com.homepainter.service.UltraGCN.GetFurniture;
-import static com.homepainter.util.getStyleUtils.getStyle;
+
 
 @RestController
 @RequestMapping("/goods")
@@ -59,7 +59,14 @@ public class GoodsController {
 
     @Autowired
     Search_Service searchService;
+
+    @Autowired
+    GetGoods getGoods;
+
+
     public static int goodsInsertCount = 1001;
+
+    public String[] styleMenu = {"东南亚","现代","日式","复古","地中海","韩式","轻奢华","极简主义","工业","北欧","美式","新中式","欧洲","新古典主义","中国风","明清","其他","儿童","古典欧洲"};
 
     @GetMapping("/test")
     public void test() throws IOException {
@@ -81,8 +88,45 @@ public class GoodsController {
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
 
+        if(true){
+            // 测试阶段-不使用UltraGCN
+
+            // 获取用户风格
+            List<String> styles = new ArrayList<>();
+            if(redisUtil.hasKey("UserStyle"+userId))
+                styles = (List<String>) redisUtil.get("UserStyle"+userId);
+            else
+                styles.add("现代");
+
+            for(int i=0;i<styles.size()&&FurnitureList.size()<=skip+20;i++){
+                List<Map<String,Object>> temp = getGoods.GetGoods_ByStyle(styles.get(i));
+                for(int j=0;j<temp.size();j++){
+                    if(FurnitureList.size()<=skip+20){
+                        FurnitureList.add(temp.get(j));
+                    }else{
+                        break;
+                    }
+                }
+            }
+
+            // 如果结果没满，拿其他风格
+            if(FurnitureList.size()!=skip+20){
+                for(int i=0;i<styleMenu.length&&FurnitureList.size()<=skip+20;i++){
+                    List<Map<String,Object>> temp = getGoods.GetGoods_ByStyle(styleMenu[i]);
+                    for(int j=0;j<temp.size();j++){
+                        if(FurnitureList.size()<=skip+20){
+                            FurnitureList.add(temp.get(j));
+                        }else{
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+        }
         // 判断是否在新用户待训练列表中
-        if(ultraGCN.IsUserInFurnitureWaitTrainNewUser(userId)==true){
+        else if(ultraGCN.IsUserInFurnitureWaitTrainNewUser(userId)==true){
             System.out.println("新用户id:"+userId+"开始从风格调取数据"+new Date().toString());
             // 新用户注册，根据注册风格去拿
 
@@ -132,7 +176,7 @@ public class GoodsController {
     @PostMapping("get_list")
     public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data, @RequestHeader String token) throws ClientException {
         Map<String, Object> map = new HashMap<>();
-        List<JSONObject> list = new ArrayList<>();
+        List<Map<String,Object>> list = new ArrayList<>();
         // 分页
         int skip = 0;
         if(data.get("skip")!=null){
@@ -145,8 +189,28 @@ public class GoodsController {
         // 空搜索，调用get的方法
         if (data.get("search_content") == null) map.put("data", getAllList(String.valueOf( skip ),token));
 
+        if(true){
+            // 测试用，不使用UltraGCN
+
+            // 查询注册风格
+            List<String> styles = new ArrayList<>();
+            if(redisUtil.hasKey("UserStyle"+userId))
+                styles = (List<String>) redisUtil.get("UserStyle"+userId);
+            else
+                styles.add("现代");
+
+            System.out.println(new Date().toString());
+            // 开始搜索
+            list = searchService.kmpSearch((String) data.get("search_content"),skip);
+            System.out.println(new Date().toString());
+            // 如果结果没满，则返回 数组 0
+
+
+            // 对搜索结果根据风格进行排序
+            list = searchService.SortByStyleList_String(list,styles);
+        }
         // 判断是否在新用户待训练列表中
-        if(ultraGCN.IsUserInFurnitureWaitTrainNewUser(userId)==true){
+        else if(ultraGCN.IsUserInFurnitureWaitTrainNewUser(userId)==true){
             System.out.println("新用户id:"+userId+"开始从风格调取数据"+new Date().toString());
             // 新用户注册，根据注册风格去拿
             // 查询注册风格
@@ -154,7 +218,7 @@ public class GoodsController {
             List<Map<String, Object>> StyleList = jdbcTemplate.queryForList(sql);
 
             // 开始搜索
-            list = kmpSearch((String) data.get("search_content"),skip);
+            list = searchService.kmpSearch((String) data.get("search_content"),skip);
 
             // 对搜索结果根据风格进行排序
             list = searchService.SortByStyleList(list,StyleList);
@@ -166,18 +230,18 @@ public class GoodsController {
             List<Integer> UltraGCN_res = GetFurniture(userId);
 
             // 开始搜索
-            list = kmpSearch((String) data.get("search_content"),skip);
+            list = searchService.kmpSearch((String) data.get("search_content"),skip);
 
             // 对搜索结果根据风格进行排序
             list = searchService.SortByFurnitureList(list,UltraGCN_res);
         }
 
         // 添加行为信息
-        for (JSONObject j : list){
-            String a = (String) j.get("goodsId");
-            int goodsId = Integer.parseInt(a);
-            behaveService.updateAddStyle(userId, goodsId, "randomSearchClick", 1);
-        }
+//        for (Map<String,Object> j : list){
+//            String a = (String) j.get("goodsId");
+//            int goodsId = Integer.parseInt(a);
+//            behaveService.updateAddStyle(userId, goodsId, "randomSearchClick", 1);
+//        }
 
         map.put("data", list);
         map.put("code", 0);

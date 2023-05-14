@@ -37,8 +37,7 @@ public class SpliteHouseService {
      * @return
      * @throws Exception
      */
-    public Map<String,Object> SpliteHouseController(JSONObject json,int userId) throws Exception {
-
+    public Map<String,Object> SpliteHouseController(Map<String,Object> json,int userId) throws Exception {
 
         Map<String,Object> temp =  json;
 

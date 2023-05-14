@@ -3,6 +3,7 @@ package com.homepainter.ForTest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.homepainter.util.ReadJson;
 import com.homepainter.util.RedisUtil;
 
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,22 @@ public class LuRuGoods {
 
     @Autowired
     RedisUtil redis;
+
+    /**
+     * 更新JSON表
+     */
+    @Test
+    public void REF_GOOSJSON(){
+        String json = ReadJson.readJson("goods.json","");
+        JSONObject Alljson = JSON.parseObject(json);
+        JSONArray jsonArray =  JSON.parseArray(Alljson.getString("RECORDS"));
+        List<Map<String,Object>> temp = new ArrayList<>();
+        for(int i=0;i<jsonArray.size();i++){
+            temp.add((Map<String, Object>) jsonArray.get(i));
+        }
+
+        redis.set("JSON_GOODS",temp);
+    }
 
     /**
      * 建立联想风格索引，再次建立 不需要 删除键值，但是要在风格索引建立好的前提下 运行！

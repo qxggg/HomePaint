@@ -1,5 +1,6 @@
 package com.homepainter.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
 import com.homepainter.service.SpliteHouseService;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import static com.homepainter.service.Upload_File.putObject;
 import static com.homepainter.util.File2Base64.Base64ToFile;
+import static com.homepainter.util.ImageToBase64.getImageAsBase64;
 
 
 @RestController
@@ -48,13 +50,10 @@ public class HouseIdentifyController {
         res.put("code", 1);
         res.put("msg", "API调用报错");
         // url和base64分类
-        boolean use_imageurl = false;
         String image = "";
         if(input.get("image_url") != null){
-            use_imageurl = true;
-            image = input.get("image_url").toString();
+            image = getImageAsBase64(input.get("image_url").toString());
         }else{
-            use_imageurl = false;
             image = input.get("image").toString();
         }
 
@@ -66,15 +65,40 @@ public class HouseIdentifyController {
         PutObjectResult putObjectResult = putObject(filename, file_res, "module/");
         String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/module/" + filename;
         // 获取分房结果
-        JSONObject IdentifyResult = HouseIdentify.houseIdentify(Imageurl);
+        Map<String,Object> IdentifyResult = HouseIdentify.houseIdentify(Imageurl);
         // 原始数据
-        JSONObject origin = (JSONObject) IdentifyResult.get("data");
-        data.put("origin",origin);
+        Map<String,Object> origin = new HashMap<>();
+        try {
+            origin = (Map<String, Object>) IdentifyResult.get("data");
+            data.put("origin",origin);
+        }catch (Exception e){
+            res.put("code",20);
+            res.put("Exception",e);
+            res.put("msg","户型图识别失败");
+            return res;
+        }
+
         // 抠门扣窗
-        data.put("DWW",HouseIdentifyHandler.getResult(origin));
+        try{
+            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
+        }catch (Exception e){
+            res.put("code",21);
+            res.put("Exception",e);
+            res.put("msg","抠门扣窗失败");
+            return res;
+        }
+
         // 分房算法
-        Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
-        data.put("house",house);
+        try {
+            Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+            data.put("house",house);
+        }catch (Exception e){
+            res.put("code",22);
+            res.put("Exception",e);
+            res.put("msg","分房算法失败");
+            return res;
+        }
+
 
         res.put("data", data);
         res.put("code", 0);

@@ -50,22 +50,22 @@ public interface HouseIdentify {
             OkHttpClient client = SSLCipherSuiteUtil.createOkHttpClient(Constant.INTERNATIONAL_PROTOCOL);
             // Send the request.
             Response response = client.newCall(signedRequest).execute();
-            // Print the status line of the response.
+
             LOGGER.info("status: " + response.code());
-            // Print the header fields of the response.
+
             Headers resHeaders = response.headers();
 
             for (String h : resHeaders.names()) {
                 LOGGER.info(h + ": " + resHeaders.get(h));
             }
 
-            // Print the body of the response.
+
             ResponseBody resEntity = response.body();
-//            LOGGER.info(resEntity.string());
+
 
             res = resEntity.string();
             result = JSONObject.parseObject(res);
-            System.out.println("haha" + result );
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }

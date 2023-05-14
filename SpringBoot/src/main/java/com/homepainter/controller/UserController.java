@@ -146,6 +146,9 @@ public class UserController {
 
                 // 添加到待训练列表
                 ultraGCN.AddUser(id);
+
+                // 添加注册风格
+                redisUtil.set("UserStyle"+id,styles);
             } else map.put("msg", "网络错误！");
         }
         else map.put("msg", "验证码错误！");
