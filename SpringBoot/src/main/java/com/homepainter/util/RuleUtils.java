@@ -177,6 +177,28 @@ public class RuleUtils {
         return walls;
     }
 
+
+    public static JSONArray wallAddHandler(JSONArray walls){
+      for (int i = 0; i < walls.size(); ++i){
+          JSONObject w1 = walls.getJSONObject((i));
+          if (w1.get("category").equals(2) || w1.get("category").equals(1)) continue;
+
+          BigDecimal x1 = w1.getJSONObject("p1").getBigDecimal("x");
+          BigDecimal x2 = w1.getJSONObject("p2").getBigDecimal("x");
+          BigDecimal y1 = w1.getJSONObject("p1").getBigDecimal("y");
+          BigDecimal y2 = w1.getJSONObject("p2").getBigDecimal("y");
+          int j = 1;
+
+          while(true) {
+              JSONObject w2 = walls.getJSONObject((i + j) % walls.size());
+              BigDecimal x3 = w2.getJSONObject("p2").getBigDecimal("x");
+              BigDecimal y3 = w2.getJSONObject("p2").getBigDecimal("y");
+              if ()
+          }
+          if (w1.get(""))
+      }
+    }
+
     private static void roomHandlerUtil(JSONArray remove, JSONArray walls, JSONObject wall, JSONObject p1, JSONObject p2) {
         int s = (int) p1.get("id");
         int e = (int) p2.get("id");
@@ -267,9 +289,9 @@ public class RuleUtils {
         double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
         for (int i = 0; i < index.size(); ++i){
             JSONObject idx = index.getJSONObject(i);
-            double x = (double) idx.get("x");
-            double y = (double) idx.get("y");
-            double z = (double) idx.get("z");
+            double x = toDouble((BigDecimal) idx.get("x"));
+            double y =  toDouble((BigDecimal) idx.get("y"));
+            double z =  toDouble((BigDecimal) idx.get("z"));
 
             if (x > 0 && z > 0 && y < 0){
                 x1 = x; y1 = y; z1 = z;
@@ -280,6 +302,12 @@ public class RuleUtils {
             }
         }
 
+        System.out.println("x1 " + x1);
+        System.out.println("y1 " + y1);
+        System.out.println("z1 " + z1);
+        System.out.println("x2 " + x2);
+        System.out.println("y2 " + y2);
+        System.out.println("z2 " + z2);
         double x = (x1 + x2) / 2.0, y = (y1 + y2) / 2.0, z = (z1 + z2) / 2.0;
 
         System.out.println("下面输出一下原来物体最下方那个点的坐标");
@@ -288,9 +316,9 @@ public class RuleUtils {
         System.out.println(z);
         System.out.println();
 
-        double cx = (double) center.get("x");
-        double cy = (double) center.get("y");
-        double cz = (double) center.get("z");
+        double cx = toDouble((BigDecimal) center.get("x"));
+        double cy = toDouble((BigDecimal) center.get("y"));
+        double cz = toDouble((BigDecimal) center.get("z"));
         System.out.println("下面输出中心点");
         System.out.println(cx);
         System.out.println(cy);
@@ -301,10 +329,10 @@ public class RuleUtils {
         JSONObject p1 = wall.getJSONObject("p1");
         JSONObject p2 = wall.getJSONObject("p2");
 
-        double wx1 = (double) p1.get("x");
-        double wy1 = (double) p1.get("y");
-        double wx2 = (double) p2.get("x");
-        double wy2 = (double) p2.get("y");
+        double wx1 = toDouble((BigDecimal) p1.get("x"));
+        double wy1 = toDouble((BigDecimal) p1.get("y"));
+        double wx2 = toDouble((BigDecimal) p2.get("x"));
+        double wy2 = toDouble((BigDecimal) p2.get("y"));
 
         double xtmp = (wx1 + wx2) / 2.0;
         double ztmp = (wy1 + wy2) / 2.0;
@@ -342,6 +370,9 @@ public class RuleUtils {
         System.out.println();
         calPoints(index, pivot, angle);
         JSONObject j = new JSONObject();
+        System.out.println();
+        System.out.println(angle * 180 / Math.PI);
+        System.out.println(index);
         j.put("x", res[0]);
         j.put("y", cfy);
         j.put("z", res[1]);
@@ -352,9 +383,9 @@ public class RuleUtils {
     public static JSONArray calPoints(JSONArray index, double[] pivot, double angle){
         for (int i = 0; i < index.size(); ++i){
             JSONObject idx = index.getJSONObject(i);
-            double x = (double)idx.get("x");
-            double y = (double)idx.get("y");
-            double z = (double)idx.get("z");
+            double x = toDouble((BigDecimal) idx.get("x"));
+            double y =  toDouble((BigDecimal) idx.get("y"));
+            double z =  toDouble((BigDecimal) idx.get("z"));
 
             double[] point = {x, z};
             double[] res = rotate(pivot, point, 2 * Math.PI - angle);
@@ -430,6 +461,7 @@ public class RuleUtils {
         idx.put("z", 4.0);
 
         indexs.add(idx);
+
 
         idx = new JSONObject();
         idx.put("x", -4.0);
