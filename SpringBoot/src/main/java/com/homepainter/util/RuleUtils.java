@@ -1,5 +1,6 @@
 package com.homepainter.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections4.CollectionUtils;
@@ -178,26 +179,24 @@ public class RuleUtils {
     }
 
 
-    public static JSONArray wallAddHandler(JSONArray walls){
-      for (int i = 0; i < walls.size(); ++i){
-          JSONObject w1 = walls.getJSONObject((i));
-          if (w1.get("category").equals(2) || w1.get("category").equals(1)) continue;
-
-          BigDecimal x1 = w1.getJSONObject("p1").getBigDecimal("x");
-          BigDecimal x2 = w1.getJSONObject("p2").getBigDecimal("x");
-          BigDecimal y1 = w1.getJSONObject("p1").getBigDecimal("y");
-          BigDecimal y2 = w1.getJSONObject("p2").getBigDecimal("y");
-          int j = 1;
-
-          while(true) {
-              JSONObject w2 = walls.getJSONObject((i + j) % walls.size());
-              BigDecimal x3 = w2.getJSONObject("p2").getBigDecimal("x");
-              BigDecimal y3 = w2.getJSONObject("p2").getBigDecimal("y");
-              if ()
-          }
-          if (w1.get(""))
-      }
-    }
+//    public static JSONArray wallAddHandler(JSONArray walls){
+//      for (int i = 0; i < walls.size(); ++i){
+//          JSONObject w1 = walls.getJSONObject((i));
+//          if (w1.get("category").equals(2) || w1.get("category").equals(1)) continue;
+//
+//          BigDecimal x1 = w1.getJSONObject("p1").getBigDecimal("x");
+//          BigDecimal x2 = w1.getJSONObject("p2").getBigDecimal("x");
+//          BigDecimal y1 = w1.getJSONObject("p1").getBigDecimal("y");
+//          BigDecimal y2 = w1.getJSONObject("p2").getBigDecimal("y");
+//          int j = 1;
+//
+//          while(true) {
+//              JSONObject w2 = walls.getJSONObject((i + j) % walls.size());
+//              BigDecimal x3 = w2.getJSONObject("p2").getBigDecimal("x");
+//              BigDecimal y3 = w2.getJSONObject("p2").getBigDecimal("y");
+//          }
+//      }
+//    }
 
     private static void roomHandlerUtil(JSONArray remove, JSONArray walls, JSONObject wall, JSONObject p1, JSONObject p2) {
         int s = (int) p1.get("id");
@@ -400,7 +399,6 @@ public class RuleUtils {
 
 
 
-
     public static void main(String[] args) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get("C:\\Users\\25697\\Desktop\\hello.json")));
         JSONObject j = (JSONObject) JSONObject.parse(content);
@@ -425,6 +423,9 @@ public class RuleUtils {
 
         JSONArray remove = (JSONArray) data1.get("remove");
         JSONArray www = roomHandler(rooms.getJSONObject(0), remove);
+
+        System.out.println("www" + www);
+        System.out.println();
         JSONObject room = rooms.getJSONObject(0);
         JSONArray array = room.getJSONArray("point");
 //        System.out.println(array);
