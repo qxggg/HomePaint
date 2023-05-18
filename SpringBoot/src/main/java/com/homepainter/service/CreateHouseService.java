@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.controller.HouseDataController;
+import com.homepainter.util.RedisUtil;
 import com.homepainter.util.RuleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,29 +20,16 @@ public class CreateHouseService {
     @Autowired
     GetGoods getGoods;
 
+
+
+
     public static int generateRandomNumber(int n) {
         Random random = new Random();
         return random.nextInt(n + 1);
     }
 
     public JSONArray recommend(int userId, String style) {
-        JSONArray res = new JSONArray();
-        JSONObject data = (JSONObject) JSONObject.parse(HouseDataController.GetUserHouse(userId).toString());
-        JSONArray rooms = data.getJSONObject("data").getJSONObject("house").getJSONArray("Room");
-        for (int i = 0; i < rooms.size(); ++i) {
-            JSONObject room = rooms.getJSONObject(i);
-            JSONArray tmp = new JSONArray();
-            if (room.get("name").equals("客厅"))
-                tmp = createLivingRoom(style);
-            else if (room.get("name").equals("卫生间"))
-                tmp = createBathroom(style);
-            else if (room.get("name").equals("厨房"))
-                tmp = createKitchen(style);
-            else if (room.get("name").equals("卧室"))
-                tmp = createBedroom(style);
-            res.add(tmp);
-        }
-        return res;
+      return null;
     }
 
     public JSONArray createLivingRoom(String style){
@@ -71,16 +59,13 @@ public class CreateHouseService {
 
 
     public void find(JSONArray sum, String style, String category) {
-        String json = JSON.toJSONString(getGoods.GetGoods_ByStyle_LianXiang_Category(style, category));
+        String json = JSON.toJSONString(getGoods.GetGoods_ByStyle_Category(style, category));
         JSONArray jsonArray = JSONArray.parseArray(json);
         if (jsonArray.isEmpty()) return;
         if (jsonArray.size() == 1) sum.add(jsonArray.get(0));
         else {
             for (int i = 0; i < 2; ++i) {
-                int j = generateRandomNumber(5); int random;
-                if (j == 5) random = generateRandomNumber(jsonArray.size() - 1) ;
-                else if (j == 4 || j == 3) random =  random = generateRandomNumber(jsonArray.size() - 1) / 2;
-                else random = generateRandomNumber(jsonArray.size() - 1) / 3;
+                int random = generateRandomNumber(jsonArray.size() - 1);
                 sum.add(jsonArray.get(random));
             }
         }

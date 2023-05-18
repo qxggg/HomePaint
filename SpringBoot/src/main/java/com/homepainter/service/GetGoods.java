@@ -12,6 +12,25 @@ public class GetGoods {
     @Autowired
     RedisUtil redisUtil;
 
+    public List<String> getStyleList(int userId){
+        List<String> styles = new ArrayList<>();
+        if(redisUtil.hasKey("UserStyle" + userId)) styles = (List<String>) redisUtil.get("UserStyle"+ userId);
+        else styles.add("现代");
+        return styles;
+    }
+
+    public List<Map<String,Object>> GetGoods_ByStyle_Category(String style, String category){
+        List<Map<String, Object>> res = new ArrayList<>();
+        List<Map<String, Object>> list = (List<Map<String, Object>>) redisUtil.get("STYLE"+style);
+        for(int i=0;i< list.size();i++){
+            if(list.get(i).get("category").toString().equals(category)){
+                res.add(list.get(i));
+            }
+        }
+
+        return res;
+    }
+
     /**
      * 根据 Id 查家具
      * @param id

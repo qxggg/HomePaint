@@ -1,11 +1,13 @@
 package com.homepainter.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
 import com.homepainter.service.SpliteHouseService;
 import com.homepainter.util.HouseIdentifyHandler;
 import com.homepainter.util.RedisUtil;
+import com.homepainter.util.RuleUtils;
 import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -103,6 +105,19 @@ public class HouseIdentifyController {
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "户型识别检索成功");
+
+        //给房间绑定门窗
+        try{
+            JSONArray rooms = RuleUtils.findDoorWindow((JSONObject) JSONObject.parse(res.toJSONString()));
+            HashMap<String, Object> house = (HashMap<String, Object>) data.get("house");
+            house.put("Room", rooms);
+        }catch (Exception e){
+            res.put("code", 23);
+            res.put("Exception", e);
+            res.put("msg", "绑定门窗失败");
+        }
+
+
         return res;
     }
 
