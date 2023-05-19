@@ -31,6 +31,7 @@ public class HouseDataController {
         保存户型图蓝图信息，没有则新建文件夹，文件夹名为用户id
      */
     @PostMapping("/save")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> save_house(@RequestBody Map<String, Object> input, @RequestHeader String token){
         Map<String, Object> res = new HashMap<>();
         res.put("code", 0);
@@ -64,6 +65,7 @@ public class HouseDataController {
         查询 户型图 蓝图信息 根据id查询
      */
     @GetMapping("/get")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> get_house(@RequestHeader String token){
         Map<String, Object> res = new HashMap<>();
 
@@ -100,6 +102,7 @@ public class HouseDataController {
      * @return
      */
     @PostMapping("/ChangeScale")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String ,Object> ChangeScale(@RequestBody Map<String,Object> input,@RequestHeader String token){
         Map<String,Object> res = new HashMap<>();
         Map<String,Object> data = new HashMap<>();
@@ -218,6 +221,7 @@ public class HouseDataController {
     }
 
     @GetMapping("/delete")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String ,Object> delete(@RequestHeader String token){
         Map<String ,Object> res = new HashMap<>();
 

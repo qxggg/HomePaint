@@ -1,5 +1,5 @@
 <template>
-	<view style="display: flex;flex-direction: column;align-items: center;">
+	<view style="display: flex;flex-direction: column;align-items: center;overflow-y: scroll;">
 		
 		<view style="width: 100%;">
 			<image src="../../static/login/logo.png" style="width: 60%;margin-left: 18%;margin-top: 120rpx;" mode="widthFix"></image>

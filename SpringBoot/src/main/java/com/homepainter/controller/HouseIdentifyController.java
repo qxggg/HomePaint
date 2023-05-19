@@ -3,6 +3,7 @@ package com.homepainter.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
+import com.homepainter.service.KouMen;
 import com.homepainter.service.SpliteHouseService;
 import com.homepainter.util.HouseIdentifyHandler;
 import com.homepainter.util.RedisUtil;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.homepainter.service.Upload_File.putObject;
@@ -33,6 +35,9 @@ public class HouseIdentifyController {
 
     @Autowired
     SpliteHouseService spliteHouse;
+
+    @Autowired
+    KouMen kouMen;
 
     /**
      * 户型图识别算法
@@ -79,8 +84,10 @@ public class HouseIdentifyController {
         }
 
         // 抠门扣窗
+        Map<String,Object> DWW = new HashMap<>();
         try{
-            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
+            DWW = (Map<String, Object>) HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin)));
+            data.put("DWW",DWW);
         }catch (Exception e){
             res.put("code",21);
             res.put("Exception",e);
@@ -89,8 +96,9 @@ public class HouseIdentifyController {
         }
 
         // 分房算法
+        Map<String,Object> house = new HashMap<>();
         try {
-            Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+            house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
             data.put("house",house);
         }catch (Exception e){
             res.put("code",22);
@@ -99,6 +107,9 @@ public class HouseIdentifyController {
             return res;
         }
 
+        // 抠门扣窗
+        List<Map<String,Object>> Newdata =  kouMen.start2(DWW,house);
+        data.put("NewData",Newdata);
 
         res.put("data", data);
         res.put("code", 0);

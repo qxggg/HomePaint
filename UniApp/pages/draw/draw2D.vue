@@ -38,9 +38,9 @@
 				style="width: 80%;z-index: 1;height: 100%;" canvas-id="firstCanvas" id="firstCanvas"></canvas>
 
 			<view style="display: flex;flex-direction: column;justify-content: right;width: 10%;flex-shrink: 0;">
-				<view style="margin-top: 25px;display: flex;align-items: center;" @click="switch_2d">
-					<image src="../../static/ultis/3D.png" mode="widthFix" style="width: 20px;"></image>
-					<text style="font-size: 15px;margin-left: 5rpx;text-decoration: underline">3D视角</text>
+				<view style="margin-top: 25px;display: flex;align-items: center;" >
+					<image  src="../../static/ultis/3D.png" mode="widthFix" style="width: 20px;"></image>
+					<a style="font-size: 15px;margin-left: 5rpx;text-decoration: underline" href="uniwebview://close">3D视角</a>
 				</view>
 
 				<view style="display: flex;align-items: center;margin-top: 10px;">

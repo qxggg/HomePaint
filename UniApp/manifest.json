@@ -136,5 +136,23 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "2"
+    "vueVersion" : "2",
+    "h5" : {
+        "title" : "次世代家装",
+        "devServer" : {
+            "proxy" : {
+                "/api" : {
+                    "target" : "http://101.42.44.6:8095",
+                    "changeOrigin" : true, //是否跨域
+                    "secure" : false, // 设置支持https协议的代理
+                    "pathRewrite" : {
+                        "^/api" : "/"
+                    }
+                }
+            }
+        },
+        "router" : {
+            "base" : "./"
+        }
+    }
 }
