@@ -151,7 +151,7 @@
 						
 					</view>
 				</view>
-				<view v-else style="display: flex;flex-direction: column;">
+				<view v-else-if="yindao==3" style="display: flex;flex-direction: column;">
 					<input style="height: 285px;" disabled="true"/>
 					
 					<view style="display: flex;flex-direction: row-reverse;width: 100%;">
@@ -216,6 +216,9 @@
 			// #endif
 		},
 		mounted() {			
+
+			
+			this.islogin();
 			var have_show = uni.getStorageSync('yindao');
 				
 			// if(have_show==false||have_show==undefined||have_show==null){
@@ -226,10 +229,21 @@
 
 			// console.log(JSON.stringify(this.info));
 			
-			this.initdata();
 
 		},
 		methods: {
+			islogin(){
+				console.log('---------------------')
+				var token = uni.getStorageSync('token')
+				console.log(token)
+				if(token==null||token==undefined||token.length==0){
+					uni.redirectTo({
+						url:'/pages/login/login'
+					});
+				}else{
+					this.initdata();
+				}
+			},
 			scan(){
 				uni.scanCode({
 					success: (res) => {

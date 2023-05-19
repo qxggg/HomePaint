@@ -68,10 +68,20 @@ public class LuRuGoods {
 
 
     /**
-     * 建立风格索引，如果要重新建立，需要将STYLE*的建全部删掉
+     * 建立风格索引，如果要重新建立，需要将STYLE*的建全部删掉  redis-cli KEYS "STYLE*" | xargs redis-cli DEL
      */
     @Test
     public void JianLi_Style_SuoYin(){
+
+        // 删除STYLE * 号建
+        Set<String> keys = (Set<String>) redis.getAllKeys();
+        for(String key :keys){
+            if(key.substring(0,5).equals("STYLE")){
+               System.out.println(key);
+               redis.del(key);
+            }
+        }
+
         String json = readJson("goods.json");
 
         JSONObject jsonObject = JSON.parseObject(json);
@@ -180,16 +190,16 @@ public class LuRuGoods {
 
         // size
         Map<String,Object> size = new HashMap<>();
-        size.put("x",Double.parseDouble( csv.get(8)[0]));
-        size.put("y",Double.parseDouble( csv.get(8)[1]));
-        size.put("z",Double.parseDouble( csv.get(8)[2]));
+        size.put("x",Double.parseDouble( csv.get(9)[0]));
+        size.put("y",Double.parseDouble( csv.get(9)[1]));
+        size.put("z",Double.parseDouble( csv.get(9)[2]));
         goodsData.put("size",size);
 
         // Center
         Map<String,Object> Center = new HashMap<>();
-        Center.put("x",Double.parseDouble( csv.get(8)[0]));
-        Center.put("y",Double.parseDouble( csv.get(8)[1]));
-        Center.put("z",Double.parseDouble( csv.get(8)[2]));
+        Center.put("x",Double.parseDouble( csv.get(10)[0]));
+        Center.put("y",Double.parseDouble( csv.get(10)[1]));
+        Center.put("z",Double.parseDouble( csv.get(10)[2]));
         goodsData.put("Center",Center);
         return goodsData;
     }
@@ -229,4 +239,89 @@ public class LuRuGoods {
         put("儿童", Arrays.asList("现代", "极简主义", "轻奢华", "新中式", "日式"));
         put("古典欧洲", Arrays.asList("复古", "欧洲", "北欧", "工业", "美式", "新古典主义"));
     }};
+
+    /**
+     * 修改第一次的点错误问题
+     */
+    @Test
+    public void Xiugai() throws IOException {
+        // 参数
+        String category = "L形沙发";
+        int cnt = 31;
+
+        String csvPath = "G:\\csv\\" +category +"\\";
+
+        // 获取文件下的子文件夹名称，modelId
+        String []res = Get_Zi_Dir("G:\\家具类别划分\\L形沙发");
+
+        for(int i=0;i<cnt;i++){
+            // 获取商品信息
+            Map<String,Object> goodsData = HuiZong_GoodsData_ByCSV(csvPath+i+".csv");
+            List<Map<String,Object>> vertexs = new ArrayList<>();
+            Map<String,Object> size = (Map<String, Object>) goodsData.get("size");
+            double x = Double.parseDouble( size.get("x").toString() );
+            double y = Double.parseDouble( size.get("y").toString() );
+            double z = Double.parseDouble( size.get("z").toString() );
+            // 0
+            Map<String,Object> temp = new HashMap<>();
+            temp.put("x",x/2);
+            temp.put("y",y/2);
+            temp.put("z",z/2);
+            vertexs.add(temp);
+            // 1
+            temp = new HashMap<>();
+            temp.put("x",-1*x/2);
+            temp.put("y",y/2);
+            temp.put("z",z/2);
+            vertexs.add(temp);
+            // 2
+            temp = new HashMap<>();
+            temp.put("x",x/2);
+            temp.put("y",-1*y/2);
+            temp.put("z",z/2);
+            vertexs.add(temp);
+            // 3
+            temp = new HashMap<>();
+            temp.put("x",x/2);
+            temp.put("y",y/2);
+            temp.put("z",-1*z/2);
+            vertexs.add(temp);
+            // 4
+            temp = new HashMap<>();
+            temp.put("x",-1*x/2);
+            temp.put("y",-1*y/2);
+            temp.put("z",z/2);
+            vertexs.add(temp);
+            // 5
+            temp = new HashMap<>();
+            temp.put("x",-1*x/2);
+            temp.put("y",y/2);
+            temp.put("z",-1*z/2);
+            vertexs.add(temp);
+            // 6
+            temp = new HashMap<>();
+            temp.put("x",x/2);
+            temp.put("y",-1*y/2);
+            temp.put("z",-1*z/2);
+            vertexs.add(temp);
+            // 7
+            temp = new HashMap<>();
+            temp.put("x",-1*x/2);
+            temp.put("y",-1*y/2);
+            temp.put("z",-1*z/2);
+            vertexs.add(temp);
+
+
+            goodsData.put("vertexs",vertexs);
+
+            // 获取modelId
+            String modalId = res[i];
+
+            // 存入redis
+            Map<String ,Object> goods = (Map<String, Object>) redis.get("GOODS"+modalId);
+            goods.putAll(goodsData);
+            System.out.println(goods);
+            redis.set("GOODS"+modalId,(Map<String,Object>)goods);
+        }
+    }
 }

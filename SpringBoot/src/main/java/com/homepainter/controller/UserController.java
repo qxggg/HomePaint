@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class UserController {
     UltraGCN ultraGCN;
 
     @GetMapping("/error")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> error(){
         Map<String, Object> map = new HashMap<>();
         map.put("code", "3");
@@ -49,12 +51,14 @@ public class UserController {
     }
 
     @GetMapping("/test")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> hello (@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("data", "接口联通成功");
         return map;
     }
     @PostMapping("/login")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> loginByPass(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);
@@ -78,6 +82,7 @@ public class UserController {
     }
 
     @PostMapping("/smsLogin")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> loginBySMS(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);
@@ -96,6 +101,7 @@ public class UserController {
     }
 
     @PostMapping("/loginSendCode")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> sendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);
@@ -110,6 +116,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> register(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);
@@ -149,6 +156,7 @@ public class UserController {
 
                 // 添加注册风格
                 redisUtil.set("UserStyle"+id,styles);
+
             } else map.put("msg", "网络错误！");
         }
         else map.put("msg", "验证码错误！");
@@ -156,6 +164,7 @@ public class UserController {
     }
 
     @PostMapping("/registerSendCode")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> registerSendCode(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 1);

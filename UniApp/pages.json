@@ -10,7 +10,6 @@
 			}
 			
 		},
-		//#ifdef APP-PLUS
 		//启动页
 		{
 			"path": "pages/guide/judge",
@@ -24,6 +23,7 @@
 				}
 			}
 		},
+		
 		{
 			"path": "pages/guide/guide",
 			"style": {
@@ -36,7 +36,8 @@
 				}
 			}
 		},
-		// #endif
+
+
 	// 	{
 	// 		"path": "pages/navigation/ShouYe/ShouYe",
 	// 		"style": {

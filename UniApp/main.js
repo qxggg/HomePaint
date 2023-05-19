@@ -21,7 +21,9 @@ Vue.prototype.screen_width = uni.getWindowInfo().windowWidth;
 Vue.prototype.screen_height= uni.getWindowInfo().windowHeight;
 
 // Vue.prototype.server_url='http://120.24.238.88:8146';
-Vue.prototype.server_url='http://101.42.44.6:8095/';
+// Vue.prototype.server_url='/host/';
+// Vue.prototype.server_url='http://127.0.0.1:8095/';
+Vue.prototype.server_url='/api/';
 
 Vue.mixin({
 	methods: {

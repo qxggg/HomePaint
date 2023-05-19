@@ -69,6 +69,7 @@ public class GoodsController {
     public String[] styleMenu = {"东南亚","现代","日式","复古","地中海","韩式","轻奢华","极简主义","工业","北欧","美式","新中式","欧洲","新古典主义","中国风","明清","其他","儿童","古典欧洲"};
 
     @GetMapping("/test")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public void test() throws IOException {
         outXlxsUltraGCNService.writeFurnitureXlxs();
     }
@@ -76,6 +77,7 @@ public class GoodsController {
 
 
     @GetMapping("/get_list")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> getAllList(@RequestParam(value="skip",required = false) String skipString ,@RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         List<Map<String, Object>> FurnitureList = new ArrayList<>();
@@ -154,6 +156,7 @@ public class GoodsController {
     }
 
     @PostMapping("/post")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> getGoodsById(@RequestBody Map<String, Object> data, @RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
@@ -174,6 +177,7 @@ public class GoodsController {
     }
 
     @PostMapping("get_list")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> getGoodsByContent(@RequestBody Map<String, Object> data, @RequestHeader String token) throws ClientException {
         Map<String, Object> map = new HashMap<>();
         List<Map<String,Object>> list = new ArrayList<>();
@@ -250,11 +254,13 @@ public class GoodsController {
     }
 
     @PostMapping("/translate")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public List<JSONObject> translate(@RequestBody List<JSONObject> jsonObjects) throws Exception {
         return translateService.translateJson(jsonObjects);
     }
 
     @PostMapping("/insertLocal")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> insertGoods(@RequestBody List<InsertGoods> goods){
         Map<String, Object> map = new HashMap<>();
 
@@ -274,6 +280,7 @@ public class GoodsController {
     }
 
     @GetMapping("/swiperList")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> getHot(){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
@@ -283,6 +290,7 @@ public class GoodsController {
     }
 
     @PostMapping("/shoucang")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> collect(@RequestBody Map<String, Object> data,  @RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         int collectId = (int) data.get("id");
@@ -302,6 +310,7 @@ public class GoodsController {
     }
 
     @GetMapping("/shoucang/list")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> getCollectList( @RequestHeader String token){
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
@@ -328,6 +337,7 @@ public class GoodsController {
 //        return res;
 //    }
     @GetMapping("/shoucang")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> getCollect(){
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
@@ -336,6 +346,7 @@ public class GoodsController {
         return map;
     }
     @PostMapping("/unshoucang")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> UnCollect(@RequestBody Map<String, Object> data,  @RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         int collectId = (int) data.get("id");
@@ -354,6 +365,7 @@ public class GoodsController {
     }
 
     @PostMapping("/Look_time")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> view(@RequestBody Map<String, Object> data,  @RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
@@ -365,6 +377,7 @@ public class GoodsController {
     }
 
     @PostMapping("evaluate")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> insertAppraise(@RequestBody Map<String, Object> data, @RequestHeader String token) throws IOException {
         Map<String, Object> map = new HashMap<>();
         String id =(String) redisUtil.get(token);
@@ -389,6 +402,7 @@ public class GoodsController {
         return map;
     }
     @PostMapping("WareHouse")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> wareHouse(@RequestBody Map<String, Object> data, @RequestHeader String token){
         Map<String, Object> map = new HashMap<>();
         int goods_id = (int) data.get("goods_id");
