@@ -456,7 +456,6 @@ public class RuleUtils {
         JSONArray rooms = (JSONArray) house.get("Room");
 
         for (int i = 0; i < rooms.size(); ++i){
-        //    System.out.println(i + "个房间");
             JSONObject room = rooms.getJSONObject(i);
             JSONArray doorList = new JSONArray();
             JSONArray windowList = new JSONArray();
@@ -469,88 +468,110 @@ public class RuleUtils {
                 double y1 = toDouble(point.getBigDecimal("y"));
                 double x2 = toDouble(point2.getBigDecimal("x"));
                 double y2 = toDouble(point2.getBigDecimal("y"));
-
-                for (int m = 0; m < doors.size(); ++m){
-                    JSONObject door = doors.getJSONObject(m);
-                    int start_point = door.getInteger("start_point");
-                    int end_point = door.getInteger("end_point");
-                    int doorId = door.getInteger("id");
-                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
-                    for (int n = 0; n < doorPoints.size(); ++n){
-                        JSONObject doorPoint = doorPoints.getJSONObject(n);
-                        if (doorPoint.getInteger("id") == start_point){
-                            sx = toDouble(doorPoint.getBigDecimal("x"));
-                            sy = toDouble(doorPoint.getBigDecimal("y"));
-                            sid = doorPoint.getInteger("id");
-
-                        }
-                        else if (doorPoint.getInteger("id") == end_point){
-                            ex = toDouble(doorPoint.getBigDecimal("x"));
-                            ey = toDouble(doorPoint.getBigDecimal("y"));
-                            eid = doorPoint.getInteger("id");
-                        }
-                    }
-                    if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))
-                            || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))){
-                        JSONObject d = new JSONObject();
-                        JSONObject startp = new JSONObject();
-                        JSONObject endp = new JSONObject();
-                        startp.put("x", sx);
-                        startp.put("y", sy);
-                        startp.put("id", sid);
-                        endp.put("x", ex);
-                        endp.put("y", ey);
-                        endp.put("id", eid);
-                        d.put("start_point", startp);
-                        d.put("end_point", endp);
-                        d.put("host", door.get("host"));
-                        d.put("id", doorId);
-                        d.put("category", door.get("category"));
-                        if(!doorList.contains(d)) doorList.add(d);
-                    }
-                }
-                room.put("door", doorList);
-
-                for (int m = 0; m < windows.size(); ++m){
-                    JSONObject window = windows.getJSONObject(m);
-                    int start_point = window.getInteger("start_point");
-                    int end_point = window.getInteger("end_point");
-                    int doorId = window.getInteger("id");
-                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
-                    for (int n = 0; n < windowPoints.size(); ++n){
-                        JSONObject windowPoint = windowPoints.getJSONObject(n);
-                        if (windowPoint.getInteger("id") == start_point){
-                            sx = toDouble(windowPoint.getBigDecimal("x"));
-                            sy = toDouble(windowPoint.getBigDecimal("y"));
-                            sid = windowPoint.getInteger("id");
-
-                        }
-                        else if (windowPoint.getInteger("id") == end_point){
-                            ex = toDouble(windowPoint.getBigDecimal("x"));
-                            ey = toDouble(windowPoint.getBigDecimal("y"));
-                            eid = windowPoint.getInteger("id");
-                        }
-                    }
-                    if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))
-                            || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))){
-                        JSONObject d = new JSONObject();
-                        JSONObject startp = new JSONObject();
-                        JSONObject endp = new JSONObject();
-                        startp.put("x", sx);
-                        startp.put("y", sy);
-                        startp.put("id", sid);
-                        endp.put("x", ex);
-                        endp.put("y", ey);
-                        endp.put("id", eid);
-                        d.put("start_point", startp);
-                        d.put("end_point", endp);
-                        d.put("host", window.get("host"));
-                        d.put("id", doorId);
-                        d.put("category", window.get("category"));
-                        if(!doorList.contains(d)) windowList.add(d);
-                    }
-                }
-                room.put("window", windowList);
+//
+//                for (int m = 0; m < doors.size(); ++m){
+//                    JSONObject door = doors.getJSONObject(m);
+//                    int start_point = door.getInteger("start_point");
+//                    int end_point = door.getInteger("end_point");
+//                    int doorId = door.getInteger("id");
+//                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
+//                    for (int n = 0; n < doorPoints.size(); ++n){
+//                        JSONObject doorPoint = doorPoints.getJSONObject(n);
+//                        if (doorPoint.getInteger("id") == start_point){
+//                            sx = toDouble(doorPoint.getBigDecimal("x"));
+//                            sy = toDouble(doorPoint.getBigDecimal("y"));
+//                            sid = doorPoint.getInteger("id");
+//
+//                        }
+//                        else if (doorPoint.getInteger("id") == end_point){
+//                            ex = toDouble(doorPoint.getBigDecimal("x"));
+//                            ey = toDouble(doorPoint.getBigDecimal("y"));
+//                            eid = doorPoint.getInteger("id");
+//                        }
+//                    }
+//
+//                    double pxmin = Math.min(x1, x2);
+//                    double pxmax = Math.max(x1, x2);
+//                    double wxmin = Math.min(sx, ex);
+//                    double wxmax = Math.max(sx, ex);
+//
+//                    double pymin = Math.min(y1, y2);
+//                    double pymax = Math.max(y1, y2);
+//                    double wymin = Math.min(sy, ey);
+//                    double wymax = Math.max(sy, ey);
+//                    if (pxmin <= wxmin && pxmax >= wxmax && pymin <= wymin && pymax >= wymax && Math.abs((wymax - pymin) * (pxmax - wxmax) - (wxmax - pxmin) * (pymax - wymax)) < 0.01
+//                            && Math.abs((wymin - pymin) * (pxmax - wxmin) - (wxmin - pxmin) * (pymax - wymin)) < 0.01 || pxmin == wxmin && pxmax == wxmax
+//                            && pymin == wymin && pymax == wymax){
+//                        JSONObject d = new JSONObject();
+//                        JSONObject startp = new JSONObject();
+//                        JSONObject endp = new JSONObject();
+//                        startp.put("x", sx);
+//                        startp.put("y", sy);
+//                        startp.put("id", sid);
+//                        endp.put("x", ex);
+//                        endp.put("y", ey);
+//                        endp.put("id", eid);
+//                        d.put("start_point", startp);
+//                        d.put("end_point", endp);
+//                        d.put("host", door.get("host"));
+//                        d.put("id", doorId);
+//                        d.put("category", door.get("category"));
+//                        if(!doorList.contains(d)) doorList.add(d);
+//                    }
+//                }
+//                room.put("door", doorList);
+//                System.out.println(doorList);
+//
+//                for (int m = 0; m < windows.size(); ++m){
+//                    JSONObject window = windows.getJSONObject(m);
+//                    int start_point = window.getInteger("start_point");
+//                    int end_point = window.getInteger("end_point");
+//                    int doorId = window.getInteger("id");
+//                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
+//                    for (int n = 0; n < windowPoints.size(); ++n){
+//                        JSONObject windowPoint = windowPoints.getJSONObject(n);
+//                        if (windowPoint.getInteger("id") == start_point){
+//                            sx = toDouble(windowPoint.getBigDecimal("x"));
+//                            sy = toDouble(windowPoint.getBigDecimal("y"));
+//                            sid = windowPoint.getInteger("id");
+//
+//                        }
+//                        else if (windowPoint.getInteger("id") == end_point){
+//                            ex = toDouble(windowPoint.getBigDecimal("x"));
+//                            ey = toDouble(windowPoint.getBigDecimal("y"));
+//                            eid = windowPoint.getInteger("id");
+//                        }
+//                    }
+//                    double pxmin = Math.min(x1, x2);
+//                    double pxmax = Math.max(x1, x2);
+//                    double wxmin = Math.min(sx, ex);
+//                    double wxmax = Math.max(sx, ex);
+//
+//                    double pymin = Math.min(y1, y2);
+//                    double pymax = Math.max(y1, y2);
+//                    double wymin = Math.min(sy, ey);
+//                    double wymax = Math.max(sy, ey);
+//                    if (pxmin <= wxmin && pxmax >= wxmax && pymin <= wymin && pymax >= wymax && Math.abs((wymax - pymin) * (pxmax - wxmax) - (wxmax - pxmin) * (pymax - wymax)) < 0.01
+//                            && Math.abs((wymin - pymin) * (pxmax - wxmin) - (wxmin - pxmin) * (pymax - wymin)) < 0.01 || pxmin == wxmin && pxmax == wxmax
+//                            && pymin == wymin && pymax == wymax){
+//                        JSONObject d = new JSONObject();
+//                        JSONObject startp = new JSONObject();
+//                        JSONObject endp = new JSONObject();
+//                        startp.put("x", sx);
+//                        startp.put("y", sy);
+//                        startp.put("id", sid);
+//                        endp.put("x", ex);
+//                        endp.put("y", ey);
+//                        endp.put("id", eid);
+//                        d.put("start_point", startp);
+//                        d.put("end_point", endp);
+//                        d.put("host", window.get("host"));
+//                        d.put("id", doorId);
+//                        d.put("category", window.get("category"));
+//                        if(!doorList.contains(d)) windowList.add(d);
+//                    }
+//                }
+//                room.put("window", windowList);
 
                 for (int m = 0; m < walls.size(); ++m){
                     JSONObject wall = walls.getJSONObject(m);
@@ -573,8 +594,23 @@ public class RuleUtils {
                         }
                     }
 
-                    if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx <= x1 && sx >= x2 && ex <= x1 && ex >= x2) || (sx >= x1 && sx <= x2 && ex >= x1 && ex <= x2))
-                            || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx <= x1 && sx >= x2 && ex <= x1 && ex >= x2) || (sx >= x1 && sx <= x2 && ex >= x1 && ex <= x2))){
+//
+//                    System.out.println("sx " + sx + " sy " + sy + " ex " + ex + " ey " + ey);
+//                    System.out.println("x1" + x1 + " y1" + y1 + " x2" + x2 + " y2" + y2);
+//                    System.out.println();
+
+                    double pxmin = Math.min(x1, x2);
+                    double pxmax = Math.max(x1, x2);
+                    double wxmin = Math.min(sx, ex);
+                    double wxmax = Math.max(sx, ex);
+
+                    double pymin = Math.min(y1, y2);
+                    double pymax = Math.max(y1, y2);
+                    double wymin = Math.min(sy, ey);
+                    double wymax = Math.max(sy, ey);
+                    if (pxmin <= wxmin && pxmax >= wxmax && pymin <= wymin && pymax >= wymax && Math.abs((wymax - pymin) * (pxmax - wxmax) - (wxmax - pxmin) * (pymax - wymax)) < 0.01
+                            && Math.abs((wymin - pymin) * (pxmax - wxmin) - (wxmin - pxmin) * (pymax - wymin)) < 0.01 || pxmin == wxmin && pxmax == wxmax
+                    && pymin == wymin && pymax == wymax){
                         JSONObject d = new JSONObject();
                         d.put("id", wallId);
                         if(!wallList.contains(d)) wallList.add(d);
@@ -583,8 +619,8 @@ public class RuleUtils {
                 }
                 room.put("wall", wallList);
             }
-        }
 
+        }
         return rooms;
     }
 
