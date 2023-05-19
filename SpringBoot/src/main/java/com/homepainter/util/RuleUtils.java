@@ -70,6 +70,19 @@ public class RuleUtils {
         return result;
     }
 
+    public static boolean isPeopleInHouse(JSONObject idx, JSONArray wallPoints){
+        List<Double> x = new ArrayList<>();
+        List<Double> y = new ArrayList<>();
+        for (int i = 0; i < wallPoints.size(); ++i){
+            JSONObject wallPoint = wallPoints.getJSONObject(i);
+            x.add(toDouble(wallPoint.getBigDecimal("x")));
+            y.add(toDouble(wallPoint.getBigDecimal("y")));
+        }
+        return (pnpolyAlgorithm(x, y, (double) idx.get("x"), (double) idx.get("y")));
+    }
+
+
+
     public static boolean isInHouse(JSONArray index, JSONArray wallPoints, float up){
 
         List<Double> x = new ArrayList<>();
@@ -435,16 +448,19 @@ public class RuleUtils {
         JSONArray windows = (JSONArray) data2.get("Windows");
         JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
 
+        JSONArray walls = (JSONArray) data2.get("Walls");
+        JSONArray wallPoints = (JSONArray) data2.get("WallPoints");
+
         JSONObject house = (JSONObject) data1.get("house");
 
         JSONArray rooms = (JSONArray) house.get("Room");
 
         for (int i = 0; i < rooms.size(); ++i){
-            System.out.println(i + "个房间");
-            System.out.println();
+        //    System.out.println(i + "个房间");
             JSONObject room = rooms.getJSONObject(i);
             JSONArray doorList = new JSONArray();
             JSONArray windowList = new JSONArray();
+            JSONArray wallList = new JSONArray();
             JSONArray points = (JSONArray) room.get("point");
             for (int j = 0; j < points.size(); ++j){
                 JSONObject point = points.getJSONObject(j);
@@ -476,7 +492,6 @@ public class RuleUtils {
                     }
                     if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))
                             || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))){
-                        System.out.println();
                         JSONObject d = new JSONObject();
                         JSONObject startp = new JSONObject();
                         JSONObject endp = new JSONObject();
@@ -537,6 +552,36 @@ public class RuleUtils {
                 }
                 room.put("window", windowList);
 
+                for (int m = 0; m < walls.size(); ++m){
+                    JSONObject wall = walls.getJSONObject(m);
+                    int start_point = wall.getInteger("start_point");
+                    int end_point = wall.getInteger("end_point");
+                    int wallId = wall.getInteger("id");
+                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
+                    for (int n = 0; n < wallPoints.size(); ++n){
+                        JSONObject wallPoint = wallPoints.getJSONObject(n);
+                        if (wallPoint.getInteger("id") == start_point){
+                            sx = toDouble(wallPoint.getBigDecimal("x"));
+                            sy = toDouble(wallPoint.getBigDecimal("y"));
+                            sid = wallPoint.getInteger("id");
+
+                        }
+                        else if (wallPoint.getInteger("id") == end_point){
+                            ex = toDouble(wallPoint.getBigDecimal("x"));
+                            ey = toDouble(wallPoint.getBigDecimal("y"));
+                            eid = wallPoint.getInteger("id");
+                        }
+                    }
+
+                    if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx <= x1 && sx >= x2 && ex <= x1 && ex >= x2) || (sx >= x1 && sx <= x2 && ex >= x1 && ex <= x2))
+                            || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx <= x1 && sx >= x2 && ex <= x1 && ex >= x2) || (sx >= x1 && sx <= x2 && ex >= x1 && ex <= x2))){
+                        JSONObject d = new JSONObject();
+                        d.put("id", wallId);
+                        if(!wallList.contains(d)) wallList.add(d);
+                    }
+
+                }
+                room.put("wall", wallList);
             }
         }
 
@@ -571,8 +616,34 @@ public class RuleUtils {
         JSONArray remove = (JSONArray) data1.get("remove");
 
         findDoorWindow(j);
-
+//
         System.out.println(rooms);
+
+//        JSONArray wa = new JSONArray();
+//        JSONObject jj = new JSONObject();
+//        jj.put("x", 0.0);
+//        jj.put("y", 0.0);
+//        wa.add(jj);
+//
+//        jj = new JSONObject();
+//        jj.put("x", 4.0);
+//        jj.put("y", 0.0);
+//        wa.add(jj);
+//
+//        jj = new JSONObject();
+//        jj.put("x", 4.0);
+//        jj.put("y", 4.0);
+//        wa.add(jj);
+//
+//        jj = new JSONObject();
+//        jj.put("x", 0.0);
+//        jj.put("y", 4.0);
+//        wa.add(jj);
+//
+//        JSONObject idx = new JSONObject();
+//        idx.put("x", 2.0);
+//        idx.put("y", 3.99);
+//        System.out.println(isPeopleInHouse(idx, wa));
 
 
 //        System.out.println(rooms);
