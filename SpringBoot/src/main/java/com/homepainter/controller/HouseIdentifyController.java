@@ -1,12 +1,13 @@
 package com.homepainter.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.HouseIdentify;
-import com.homepainter.service.KouMen;
 import com.homepainter.service.SpliteHouseService;
 import com.homepainter.util.HouseIdentifyHandler;
 import com.homepainter.util.RedisUtil;
+import com.homepainter.util.RuleUtils;
 import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.homepainter.service.Upload_File.putObject;
@@ -35,9 +35,6 @@ public class HouseIdentifyController {
 
     @Autowired
     SpliteHouseService spliteHouse;
-
-    @Autowired
-    KouMen kouMen;
 
     /**
      * 户型图识别算法
@@ -84,10 +81,8 @@ public class HouseIdentifyController {
         }
 
         // 抠门扣窗
-        Map<String,Object> DWW = new HashMap<>();
         try{
-            DWW = (Map<String, Object>) HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin)));
-            data.put("DWW",DWW);
+            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
         }catch (Exception e){
             res.put("code",21);
             res.put("Exception",e);
@@ -96,9 +91,8 @@ public class HouseIdentifyController {
         }
 
         // 分房算法
-        Map<String,Object> house = new HashMap<>();
         try {
-            house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+            Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
             data.put("house",house);
         }catch (Exception e){
             res.put("code",22);
@@ -107,13 +101,23 @@ public class HouseIdentifyController {
             return res;
         }
 
-        // 抠门扣窗
-        List<Map<String,Object>> Newdata =  kouMen.start2(DWW,house);
-        data.put("NewData",Newdata);
 
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "户型识别检索成功");
+
+        //给房间绑定门窗
+        try{
+            JSONArray rooms = RuleUtils.findDoorWindow((JSONObject) JSONObject.parse(res.toJSONString()));
+            HashMap<String, Object> house = (HashMap<String, Object>) data.get("house");
+            house.put("Room", rooms);
+        }catch (Exception e){
+            res.put("code", 23);
+            res.put("Exception", e);
+            res.put("msg", "绑定门窗失败");
+        }
+
+
         return res;
     }
 

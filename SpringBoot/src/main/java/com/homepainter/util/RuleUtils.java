@@ -1,7 +1,9 @@
 package com.homepainter.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.homepainter.service.GetGoods;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bouncycastle.pqc.jcajce.provider.qtesla.SignatureSpi;
 
@@ -102,7 +104,7 @@ public class RuleUtils {
 
     }
 
-    public static boolean inputGoods(List<HashMap<String, Object>> goods, JSONArray wallPoints, float up, JSONArray index){
+    public static boolean inputGoods(List<HashMap<String, Object>> goods, JSONArray wallPoints , float up, JSONArray index){
         if (isInHouse(index, wallPoints, up) && checkIndex(goods, index)) {
             recordIndex(goods, index);
             return true;
@@ -152,6 +154,32 @@ public class RuleUtils {
         }
     }
 
+//    public static JSONArray indexHandler(JSONArray index, JSONObject center, JSONObject target, JSONObject rotate){
+//        double x = toDouble(center.getBigDecimal("x"));
+//        double y = toDouble(center.getBigDecimal("y"));
+//        double z = toDouble(center.getBigDecimal("z"));
+//
+//        double tx = toDouble(target.getBigDecimal("x"));
+//        double ty = toDouble(target.getBigDecimal("y"));
+//        double tz = toDouble(target.getBigDecimal("z"));
+//
+//        double fx = toDouble(rotate.getBigDecimal("x"));
+//        double fy = toDouble(rotate.getBigDecimal("y"));
+//        double fz = toDouble(rotate.getBigDecimal("z"));
+//        double dx = tx - x, dy = ty - y, dz = tz - z;
+//
+//
+//        for (int i = 0; i < index.size(); ++i){
+//            JSONObject tmp = index.getJSONObject(i);
+//            double lx = tmp.getDouble("x");
+//            double ly = tmp.getDouble("y");
+//            double lz = tmp.getDouble("z");
+//            lx += dx; ly += dy; lz += dz;
+//        }
+//
+//        return index;
+//    }
+
 
     public static JSONArray roomHandler(JSONObject room, JSONArray remove){
         JSONArray points = (JSONArray) room.get("point");
@@ -176,6 +204,26 @@ public class RuleUtils {
          System.out.println(walls);
         return walls;
     }
+
+
+//    public static JSONArray wallAddHandler(JSONArray walls){
+//      for (int i = 0; i < walls.size(); ++i){
+//          JSONObject w1 = walls.getJSONObject((i));
+//          if (w1.get("category").equals(2) || w1.get("category").equals(1)) continue;
+//
+//          BigDecimal x1 = w1.getJSONObject("p1").getBigDecimal("x");
+//          BigDecimal x2 = w1.getJSONObject("p2").getBigDecimal("x");
+//          BigDecimal y1 = w1.getJSONObject("p1").getBigDecimal("y");
+//          BigDecimal y2 = w1.getJSONObject("p2").getBigDecimal("y");
+//          int j = 1;
+//
+//          while(true) {
+//              JSONObject w2 = walls.getJSONObject((i + j) % walls.size());
+//              BigDecimal x3 = w2.getJSONObject("p2").getBigDecimal("x");
+//              BigDecimal y3 = w2.getJSONObject("p2").getBigDecimal("y");
+//          }
+//      }
+//    }
 
     private static void roomHandlerUtil(JSONArray remove, JSONArray walls, JSONObject wall, JSONObject p1, JSONObject p2) {
         int s = (int) p1.get("id");
@@ -267,9 +315,9 @@ public class RuleUtils {
         double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
         for (int i = 0; i < index.size(); ++i){
             JSONObject idx = index.getJSONObject(i);
-            double x = (double) idx.get("x");
-            double y = (double) idx.get("y");
-            double z = (double) idx.get("z");
+            double x = toDouble((BigDecimal) idx.get("x"));
+            double y =  toDouble((BigDecimal) idx.get("y"));
+            double z =  toDouble((BigDecimal) idx.get("z"));
 
             if (x > 0 && z > 0 && y < 0){
                 x1 = x; y1 = y; z1 = z;
@@ -280,6 +328,12 @@ public class RuleUtils {
             }
         }
 
+        System.out.println("x1 " + x1);
+        System.out.println("y1 " + y1);
+        System.out.println("z1 " + z1);
+        System.out.println("x2 " + x2);
+        System.out.println("y2 " + y2);
+        System.out.println("z2 " + z2);
         double x = (x1 + x2) / 2.0, y = (y1 + y2) / 2.0, z = (z1 + z2) / 2.0;
 
         System.out.println("下面输出一下原来物体最下方那个点的坐标");
@@ -288,9 +342,9 @@ public class RuleUtils {
         System.out.println(z);
         System.out.println();
 
-        double cx = (double) center.get("x");
-        double cy = (double) center.get("y");
-        double cz = (double) center.get("z");
+        double cx = toDouble((BigDecimal) center.get("x"));
+        double cy = toDouble((BigDecimal) center.get("y"));
+        double cz = toDouble((BigDecimal) center.get("z"));
         System.out.println("下面输出中心点");
         System.out.println(cx);
         System.out.println(cy);
@@ -301,10 +355,10 @@ public class RuleUtils {
         JSONObject p1 = wall.getJSONObject("p1");
         JSONObject p2 = wall.getJSONObject("p2");
 
-        double wx1 = (double) p1.get("x");
-        double wy1 = (double) p1.get("y");
-        double wx2 = (double) p2.get("x");
-        double wy2 = (double) p2.get("y");
+        double wx1 = toDouble((BigDecimal) p1.get("x"));
+        double wy1 = toDouble((BigDecimal) p1.get("y"));
+        double wx2 = toDouble((BigDecimal) p2.get("x"));
+        double wy2 = toDouble((BigDecimal) p2.get("y"));
 
         double xtmp = (wx1 + wx2) / 2.0;
         double ztmp = (wy1 + wy2) / 2.0;
@@ -342,6 +396,9 @@ public class RuleUtils {
         System.out.println();
         calPoints(index, pivot, angle);
         JSONObject j = new JSONObject();
+        System.out.println();
+        System.out.println(angle * 180 / Math.PI);
+        System.out.println(index);
         j.put("x", res[0]);
         j.put("y", cfy);
         j.put("z", res[1]);
@@ -352,9 +409,9 @@ public class RuleUtils {
     public static JSONArray calPoints(JSONArray index, double[] pivot, double angle){
         for (int i = 0; i < index.size(); ++i){
             JSONObject idx = index.getJSONObject(i);
-            double x = (double)idx.get("x");
-            double y = (double)idx.get("y");
-            double z = (double)idx.get("z");
+            double x = toDouble((BigDecimal) idx.get("x"));
+            double y =  toDouble((BigDecimal) idx.get("y"));
+            double z =  toDouble((BigDecimal) idx.get("z"));
 
             double[] point = {x, z};
             double[] res = rotate(pivot, point, 2 * Math.PI - angle);
@@ -366,6 +423,125 @@ public class RuleUtils {
         return index;
     }
 
+    public static JSONArray findDoorWindow(JSONObject data){
+
+        JSONObject data1 =  data.getJSONObject("data");
+        JSONObject data2 = (JSONObject) data1.get("DWW");
+
+
+        JSONArray doors = (JSONArray) data2.get("Doors");
+        JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
+
+        JSONArray windows = (JSONArray) data2.get("Windows");
+        JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
+
+        JSONObject house = (JSONObject) data1.get("house");
+
+        JSONArray rooms = (JSONArray) house.get("Room");
+
+        for (int i = 0; i < rooms.size(); ++i){
+            System.out.println(i + "个房间");
+            System.out.println();
+            JSONObject room = rooms.getJSONObject(i);
+            JSONArray doorList = new JSONArray();
+            JSONArray windowList = new JSONArray();
+            JSONArray points = (JSONArray) room.get("point");
+            for (int j = 0; j < points.size(); ++j){
+                JSONObject point = points.getJSONObject(j);
+                JSONObject point2 = points.getJSONObject((j + 1) % points.size());
+                double x1 = toDouble(point.getBigDecimal("x"));
+                double y1 = toDouble(point.getBigDecimal("y"));
+                double x2 = toDouble(point2.getBigDecimal("x"));
+                double y2 = toDouble(point2.getBigDecimal("y"));
+
+                for (int m = 0; m < doors.size(); ++m){
+                    JSONObject door = doors.getJSONObject(m);
+                    int start_point = door.getInteger("start_point");
+                    int end_point = door.getInteger("end_point");
+                    int doorId = door.getInteger("id");
+                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
+                    for (int n = 0; n < doorPoints.size(); ++n){
+                        JSONObject doorPoint = doorPoints.getJSONObject(n);
+                        if (doorPoint.getInteger("id") == start_point){
+                            sx = toDouble(doorPoint.getBigDecimal("x"));
+                            sy = toDouble(doorPoint.getBigDecimal("y"));
+                            sid = doorPoint.getInteger("id");
+
+                        }
+                        else if (doorPoint.getInteger("id") == end_point){
+                            ex = toDouble(doorPoint.getBigDecimal("x"));
+                            ey = toDouble(doorPoint.getBigDecimal("y"));
+                            eid = doorPoint.getInteger("id");
+                        }
+                    }
+                    if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))
+                            || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))){
+                        System.out.println();
+                        JSONObject d = new JSONObject();
+                        JSONObject startp = new JSONObject();
+                        JSONObject endp = new JSONObject();
+                        startp.put("x", sx);
+                        startp.put("y", sy);
+                        startp.put("id", sid);
+                        endp.put("x", ex);
+                        endp.put("y", ey);
+                        endp.put("id", eid);
+                        d.put("start_point", startp);
+                        d.put("end_point", endp);
+                        d.put("host", door.get("host"));
+                        d.put("id", doorId);
+                        d.put("category", door.get("category"));
+                        if(!doorList.contains(d)) doorList.add(d);
+                    }
+                }
+                room.put("door", doorList);
+
+                for (int m = 0; m < windows.size(); ++m){
+                    JSONObject window = windows.getJSONObject(m);
+                    int start_point = window.getInteger("start_point");
+                    int end_point = window.getInteger("end_point");
+                    int doorId = window.getInteger("id");
+                    double sx = 0, sy = 0, ex = 0, ey = 0, sid = 0, eid = 0;
+                    for (int n = 0; n < windowPoints.size(); ++n){
+                        JSONObject windowPoint = windowPoints.getJSONObject(n);
+                        if (windowPoint.getInteger("id") == start_point){
+                            sx = toDouble(windowPoint.getBigDecimal("x"));
+                            sy = toDouble(windowPoint.getBigDecimal("y"));
+                            sid = windowPoint.getInteger("id");
+
+                        }
+                        else if (windowPoint.getInteger("id") == end_point){
+                            ex = toDouble(windowPoint.getBigDecimal("x"));
+                            ey = toDouble(windowPoint.getBigDecimal("y"));
+                            eid = windowPoint.getInteger("id");
+                        }
+                    }
+                    if (Math.abs((sy - y1) * (x2 - sx) - (y2 - sy) * (sx - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))
+                            || Math.abs((ey - y1) * (x2 - ex) - (y2 - ey) * (ex - x1)) <= 0.01 && ((sx < x1 && sx > x2 && ex < x1 && ex > x2) || (sx > x1 && sx < x2 && ex > x1 && ex < x2))){
+                        JSONObject d = new JSONObject();
+                        JSONObject startp = new JSONObject();
+                        JSONObject endp = new JSONObject();
+                        startp.put("x", sx);
+                        startp.put("y", sy);
+                        startp.put("id", sid);
+                        endp.put("x", ex);
+                        endp.put("y", ey);
+                        endp.put("id", eid);
+                        d.put("start_point", startp);
+                        d.put("end_point", endp);
+                        d.put("host", window.get("host"));
+                        d.put("id", doorId);
+                        d.put("category", window.get("category"));
+                        if(!doorList.contains(d)) windowList.add(d);
+                    }
+                }
+                room.put("window", windowList);
+
+            }
+        }
+
+        return rooms;
+    }
 
 
 
@@ -374,8 +550,8 @@ public class RuleUtils {
         String content = new String(Files.readAllBytes(Paths.get("C:\\Users\\25697\\Desktop\\hello.json")));
         JSONObject j = (JSONObject) JSONObject.parse(content);
 
-        JSONObject data1 = (JSONObject) j.get("data");
-        JSONObject data2 = (JSONObject) data1.get("RWW");
+        JSONObject data1 =  j.getJSONObject("data");
+        JSONObject data2 = (JSONObject) data1.get("DWW");
 
 
         JSONArray doorList = (JSONArray) data2.get("Doors");
@@ -386,98 +562,122 @@ public class RuleUtils {
 
         JSONArray windowList = (JSONArray) data2.get("Windows");
         JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
-
+//
         String style = (String) data2.get("style");
-        JSONObject house = (JSONObject) j.get("house");
+        JSONObject house = (JSONObject) data1.get("house");
 
         JSONArray rooms = (JSONArray) house.get("Room");
 
         JSONArray remove = (JSONArray) data1.get("remove");
-        JSONArray www = roomHandler(rooms.getJSONObject(0), remove);
-        JSONObject room = rooms.getJSONObject(0);
-        JSONArray array = room.getJSONArray("point");
-//        System.out.println(array);
-//        System.out.println(roomHandler(rooms.getJSONObject(0), remove));
-        JSONObject wa = new JSONObject();
-        JSONObject p1 = new JSONObject();
-        JSONObject p2 = new JSONObject();
-        p2.put("x", 3.0);
-        p2.put("y", 5.0);
-        p1.put("x", 3.0);
-        p1.put("y", 19.0);
 
-        wa.put("p1", p1);
-        wa.put("p2", p2);
+        findDoorWindow(j);
+
+        System.out.println(rooms);
+
+
+//        System.out.println(rooms);
+//        JSONArray www = roomHandler(rooms.getJSONObject(0), remove);
 //
-        JSONArray indexs = new JSONArray();
-        JSONObject idx = new JSONObject();
-        idx.put("x", 4.0);
-        idx.put("y", 4.0);
-        idx.put("z", 4.0);
-
-        indexs.add(idx);
-
-        idx = new JSONObject();
-        idx.put("x", 4.0);
-        idx.put("y", 4.0);
-        idx.put("z", -4.0);
-
-        indexs.add(idx);
-
-        idx = new JSONObject();
-        idx.put("x", 4.0);
-        idx.put("y", -4.0);
-        idx.put("z", 4.0);
-
-        indexs.add(idx);
-
-        idx = new JSONObject();
-        idx.put("x", -4.0);
-        idx.put("y", 4.0);
-        idx.put("z", 4.0);
-
-        indexs.add(idx);
-
-        idx = new JSONObject();
-        idx.put("x", -4.0);
-        idx.put("y", -4.0);
-        idx.put("z", 4.0);
-
-        indexs.add(idx);
-
-
-        idx = new JSONObject();
-        idx.put("x",-4.0);
-        idx.put("y", 4.0);
-        idx.put("z", -4.0);
-
-        indexs.add(idx);
-
-        idx = new JSONObject();
-        idx.put("x", 4.0);
-        idx.put("y", -4.0);
-        idx.put("z", -4.0);
-
-        indexs.add(idx);
-
-        idx = new JSONObject();
-        idx.put("x", -4.0);
-        idx.put("y", -4.0);
-        idx.put("z", -4.0);
-
-        indexs.add(idx);
-
-
-
-        JSONObject center = new JSONObject();
-        center.put("x", 2.0);
-        center.put("y", 2.0);
-        center.put("z", 2.0);
-
-
-        System.out.println(insertWallGoods(indexs, wa, center));
-
-
+//        System.out.println("www" + www);
+//        System.out.println();
+//        JSONObject room = rooms.getJSONObject(0);
+//        JSONArray array = room.getJSONArray("point");
+////        System.out.println(array);
+////        System.out.println(roomHandler(rooms.getJSONObject(0), remove));
+//        JSONObject wa = new JSONObject();
+//        JSONObject p1 = new JSONObject();
+//        JSONObject p2 = new JSONObject();
+//        p2.put("x", 3.0);
+//        p2.put("y", 5.0);
+//        p1.put("x", 3.0);
+//        p1.put("y", 19.0);
+//
+//        wa.put("p1", p1);
+//        wa.put("p2", p2);
+////
+//        JSONArray indexs = new JSONArray();
+//        JSONObject idx = new JSONObject();
+//        idx.put("x", 4.0);
+//        idx.put("y", 4.0);
+//        idx.put("z", 4.0);
+//
+//        indexs.add(idx);
+//
+//        idx = new JSONObject();
+//        idx.put("x", 4.0);
+//        idx.put("y", 4.0);
+//        idx.put("z", -4.0);
+//
+//        indexs.add(idx);
+//
+//        idx = new JSONObject();
+//        idx.put("x", 4.0);
+//        idx.put("y", -4.0);
+//        idx.put("z", 4.0);
+//
+//        indexs.add(idx);
+//
+//
+//        idx = new JSONObject();
+//        idx.put("x", -4.0);
+//        idx.put("y", 4.0);
+//        idx.put("z", 4.0);
+//
+//        indexs.add(idx);
+//
+//        idx = new JSONObject();
+//        idx.put("x", -4.0);
+//        idx.put("y", -4.0);
+//        idx.put("z", 4.0);
+//
+//        indexs.add(idx);
+//
+//
+//        idx = new JSONObject();
+//        idx.put("x",-4.0);
+//        idx.put("y", 4.0);
+//        idx.put("z", -4.0);
+//
+//        indexs.add(idx);
+//
+//        idx = new JSONObject();
+//        idx.put("x", 4.0);
+//        idx.put("y", -4.0);
+//        idx.put("z", -4.0);
+//
+//        indexs.add(idx);
+//
+//        idx = new JSONObject();
+//        idx.put("x", -4.0);
+//        idx.put("y", -4.0);
+//        idx.put("z", -4.0);
+//
+//        indexs.add(idx);
+////
+////
+////
+//        JSONObject center = new JSONObject();
+//        center.put("x", 2.0);
+//        center.put("y", 2.0);
+//        center.put("z", 2.0);
+//
+////
+////        System.out.println(insertWallGoods(indexs, wa, center));
+//
+//
+//        JSONObject target = new JSONObject();
+//        target.put("x", 3.0);
+//        target.put("y", 3.0);
+//        target.put("z", 3.0);
+//
+//        JSONObject rotate = new JSONObject();
+//        rotate.put("x", 0);
+//        rotate.put("y",0);
+//        rotate.put("z", 0);
+//
+//
+//        System.out.println(indexs);
+//
 
 
 

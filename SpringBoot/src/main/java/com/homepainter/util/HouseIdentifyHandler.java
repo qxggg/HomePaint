@@ -131,7 +131,7 @@ HouseIdentifyHandler {
 
                 }
 
-                else if(wx2 - wx1 != 0 && wy2 - wy1 != 0 && Math.abs((wy2 - wy1) * (dx2 - dx1) - (wx2 - wx1) * (dy2 - dy1)) <= 0.01 &&  (dy1 - wy1) * (wx2 - dx1) - (wy2 - dy1) * (dx1 - wx1) <= 0.01){
+                else if(wx1 < dx1 && wx2 > dx2 && wx2 - wx1 != 0 && wy2 - wy1 != 0 && Math.abs((wy2 - wy1) * (dx2 - dx1) - (wx2 - wx1) * (dy2 - dy1)) <= 0.01 &&  (dy1 - wy1) * (wx2 - dx1) - (wy2 - dy1) * (dx1 - wx1) <= 0.01){
                     JSONObject wall1 = new JSONObject();
                     wall1.put("start_point", wsid);
                     wall1.put("end_point", dsid);
@@ -277,7 +277,7 @@ HouseIdentifyHandler {
 
                 }
 
-                else if(wx2 - wx1 != 0 && wy2 - wy1 != 0 && Math.abs((wy2 - wy1) * (dx2 - dx1) - (wx2 - wx1) * (dy2 - dy1)) <= 0.01 && (dy1 - wy1) * (wx2 - dx1) - (wy2 - dy1) * (dx1 - wx1) <= 0.01){
+                else if(wx1 < dx1 && wx2 > dx2 && wx2 - wx1 != 0 && wy2 - wy1 != 0 && Math.abs((wy2 - wy1) * (dx2 - dx1) - (wx2 - wx1) * (dy2 - dy1)) <= 0.01 && (dy1 - wy1) * (wx2 - dx1) - (wy2 - dy1) * (dx1 - wx1) <= 0.01){
                     JSONObject wall1 = new JSONObject();
                     wall1.put("start_point", wsid);
                     wall1.put("end_point", dsid);
