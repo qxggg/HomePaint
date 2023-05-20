@@ -15,4 +15,7 @@ public class test {
     public void test(){
         getGoods.GetGoods_ByStyle("现代");
     }
+
+
+
 }
