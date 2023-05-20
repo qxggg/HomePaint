@@ -147,12 +147,17 @@ public class CreateHouseService {
 
     public void find(JSONArray sum, List<String> styles, String category) {
         JSONArray jsonArray = new JSONArray();
+        JSONArray styleList = new JSONArray();
         for (String style : styles) {
-            String json = JSON.toJSONString(getGoods.GetGoods_ByStyle_Category(style, category));
-            JSONArray styleList = JSONArray.parseArray(json);
-            for (int j = 0; j < styleList.size(); ++j)
-                jsonArray.add(styleList.get(j));
+            String json = JSON.toJSONString(getGoods.GetGoods_ByStyle(style));
+            styleList = JSONArray.parseArray(json);
+            for (int j = 0; j < styleList.size(); ++j) {
+                JSONObject jj = styleList.getJSONObject(j);
+                if (jj.getString("category").equals(category))
+                    jsonArray.add(jj);
+            }
         }
+
         if (jsonArray.size() == 0) return;
         if (jsonArray.size() == 1) sum.add(jsonArray.get(0));
         else {
@@ -162,7 +167,25 @@ public class CreateHouseService {
             }
         }
     }
+
 }
+//        JSONArray jsonArray = new JSONArray();
+//        for (String style : styles) {
+//            String json = JSON.toJSONString(getGoods.GetGoods_ByStyle_Category(style, category));
+//            JSONArray styleList = JSONArray.parseArray(json);
+//            for (int j = 0; j < styleList.size(); ++j)
+//                jsonArray.add(styleList.get(j));
+//        }
+//        if (jsonArray.size() == 0) return;
+//        if (jsonArray.size() == 1) sum.add(jsonArray.get(0));
+//        else {
+//            for (int i = 0; i < 2; ++i) {
+//                int random = generateRandomNumber(jsonArray.size() - 1);
+//                sum.add(jsonArray.get(random));
+//            }
+//        }
+
+
 
 
 //    public JSONObject createMainRoom(JSONObject room, JSONArray remove, List<HashMap<String, Object>> goods, String style, String category, float up){

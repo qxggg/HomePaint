@@ -164,7 +164,7 @@ public class HouseIdentifyController {
 
 
                 defaultFloors.add(defaultFloor);
-                defaultWallpaints.add(defaultWallpaint);
+           //     defaultWallpaints.add(defaultWallpaint);
                 defaultLights.add(defaultLight);
             }
             furniture.put("floor", defaultFloors);
