@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.xml.bind.annotation.W3CDomHandler;
 import java.io.File;
 import java.io.IOException;
 
@@ -103,9 +104,13 @@ public class HouseIdentifyController {
             return res;
         }
 
+
         try{
             JSONObject furniture = new JSONObject();
             data.put("furniture", furniture);
+            JSONArray floor = new JSONArray();
+            JSONArray door = new JSONArray();
+            JSONArray wallPaper = new JSONArray();
         }catch (Exception e){
 
         }
