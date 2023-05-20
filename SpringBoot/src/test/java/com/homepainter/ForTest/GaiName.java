@@ -30,6 +30,26 @@ public class GaiName {
         }
     }
 
+    @Test
+    public void CopyFolderUser() throws IOException {
+        String path = "G:\\家具备份\\";
+
+        for(int i=0;i<20;i++){
+            System.out.println(i);
+            File file = new File(path+i);
+            if (file.isDirectory()) {
+                String[] subDirectories = file.list((current, name) -> new File(current, name).isDirectory());
+                for (String subDirectory : subDirectories) {
+                    System.out.println(subDirectory);
+                    File folder = new File("G:\\3DFurniture\\"+subDirectory);
+                    folder.mkdirs();
+                    copyFolder(path+i+"\\"+subDirectory+"\\","G:\\3DFurniture\\"+subDirectory);
+                }
+            }
+
+        }
+    }
+
     public static void copyFolder(String sourceFolder, String destinationFolder) throws IOException {
 
 
@@ -51,7 +71,7 @@ public class GaiName {
                         }
                     });
             // 删除源文件夹
-            Files.delete(sourceFolderPath);
+            // Files.delete(sourceFolderPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
