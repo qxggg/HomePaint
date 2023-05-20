@@ -10,14 +10,17 @@ import com.homepainter.util.RedisUtil;
 import com.homepainter.util.RuleUtils;
 import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.xml.bind.annotation.W3CDomHandler;
 import java.io.File;
 import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,7 @@ import static com.homepainter.util.ImageToBase64.getImageAsBase64;
 @RestController
 @RequestMapping("/identify")
 public class HouseIdentifyController {
+
 
     @Autowired
     RedisUtil redisUtil;
@@ -102,17 +106,75 @@ public class HouseIdentifyController {
         }
 
 
+
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "户型识别检索成功");
 
-        //给房间绑定门窗
+        //给房间绑定门窗 //给room打id
         try{
             JSONArray rooms = RuleUtils.findDoorWindow((JSONObject) JSONObject.parse(res.toJSONString()));
             HashMap<String, Object> house = (HashMap<String, Object>) data.get("house");
+            JSONObject furniture = new JSONObject();
+            data.put("furniture", furniture);
+            JSONArray floor = new JSONArray();
+            JSONArray door = new JSONArray();
+            JSONArray wallPaper = new JSONArray();
+            JSONArray light = new JSONArray();
+            JSONArray defaultFloors = new JSONArray();
+            JSONArray defaultWallpaints = new JSONArray();
+            JSONArray defaultLights = new JSONArray();
+            for (int i = 0; i < rooms.size(); ++i) {
+                JSONObject defaultFloor = new JSONObject();
+                JSONObject defaultWallpaint = new JSONObject();
+                JSONObject defaultLight = new JSONObject();
+                JSONObject room = rooms.getJSONObject(i);
+                defaultWallpaint.put("id", 780);
+                defaultWallpaint.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/BiZhi/780.jpg");
+                defaultWallpaint.put("roomId", i);
+                defaultWallpaint.put("price", 15);
+                defaultWallpaints.add(defaultWallpaint);
+                defaultFloor.put("id", 6);
+                defaultFloor.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/DiBan/6.jpg");
+                defaultFloor.put("roomId", i);
+                defaultFloor.put("price", 299.9);
+
+                defaultLight.put("roomId", i);
+                if (room.getString("name").equals("洗漱间") || room.getString("name").equals("卫生间")){
+                    defaultLight.put("modalId", "0f4227d2-88a2-4c39-bfd1-6d8603c9f0eb");
+                    defaultLight.put("goodsId", 881);
+                    defaultLight.put("price", 1000);
+                }
+                else if (room.getString("name").equals("阳台") || room.getString("name").equals("厨房")){
+                    defaultLight.put("modalId", "1bc7ff20-2031-44e9-91a9-4dd7bcf1b679");
+                    defaultLight.put("goodsId", 1602);
+                    defaultLight.put("price", 1000);
+                }
+                else if (room.getString("name").equals("客厅")){
+                    defaultLight.put("modalId", "38ea2314-1803-442e-9add-ace97d2959a2");
+                    defaultLight.put("goodsId", 141);
+                    defaultLight.put("price", 1000);
+                }
+                else{
+                    defaultLight.put("modalId", "3f546069-dc34-425c-87d0-f1cc1f858a5c");
+                    defaultLight.put("goodsId", 1345);
+                    defaultLight.put("price", 1000);
+                }
+                rooms.getJSONObject(i).put("roomId", i);
+
+
+                defaultFloors.add(defaultFloor);
+                defaultWallpaints.add(defaultWallpaint);
+                defaultLights.add(defaultLight);
+            }
+            furniture.put("floor", defaultFloors);
+            furniture.put("WallPaper", defaultWallpaints);
+            furniture.put("goods", new ArrayList());
+            furniture.put("light", defaultLights);
+
             house.put("Room", rooms);
         }catch (Exception e){
-            res.put("code", 23);
+            res.put("code", 24);
             res.put("Exception", e);
             res.put("msg", "绑定门窗失败");
         }
