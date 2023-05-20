@@ -159,6 +159,7 @@ public class HouseIdentifyController {
                     defaultLight.put("modalId", "3f546069-dc34-425c-87d0-f1cc1f858a5c");
                     defaultLight.put("goodsId", 1345);
                     defaultLight.put("price", 1000);
+                    defaultLight.put("center", room.getJSONObject("center"));
                 }
                 rooms.getJSONObject(i).put("roomId", i);
 

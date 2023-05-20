@@ -631,58 +631,58 @@ public class RuleUtils {
 
 
     public static void main(String[] args) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get("C:\\Users\\25697\\Desktop\\hello.json")));
-        JSONObject j = (JSONObject) JSONObject.parse(content);
-
-        JSONObject data1 =  j.getJSONObject("data");
-        JSONObject data2 = (JSONObject) data1.get("DWW");
-
-
-        JSONArray doorList = (JSONArray) data2.get("Doors");
-        JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
-
-        JSONArray wallList = (JSONArray) data2.get("Walls");
-        JSONArray wallPoints = (JSONArray) data2.get("WallPoints");
-
-        JSONArray windowList = (JSONArray) data2.get("Windows");
-        JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
+//        String content = new String(Files.readAllBytes(Paths.get("C:\\Users\\25697\\Desktop\\hello.json")));
+//        JSONObject j = (JSONObject) JSONObject.parse(content);
 //
-        String style = (String) data2.get("style");
-        JSONObject house = (JSONObject) data1.get("house");
-
-        JSONArray rooms = (JSONArray) house.get("Room");
-
-        JSONArray remove = (JSONArray) data1.get("remove");
-
-        findDoorWindow(j);
+//        JSONObject data1 =  j.getJSONObject("data");
+//        JSONObject data2 = (JSONObject) data1.get("DWW");
+//
+//
+//        JSONArray doorList = (JSONArray) data2.get("Doors");
+//        JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
+//
+//        JSONArray wallList = (JSONArray) data2.get("Walls");
+//        JSONArray wallPoints = (JSONArray) data2.get("WallPoints");
+//
+//        JSONArray windowList = (JSONArray) data2.get("Windows");
+//        JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
+////
+//        String style = (String) data2.get("style");
+//        JSONObject house = (JSONObject) data1.get("house");
+//
+//        JSONArray rooms = (JSONArray) house.get("Room");
+//
+//        JSONArray remove = (JSONArray) data1.get("remove");
+//
+//        findDoorWindow(j);
 //
 //        System.out.println(rooms);
 
-//        JSONArray wa = new JSONArray();
-//        JSONObject jj = new JSONObject();
-//        jj.put("x", 0.0);
-//        jj.put("y", 0.0);
-//        wa.add(jj);
-//
-//        jj = new JSONObject();
-//        jj.put("x", 4.0);
-//        jj.put("y", 0.0);
-//        wa.add(jj);
-//
-//        jj = new JSONObject();
-//        jj.put("x", 4.0);
-//        jj.put("y", 4.0);
-//        wa.add(jj);
-//
-//        jj = new JSONObject();
-//        jj.put("x", 0.0);
-//        jj.put("y", 4.0);
-//        wa.add(jj);
-//
-//        JSONObject idx = new JSONObject();
-//        idx.put("x", 2.0);
-//        idx.put("y", 3.99);
-//        System.out.println(isPeopleInHouse(idx, wa));
+        JSONArray wa = new JSONArray();
+        JSONObject jj = new JSONObject();
+        jj.put("x", 0.0);
+        jj.put("y", 0.0);
+        wa.add(jj);
+
+        jj = new JSONObject();
+        jj.put("x", 4.0);
+        jj.put("y", 0.0);
+        wa.add(jj);
+
+        jj = new JSONObject();
+        jj.put("x", 4.0);
+        jj.put("y", 4.0);
+        wa.add(jj);
+
+        jj = new JSONObject();
+        jj.put("x", 0.0);
+        jj.put("y", 4.0);
+        wa.add(jj);
+
+        JSONObject idx = new JSONObject();
+        idx.put("x", 2.0);
+        idx.put("y", 3.99);
+        System.out.println(isPeopleInHouse(idx, wa));
 
 
 //        System.out.println(rooms);

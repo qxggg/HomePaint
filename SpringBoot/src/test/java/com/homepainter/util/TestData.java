@@ -28,32 +28,39 @@ public class TestData {
 
     @Test
     public void test(){
-        Map<String, Object> datas = HouseDataController.GetUserHouse(232);
-        JSONObject data = (JSONObject) JSONObject.parse(datas.toString());
-
-        JSONObject data1 =  data.getJSONObject("data");
-        JSONObject data2 = (JSONObject) data1.get("DWW");
-
-        JSONArray doorList = (JSONArray) data2.get("Doors");
-        JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
-
-        JSONArray wallList = (JSONArray) data2.get("Walls");
-        JSONArray wallPoints = (JSONArray) data2.get("WallPoints");
-
-        JSONArray windowList = (JSONArray) data2.get("Windows");
-        JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
+//        Map<String, Object> datas = HouseDataController.GetUserHouse(232);
+//        JSONObject data = (JSONObject) JSONObject.parse(datas.toString());
 //
-        String style = (String) data2.get("style");
-        JSONObject house = (JSONObject) data1.get("house");
-
-        JSONArray rooms = (JSONArray) house.get("Room");
-
-        JSONArray remove = (JSONArray) data1.get("remove");
-        JSONArray j = new JSONArray();
-
-        JSONArray jp = createHouseService.createHouse(232, 3.3, 5.5, rooms);
-
+//        JSONObject data1 =  data.getJSONObject("data");
+//        JSONObject data2 = (JSONObject) data1.get("DWW");
+//
+//        JSONArray doorList = (JSONArray) data2.get("Doors");
+//        JSONArray doorPoints = (JSONArray) data2.get("DoorPoints");
+//
+//        JSONArray wallList = (JSONArray) data2.get("Walls");
+//        JSONArray wallPoints = (JSONArray) data2.get("WallPoints");
+//
+//        JSONArray windowList = (JSONArray) data2.get("Windows");
+//        JSONArray windowPoints = (JSONArray) data2.get("WindowPoints");
+////
+//        String style = (String) data2.get("style");
+//        JSONObject house = (JSONObject) data1.get("house");
+//
+//        JSONArray rooms = (JSONArray) house.get("Room");
+//
+//        JSONArray remove = (JSONArray) data1.get("remove");
+//        JSONArray j = new JSONArray();
+//
+//        JSONArray jp = createHouseService.createHouse(232, 3.3, 5.5, rooms);
+        JSONArray sum = new JSONArray();
+        List<String> styles = new ArrayList<>();
+        styles.add("韩式");
+        styles.add("日式");
+        styles.add("东南亚");
+  //      createHouseService.find(sum, styles, "单人床");
+        System.out.println(sum);
         }
+
 
 
 

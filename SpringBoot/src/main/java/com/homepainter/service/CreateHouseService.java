@@ -29,8 +29,10 @@ public class CreateHouseService {
         for (int i = 0; i < rooms.size(); ++i){
             room = rooms.getJSONObject(i);
             JSONArray wallPoint = room.getJSONArray("point");
-            if (RuleUtils.isPeopleInHouse(idx, wallPoint)) break;
+            if (RuleUtils.isPeopleInHouse(idx, wallPoint)) {
+                System.out.println(i) ;break;}
         }
+
         String name = room.getString("name");
         if (name.equals("客厅")) return createLivingRoom(styles);
         else if (name.equals("卧室")) return createLivingRoom(styles);
@@ -53,23 +55,26 @@ public class CreateHouseService {
 
     public JSONArray createBalcony(List<String> style){
         JSONArray sum = new JSONArray();
-        find(sum, style, "货架");
-        find(sum, style, "吸顶灯");
-        find(sum, style, "吊灯");
+        List<String> categorys = new ArrayList<>();
+        categorys.add("吊灯");
+        categorys.add("吸顶灯");
+        find(sum, style, categorys);
         return sumLength(sum);
     }
 
     public JSONArray createLivingRoom(List<String> style){
         JSONArray sum = new JSONArray();
-        find(sum, style, "三座/多座沙发");
-        find(sum, style, "L形沙发");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "咖啡桌");
-        find(sum, style, "餐桌");
-        find(sum, style, "餐椅");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "吸顶灯");
-        find(sum, style, "吊灯");
+        List<String> categorys = new ArrayList<>();
+        categorys.add("三座/多座沙发");
+        categorys.add("L形沙发");
+        categorys.add("圆形茶几");
+        categorys.add("咖啡桌");
+        categorys.add("餐桌");
+        categorys.add("餐椅");
+        categorys.add("圆形茶几");
+        categorys.add("吸顶灯");
+        categorys.add("吊灯");
+        find(sum, style, categorys);
         return sumLength(sum);
     }
 
@@ -90,62 +95,55 @@ public class CreateHouseService {
 
     public JSONArray createBathroom(List<String> style){
         JSONArray sum = new JSONArray();
-        find(sum, style, "三座/多座沙发");
-        find(sum, style, "吸顶灯");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "圆形茶几");
-        find(sum, style, "吸顶灯");
-        find(sum, style, "吊灯");
+        List<String> categorys = new ArrayList<>();
+        categorys.add("三座/多座沙发");
+        categorys.add("吸顶灯");
+        categorys.add("圆形茶几");
+        categorys.add("吊灯");
         return sumLength(sum);
     }
 
     public JSONArray createWashRoom(List<String> style){
         JSONArray sum = new JSONArray();
-        find(sum, style, "梳妆台");
-        find(sum, style, "梳妆椅");
-        find(sum, style, "梳妆椅");
-        find(sum, style, "梳妆椅");
-        find(sum, style, "吸顶灯");
-        find(sum, style, "吊灯");
+        List<String> categorys = new ArrayList<>();
+        categorys.add("梳妆台");
+        categorys.add("梳妆椅");
+        categorys.add("吸顶灯");
+        categorys.add("吊灯");
         return sumLength(sum);
     }
 
     public JSONArray createKitchen(List<String> style){
         JSONArray sum = new JSONArray();
-        find(sum, style, "餐具柜/侧柜/控制台桌");
-        find(sum, style, "咖啡桌");
-        find(sum, style, "酒吧凳");
-        find(sum, style, "酒柜");
-        find(sum, style, "餐桌");
-        find(sum, style, "餐椅");
-        find(sum, style, "吸顶灯");
-        find(sum, style, "吊灯");
+        List<String> categorys = new ArrayList<>();
+        categorys.add("餐具柜/侧柜/控制台桌");
+        categorys.add("咖啡桌");
+        categorys.add("酒吧凳");
+        categorys.add("酒柜");
+        categorys.add("餐桌");
+        categorys.add("吸顶灯");
+        categorys.add("吊灯");
         return sumLength(sum);
     }
 
     public JSONArray createBedroom(List<String> style){
         JSONArray sum = new JSONArray();
-        find(sum, style, "单人床");
-        find(sum, style, "床头柜");
-        find(sum, style, "特大床");
-        find(sum, style, "双层床");
-        find(sum, style, "书桌");
-        find(sum, style, "书柜/珠宝衣橱");
-        find(sum, style, "脚凳/沙发床/床头凳/凳子");
-        find(sum, style, "衣柜");
+        List<String> categorys = new ArrayList<>();
+        categorys.add("单人床");
+        categorys.add("床头柜");
+        categorys.add("特大床");
+        categorys.add("双层床");
+        categorys.add("书桌");
+        categorys.add("书柜/珠宝衣橱");
+        categorys.add("脚凳/沙发床/床头凳/凳子");
+        categorys.add("衣柜");
         return sumLength(sum);
     }
 
 
 
 
-    public void find(JSONArray sum, List<String> styles, String category) {
+    public void find(JSONArray sum, List<String> styles, List<String> categorys) {
         JSONArray jsonArray = new JSONArray();
         JSONArray styleList = new JSONArray();
         for (String style : styles) {
@@ -153,18 +151,15 @@ public class CreateHouseService {
             styleList = JSONArray.parseArray(json);
             for (int j = 0; j < styleList.size(); ++j) {
                 JSONObject jj = styleList.getJSONObject(j);
-                if (jj.getString("category").equals(category))
-                    jsonArray.add(jj);
+                for (String category : categorys)
+                    if (jj.getString("category").equals(category))
+                        jsonArray.add(jj);
             }
         }
-
-        if (jsonArray.size() == 0) return;
-        if (jsonArray.size() == 1) sum.add(jsonArray.get(0));
-        else {
-            for (int i = 0; i < 2; ++i) {
+            for (int i = 0; i < 20; ++i) {
                 int random = generateRandomNumber(jsonArray.size() - 1);
                 sum.add(jsonArray.get(random));
-            }
+
         }
     }
 
