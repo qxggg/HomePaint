@@ -34,6 +34,9 @@ HouseIdentifyHandler {
        JSONArray remove = new JSONArray();
         JSONArray wallAdd = new JSONArray();
 
+
+
+
         for (int i = 0; i < doorList.size(); ++i){
             JSONObject door = (JSONObject) doorList.get(i);
             int dstart = (int) door.get("start_point");
@@ -326,6 +329,14 @@ HouseIdentifyHandler {
 
         for (Object jj : wallAdd)
             wallPoints.add(jj);
+
+        for (int i = 0; i < wallList.size(); ++i)
+            wallList.getJSONObject(i).put("isDoor", false);
+
+        for (int i = 0; i < doorList.size(); ++i){
+            doorList.getJSONObject(i).put("isDoor", true);
+            wallList.add(doorList.get(i));
+        }
 
         data2.put("remove", remove);
         return data2;

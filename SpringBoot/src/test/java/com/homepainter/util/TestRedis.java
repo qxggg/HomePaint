@@ -1,5 +1,6 @@
 package com.homepainter.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,20 @@ public class TestRedis {
         for (int i = 0; i < 801; ++i){
             double number = generate();
             jdbcTemplate.update(sql, i, "https://image-1304455659.cos.ap-nanjing.myqcloud.com/BiZhi/" + i + ".jpg", number);
+        }
+    }
+
+    @Test
+    public void insertModalId(){
+        Set<String> keys = (Set<String>) redisUtil.getAllKeys();
+        for (String key : keys) {
+            String a = key.substring(0, 5);
+            String b = key.substring(5, key.length());
+            if (a.equals("GOODS")) {
+                JSONObject j = (JSONObject) redisUtil.get(key);
+                j.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/" + b + "/image.jpg");
+                redisUtil.set(key, j);
+            }
         }
     }
 }

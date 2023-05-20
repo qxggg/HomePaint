@@ -10,6 +10,7 @@ import com.homepainter.util.RedisUtil;
 import com.homepainter.util.RuleUtils;
 import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -29,6 +30,7 @@ import static com.homepainter.util.ImageToBase64.getImageAsBase64;
 @RestController
 @RequestMapping("/identify")
 public class HouseIdentifyController {
+
 
     @Autowired
     RedisUtil redisUtil;
@@ -101,6 +103,13 @@ public class HouseIdentifyController {
             return res;
         }
 
+        try{
+            JSONObject furniture = new JSONObject();
+            data.put("furniture", furniture);
+        }catch (Exception e){
+
+        }
+
 
         res.put("data", data);
         res.put("code", 0);
@@ -112,7 +121,7 @@ public class HouseIdentifyController {
             HashMap<String, Object> house = (HashMap<String, Object>) data.get("house");
             house.put("Room", rooms);
         }catch (Exception e){
-            res.put("code", 23);
+            res.put("code", 24);
             res.put("Exception", e);
             res.put("msg", "绑定门窗失败");
         }
