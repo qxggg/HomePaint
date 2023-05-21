@@ -108,7 +108,6 @@ public class HouseIdentifyController {
         }
 
 
-
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "户型识别检索成功");

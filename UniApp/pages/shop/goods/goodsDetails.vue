@@ -1,5 +1,6 @@
 <template>
 	<view class="goodsDetails">
+		{{goodsData}}
 		<!-- 顶部自定义导航栏 -->
 		<view class="top_nav">
 			<navBar textcolor="#000" :showLeft="true" :showTitle="false"></navBar>
@@ -111,12 +112,7 @@
 										<text class="text1">{{ row.time.substring(0,10) }}</text>
 										<text class="text2">{{ row.time.substring(0,10) }}</text>
 									</p>
-									<p class="p3">
-										<image src="/static/images/home/stars.png" v-for="s in row.score" :key="s" mode=""></image>
-										<block v-if="row.score !== 5">
-											<image src="/static/images/home/star-no.png" v-for="(s,h) in (5-row.score)" :key="h" mode=""></image>
-										</block>
-									</p>
+
 								</view>
 							</view>
 							<view class="tag_box" v-if="row.tags!=null && row.tags.length !== 0">
@@ -130,9 +126,11 @@
 							<view class="huifu" v-if="row.reply && row.reply !== ''">商家回复：{{ row.reply }}</view>
 						</view>
 					</view>
+				
 				</view>
 			</view>
 		</view>
+
 		<!-- 商品详情 -->
 		<view class="details">
 			<view class="details_title">
@@ -175,39 +173,10 @@
 				<image src="/static/images/home/TOP.png"></image>
 			</view>
 		</view>
-		<uni-popup ref="popup" type="center">
-			<view class="center_poter" style="margin: 0 auto;" v-if="shows">
-				<!-- #ifndef MP -->
-				<image class="close_btn" src="/static/images/goods/close.png" @click="hidePoster">
-				</image>
-				<!-- #endif -->
-				<!-- #ifdef MP -->
-				<cover-image class="close_btn" src="/static/images/goods/close.png" @click="hidePoster">
-				</cover-image>
-				<!-- #endif -->
-				<poster :posterData="goodsData"></poster>
-			</view>
-		</uni-popup>
+
 		
-		<!-- 预览视频弹窗 -->
-		<view class="mask" v-if="showVideo == true" @touchmove.stop.prevent="ondefault" @click="hideShow">
-			<view class="close">
-				<image src="/static/images/goods/close.png"></image>
-			</view>
-		</view>
-		<view class="previewvideo" v-if="showVideo == true">
-			<view class="videos">
-				<video class="nowvideos" id="nowVideo" v-if="showVideo == true" :src="goodsData.videos" :autoplay="showVideo"
-				 :show-center-play-btn="true" :show-mute-btn="true" :show-fullscreen-btn="false"></video>
-			</view>
-		</view>
-		<!-- 用来承载H5预览视频的 -->
-		<view style="position: absolute;top: -999upx;left: -999upx;">
-			<video ref="newVideo" id="newVideo" :src="goodsData.videos"
-			:autoplay="showVideo"
-			 :show-center-play-btn="false" :show-mute-btn="true" :show-fullscreen-btn="false" @fullscreenchange="hideShow"></video>
-		</view>
-		<loading v-if="isShow == true"></loading>
+
+
 	</view>
 </template>
 
@@ -236,7 +205,8 @@
 				longitude: '',
 				nowList: {},
 				goodsData: {
-					imageUrl:[]
+					imageUrl:[],
+					appraise:null
 				},
 				showModal: false,
 				couponshow: false,
@@ -276,7 +246,7 @@
 			// #ifdef APP-PLUS
 			this.toBar = app.globalData.toBar + 25 + 'px'
 			// #endif
-			this.newVideo = uni.createVideoContext('newVideo');
+
 		},
 
 		mounted(){
@@ -285,10 +255,12 @@
 			var temp = {
 				goods_id:Number( goodsDetail.goodsId)
 			}
-			console.log(temp);
+			console.log("-----------");
 			this.request(this.server_url+'goods/post',temp,'POST').then((res)=>{
 				console.log(res);
-				this.goodsData = res.data;
+				this.goodsData = {...res.data};
+				console.log("--------------")
+				console.log(this.goodsData);
 				this.isShow = false;
 				this.isColl = res.isCollect;
 			});

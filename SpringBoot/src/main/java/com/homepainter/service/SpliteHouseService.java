@@ -38,6 +38,13 @@ public class SpliteHouseService {
      * @throws Exception
      */
     public Map<String,Object> SpliteHouseController(Map<String,Object> json,int userId) throws Exception {
+        // 赋初始值
+        closed_spaces = new ArrayList<>();
+        Walls = new ArrayList<>();
+        WallPoints = new ArrayList<>();
+
+        num_adjacent = new double[10000];
+        now_num_adjacent = 0;
 
         Map<String,Object> temp =  json;
 

@@ -339,6 +339,17 @@
 				"navigationBarBackgroundColor": "#F8F8F8"
 			}
 		}
+        ,{
+            "path" : "pages/SheQu/SheQuList/SheQuList",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleView": false
+				},
+				"enablePullDownRefresh": true
+			}
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

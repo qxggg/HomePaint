@@ -1,17 +1,22 @@
 package com.homepainter.controller;
 
 import com.homepainter.util.FileUtils;
+import com.qcloud.cos.model.PutObjectResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.homepainter.service.Upload_File.putObject;
+import static com.homepainter.util.File2Base64.Base64ToFile;
 import static com.homepainter.util.FileUtils.isExit;
 import static com.homepainter.util.ImageCropper.crop;
 import static com.homepainter.util.ImageCropper.cropImageToPolygon;
@@ -139,6 +144,27 @@ public class PictureController {
         Files.copy(imagePath, response.getOutputStream());
     }
 
+    @PostMapping ("/upload")
+    public Map<String,Object> upload(@RequestBody Map<String,Object> input) throws IOException {
+        Map<String,Object> res = new HashMap<>();
+        try{
+            // 图片base64转换并上传
+            File file_res = Base64ToFile(input.get("image").toString());
+            String filename =  System.currentTimeMillis() + "upload.jpg";
+            PutObjectResult putObjectResult = putObject(filename, file_res, "picture/");
+            String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/picture/" + filename;
+        }catch (Exception e){
+            res.put("msg",e.toString());
+            res.put("code",16);
+            return res;
+        }
+        // 图片base64转换并上传
+
+
+        res.put("msg","上传成功");
+        res.put("code",0);
+        return res;
+    }
 
 
 }

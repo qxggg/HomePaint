@@ -4,10 +4,10 @@
 		<view style="display: flex;flex-direction: row;height: 85vh;">
 			<view
 				style="width: 10%;display: flex;flex-direction: column;justify-content: right;flex-shrink: 0;height: 100%;padding: 0px 0px 0px 10px;">
-
-				<image @click="back()" src="@/static/login/back.png"
-					style="width: 30px;margin-top: 20px;border-radius: 7px;" mode="widthFix"></image>
-
+				<a href="uniwebview://shuping">
+					<image @click="back()" src="@/static/login/back.png" 
+						style="width: 30px;margin-top: 20px;border-radius: 7px;" mode="widthFix"></image>
+				</a>
 				<view @click="change_is_huaqiang" style="display: flex;align-items: center;margin-top: 10px;">
 					<image src="../../static/ultis/huabi.png" mode="widthFix" style="width: 15px;"></image>
 					<text v-if="!is_huaqiang" style="font-size: 14px;margin-left: 10px;">画墙</text>
@@ -38,7 +38,7 @@
 				style="width: 80%;z-index: 1;height: 100%;" canvas-id="firstCanvas" id="firstCanvas"></canvas>
 
 			<view style="display: flex;flex-direction: column;justify-content: right;width: 10%;flex-shrink: 0;">
-				<view style="margin-top: 25px;display: flex;align-items: center;" >
+				<view style="margin-top: 25px;display: flex;align-items: center;" @click="jump_unity()">
 					<image  src="../../static/ultis/3D.png" mode="widthFix" style="width: 20px;"></image>
 					<a style="font-size: 15px;margin-left: 5rpx;text-decoration: underline" href="uniwebview://close">3D视角</a>
 				</view>
@@ -192,22 +192,26 @@
 				NowRoomType: 0,
 				root: null,
 				house: null,
-				now_room: -1,
+				now_room:0,
 				touching:false
 			}
 		},
 		onReady: function(e) {
 			// 获取户型
 			this.root = uni.getStorageSync('House_identify');
-
+			console.log(this.root);
+			
 			this.init();
 		},
 		onUnload() {
-			// #ifdef APP-PLUS
+			
 			plus.screen.lockOrientation('default');
-			// #endif
+			
 		},
 		methods: {
+			jump_unity(){
+				
+			},
 			init() {
 				// 总初始化
 				this.result = {
@@ -220,10 +224,7 @@
 				uni.setStorageSync('Fangwu', this.result);
 				console.log(this.result);
 				uni.setStorageSync('result_file', this.result);
-				// #ifdef APP-PLUS
-				plus.screen.lockOrientation("landscape-primary");
-				// #endif
-
+				
 
 				this.ctx = uni.createCanvasContext('firstCanvas')
 
@@ -356,6 +357,10 @@
 				}
 			},
 			save_image() {
+				this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
+					if(res.code==0){
+					}
+				});
 				uni.canvasToTempFilePath({
 					canvasId: 'firstCanvas',
 					success: (res) => {
@@ -417,6 +422,8 @@
 				if (!this.is_huaqiang) {
 					// 打标签操作
 					this.now_room = this.GetRoomId(e.touches[0]);
+					console.log('---------')
+					console.log(this.now_room);
 					this.change_toolbox(-1);
 				} else {
 					// 画墙操作
@@ -591,16 +598,17 @@
 				this.minx = minx;
 				this.maxy = maxy;
 				this.miny = miny;
-				// this.screenWidth = this.screen_height;
-				// this.screenHeight = this.screen_width;
-				this.screenWidth = this.screen_width;
-				this.screenHeight = this.screen_height;
+				this.screenWidth = this.screen_height;
+				this.screenHeight = this.screen_width;
+				// this.screenWidth = this.screen_width;
+				// this.screenHeight = this.screen_height;
+
 
 				console.log('Height:' + this.screenHeight + "width:" + this.screenWidth);
 				this.pingyi_x = this.screenWidth * 0.4 - ((maxx + minx) / 2);
 				this.fangda_x = (this.screenWidth * 0.85) / (maxx - minx);
-				this.pingyi_y = this.screenHeight * 0.42 - ((maxy + miny) / 2);
-				this.fangda_y = (this.screenHeight * 0.8) / (maxy - miny);
+				this.pingyi_y = this.screenHeight * 0.4 - ((maxy + miny) / 2);
+				this.fangda_y = (this.screenHeight * 0.75  ) / (maxy - miny);
 
 				// console.log('minx:'+minx+"maxx:"+maxx+"maxy:"+maxy+"miny:"+miny);
 				// console.log(uni.getWindowInfo());

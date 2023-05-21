@@ -86,13 +86,14 @@
 									uni.showToast({
 										title:'识别成功!'
 									});
-									uni.setStorageSync('House_identify',JSON.stringify( res.data.data));
+									uni.setStorageSync('House_identify',res.data);
 									uni.navigateTo({
 										url:'/pages/draw/draw2D'
 									})
 								}
 
 							})
+							
 						})
 					}
 				})

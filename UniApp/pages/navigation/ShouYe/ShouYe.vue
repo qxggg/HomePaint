@@ -38,7 +38,7 @@
 					<view	style="height: 50px;width: 100%;display: flex;justify-content: space-around;font-size: 14px;color: #8F7819;align-items: center;">
 						<view @click="jump_cehui()">
 							<image src="@/static/navgiation/ShouYe/cehui.png" mode="widthFix" style="width: 10px;margin-left: 10px;"></image>
-							<text style="margin-left: 5px;">测绘</text>
+							<a href="uniwebview://LandscapeLeft"  style="margin-left: 5px;text-decoration: none;color: #8F7819;">测绘</a>
 						</view>
 						
 						<view style="border-left: thin solid rgba(181,151,30,1);height: 35px;opacity: 0.2;"></view>
@@ -72,8 +72,8 @@
 					<text style="margin-left: 5px	;">家具商城</text>
 				</view>
 				<view @click="jump_family()" style="width: 31%;background-color: #FFFFFF;border-radius: 10px;height: 50px;display: flex;align-items: center;justify-content: center;">
-					<image src="../../../static/navgiation/ShouYe/family.png" style="width: 20px;" mode="widthFix"></image>
-					<text style="margin-left: 5px	;">我的家庭</text>
+					<image src="/static/images/shequ.png" style="width: 20px;" mode="widthFix"></image>
+					<text style="margin-left: 5px	;">社区广场</text>
 				</view>
 			</view>
 			
@@ -210,26 +210,26 @@
 		components: {
 			recommend
 		},
-		onLoad() {
-			// #ifdef APP-PLUS
-			plus.screen.lockOrientation('default');
-			// #endif
-		},
-		mounted() {			
-
+		onLoad(params) {
+			console.log(params);
 			
-			this.islogin();
+			if(params!=undefined&&params.token!=undefined&&params.token.length!=0){
+				uni.setStorageSync('token',params.token);
+			}else{
+				this.islogin();
+			}
+			// // #ifdef APP-PLUS
+			// plus.screen.lockOrientation('default');
+			// // #endif
 			var have_show = uni.getStorageSync('yindao');
-				
+		},
+		mounted() {				
 			// if(have_show==false||have_show==undefined||have_show==null){
 			// 	this.$refs.popup.open('center');
 			// 	uni.setStorageSync('yindao',true);
 			// }
 			
-
 			// console.log(JSON.stringify(this.info));
-			
-
 		},
 		methods: {
 			islogin(){
@@ -283,10 +283,11 @@
 			},
 			jump_family(){
 				uni.navigateTo({
-					url:'/pages/family/Myfaily'
+					url:'/pages/SheQu/SheQuList/SheQuList'
 				});
 			},
 			jump_cehui(){
+				location.href = "uniwebview://LandscapeLeft";
 				if(this.dontHaveHouse)
 					uni.navigateTo({
 						url:'/pages/draw/UploadImage'
