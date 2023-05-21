@@ -59,10 +59,10 @@ public class CommunityController {
         List<Integer> goodsId = (List<Integer>) data.get("goodsId");
         List<String> image = (List<String>) data.get("image");
         String title = (String) data.get("title");
-
+        String query = "select tiebaId from tieba order by tiebaId limit";
         String sql1 = "insert into tieba values(?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql1, userId, content, null, 0, date, 0, title);
-        String query = "select tiebaid from tieba where ";
+
 
         for (Integer goodsid : goodsId){
             String sql2 = "insert into tiebagoods values(?, ?)";

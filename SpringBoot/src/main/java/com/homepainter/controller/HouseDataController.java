@@ -261,7 +261,7 @@ public class HouseDataController {
         for (int i = 0; i < array.size(); ++i){
             JSONObject good = array.getJSONObject(i);
             String modalId = good.getString("modalId");
-            String sql = "select * from goods where modalId = " + modalId;
+            String sql = "select * from goods where modalId = '" + modalId + "'";
             Map<String, Object> map = jdbcTemplate.queryForMap(sql);
             l.add(map);
         }
