@@ -11,6 +11,7 @@ import com.homepainter.service.CommunityService;
 import com.homepainter.service.TranslateService;
 import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -30,6 +31,9 @@ public class CommunityController {
     @Autowired
     TranslateService translateService;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
 
 
     
@@ -45,6 +49,27 @@ public class CommunityController {
         return map;
     }
 
+    @PostMapping("/post")
+    public Map<String, Object> insertTieba(@RequestBody Map<String, Object> data, @RequestHeader String token){
+        String tel =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(tel.substring(5));
+        Map<String, Object> map = new HashMap<>();
+        Date date = new Date();
+        String content = (String) data.get("content");
+        List<Integer> goodsId = (List<Integer>) data.get("goodsId");
+        List<String> image = (List<String>) data.get("image");
+        String title = (String) data.get("title");
+
+        String sql1 = "insert into tieba values(?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql1, userId, content, null, 0, date, 0, title);
+        String query = "select tiebaid from ";
+
+        for (Integer goodsid : goodsId){
+            String sql2 = "insert into tiebagoods values(?, ?)";
+//            jdbcTemplate.update(sql2, goodsid, )
+        }
+        return map;
+    }
     @PostMapping("/detail")
     public Map<String, Object> getDetail(@RequestBody Map<String, Object> data){
         Map<String, Object> map = new HashMap();
