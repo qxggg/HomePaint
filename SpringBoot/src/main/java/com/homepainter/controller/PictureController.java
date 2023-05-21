@@ -153,6 +153,7 @@ public class PictureController {
             String filename =  System.currentTimeMillis() + "upload.jpg";
             PutObjectResult putObjectResult = putObject(filename, file_res, "picture/");
             String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/picture/" + filename;
+            res.put("url",Imageurl);
         }catch (Exception e){
             res.put("msg",e.toString());
             res.put("code",16);
