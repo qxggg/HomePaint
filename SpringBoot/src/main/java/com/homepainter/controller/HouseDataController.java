@@ -256,7 +256,6 @@ public class HouseDataController {
         int userId = Integer.parseInt(id.substring(5));
         String jsonString = GetUserHouse(userId).toString();
         JSONObject j = JSONObject.parseObject(jsonString);
-        System.out.println(j);
         JSONArray array = j.getJSONObject("furniture").getJSONArray("goods");
         List<Map<String, Object>> l = new ArrayList<>();
         for (int i = 0; i < array.size(); ++i){
