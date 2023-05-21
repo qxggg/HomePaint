@@ -2,9 +2,13 @@ package com.homepainter.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.homepainter.util.RedisUtil;
 
+import com.qcloud.cos.utils.Jackson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,6 +28,9 @@ public class HouseDataController {
 
     @Autowired
     RedisUtil redisUtil;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     public String filename = "HouseData.json";
 
@@ -240,6 +247,30 @@ public class HouseDataController {
         res.put("msg","删除成功");
         return res;
     }
+
+    @GetMapping
+    @RequestMapping("/GetUserFurniture")
+    public Map<String, Object> GetUserFurniture(@RequestHeader String token){
+        Map<String ,Object> res = new HashMap<>();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        String jsonString = GetUserHouse(userId).toString();
+        JSONObject j = JSONObject.parseObject(jsonString);
+        JSONArray array = j.getJSONObject("data").getJSONObject("furniture").getJSONArray("goods");
+        List<Map<String, Object>> l = new ArrayList<>();
+        for (int i = 0; i < array.size(); ++i){
+            JSONObject good = array.getJSONObject(i);
+            String modalId = good.getString("modalId");
+            String sql = "select * from goods where modalId = " + modalId;
+            Map<String, Object> map = jdbcTemplate.queryForMap(sql);
+            l.add(map);
+        }
+
+        res.put("code", 0);
+        res.put("msg", "success");
+        res.put("data", l);
+        return res;
+     }
 
     public double getArea(double[][] matrix) {
         double area = 0.0;
