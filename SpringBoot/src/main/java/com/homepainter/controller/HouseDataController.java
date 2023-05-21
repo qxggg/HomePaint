@@ -296,7 +296,7 @@ public class HouseDataController {
     public static Map<String,Object> GetUserHouse(Integer id){
         Map<String,Object> res = new HashMap<>();
         try {
-            String dir = "HouseData/"+id+"/";
+            String dir = "HouseData/token"+id+"/";
             String resString = readJson("HouseData.json",dir);
             res = JSON.parseObject(resString);
         }catch (Exception e){

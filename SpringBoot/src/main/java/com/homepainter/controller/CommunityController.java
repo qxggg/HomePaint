@@ -62,7 +62,7 @@ public class CommunityController {
 
         String sql1 = "insert into tieba values(?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql1, userId, content, null, 0, date, 0, title);
-        String query = "select tiebaid from ";
+        String query = "select tiebaid from tieba where ";
 
         for (Integer goodsid : goodsId){
             String sql2 = "insert into tiebagoods values(?, ?)";
