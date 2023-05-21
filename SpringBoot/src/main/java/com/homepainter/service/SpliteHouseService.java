@@ -59,6 +59,15 @@ public class SpliteHouseService {
 
         // 获取每个房间的面积
         List<Map<String,Object>> RoomArea = getAllHouse();
+        double maxarea = (double) RoomArea.get(0).get("area");
+        int idx = 0;
+        for (int i = 0; i < RoomArea.size(); ++i){
+            Map<String, Object> map = RoomArea.get(i);
+            double area = (double) map.get("area");
+            if (area > maxarea) idx = i;
+        }
+
+        RoomArea.remove(idx);
         // 最大的为整个房间的面积
         Map<String,Object> house = RoomArea.get(0);
         RoomArea.remove(0);
@@ -66,6 +75,7 @@ public class SpliteHouseService {
         RoomArea = getAllRoomName(RoomArea);
         // 获取风格
         String style = ultraGCN.GetUserStyle(userId);
+
 
 
         Map<String,Object> res = new HashMap<>();

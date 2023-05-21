@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.W3CDomHandler;
 import java.io.File;
 import java.io.IOException;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import static com.homepainter.service.Upload_File.putObject;
 import static com.homepainter.util.File2Base64.Base64ToFile;
+import static com.homepainter.util.HouseIdentifyHandler.toDouble;
 import static com.homepainter.util.ImageToBase64.getImageAsBase64;
 
 
