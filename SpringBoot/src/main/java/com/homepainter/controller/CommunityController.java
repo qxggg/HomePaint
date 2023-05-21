@@ -59,15 +59,18 @@ public class CommunityController {
         List<Integer> goodsId = (List<Integer>) data.get("goodsId");
         List<String> image = (List<String>) data.get("image");
         String title = (String) data.get("title");
-        String query = "select tiebaId from tieba order by tiebaId limit";
+        String query = "select tiebaId from tieba order by tiebaId limit 1 desc";
+        Map<String, Object> q = jdbcTemplate.queryForMap(query);
+        int tiebaId = (int) q.get("tiebaId") + 1;
         String sql1 = "insert into tieba values(?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql1, userId, content, null, 0, date, 0, title);
+        jdbcTemplate.update(sql1, userId, content, tiebaId, 0, date, 0, title);
+
+        String sql2 = "insert into tiebagoods values(?, ?)";
+        for (Integer goodsid : goodsId)
+            jdbcTemplate.update(sql2, goodsid, tiebaId, goodsid);
 
 
-        for (Integer goodsid : goodsId){
-            String sql2 = "insert into tiebagoods values(?, ?)";
-//            jdbcTemplate.update(sql2, goodsid, )
-        }
+        map.put("code", 0);
         return map;
     }
     @PostMapping("/detail")
