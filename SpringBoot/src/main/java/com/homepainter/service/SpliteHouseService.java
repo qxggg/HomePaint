@@ -70,7 +70,7 @@ public class SpliteHouseService {
         RoomArea.remove(idx);
         // 最大的为整个房间的面积
         Map<String,Object> house = RoomArea.get(0);
-        RoomArea.remove(0);
+
         // 获取房间名称
         RoomArea = getAllRoomName(RoomArea);
         // 获取风格
