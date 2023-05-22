@@ -25,11 +25,11 @@ public class PaintImage {
         graphics2D.drawLine(xmin, ymax, xmin, ymin);
         graphics2D.drawLine(xmin, ymin, xmax, ymin);
         graphics2D.drawLine(xmax, ymax, xmax, ymin);
-        graphics2D.setFont(font);
+    //    graphics2D.setFont(font);
 
-        graphics2D.drawLine((xmin + xmax) / 2, (ymax+ymin)/2, (xmin + xmax) / 2 + 50, (ymax+ymin)/2 - 50);
-        graphics2D.drawLine((xmin + xmax) / 2 + 50, (ymax+ymin)/2 - 50,(xmin + xmax) / 2 + 100, (ymax+ymin)/2 - 50);
-        graphics2D.drawString(content,(xmin + xmax) / 2 + 100,(ymax + ymin) / 2 - 50) ;
+//        graphics2D.drawLine((xmin + xmax) / 2, (ymax+ymin)/2, (xmin + xmax) / 2 + 50, (ymax+ymin)/2 - 50);
+//        graphics2D.drawLine((xmin + xmax) / 2 + 50, (ymax+ymin)/2 - 50,(xmin + xmax) / 2 + 100, (ymax+ymin)/2 - 50);
+//        graphics2D.drawString(content,(xmin + xmax) / 2 + 100,(ymax + ymin) / 2 - 50) ;
     }
 
     public static File draw_lines(File file, String filename, Product[] products) throws IOException {
