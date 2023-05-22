@@ -4,8 +4,8 @@
 		
 		<uni-swiper-dot :info="data.image" :current="current" mode="round" :dotsStyles="dotstyle">
 			<swiper style="height: 500px;" @change="change_image">
-				<swiper-item v-for="(item,index) in data.image" :key="index" style="width: 100%;">
-					<image :src="item"  mode="widthFix" style="width: 100%;z-index: 0;"></image>
+				<swiper-item v-for="(item,index) in data.tiebaImage" :key="index" style="width: 100%;">
+					<image :src="item.imageUrl"  mode="widthFix" style="width: 100%;z-index: 0;"></image>
 				</swiper-item>
 			</swiper>
 			<input style="font-size: 20rpx;" disabled="true"/>
@@ -14,10 +14,10 @@
 		<view style="display: flex;flex-direction: column;margin-left: 5%;width: 90%;">
 			<view style="display: flex;align-items: center;justify-content: space-between;">
 				<view style="display: flex;align-items: center;">
-					<image :src="data.avatar" style="width: 40px;border-radius: 40px;" mode="widthFix"></image>
+					<image :src="data.user.avatar" style="width: 40px;border-radius: 40px;" mode="widthFix"></image>
 					<view style="display: flex;flex-direction: column;margin-left: 10px;justify-content: space-around;height: 40px;">
-						<text style="color: #000000;">{{data.writename}}</text>
-						<text style="color: gray;font-size: 13px;">{{data.date}}</text>
+						<text style="color: #000000;">{{data.user.username}}</text>
+						<text style="color: gray;font-size: 13px;">{{data.time}}</text>
 					</view>
 				</view>
 				
@@ -31,7 +31,9 @@
 			<text class="title">{{data.title}}</text>
 			<textarea :value="data.content" class="subtitle" auto-height="true" disabled="true"></textarea>
 			
-			<text style="color: grey;font-size: 14px;margin-top: 10px;">{{data.date}}</text>
+			<recommend :colors="colors"  :dataList="data.goodsInfo" :modes="modes" :loading="false"></recommend>
+			
+			<text style="color: grey;font-size: 14px;margin-top: 10px;">{{data.time}}</text>
 			
 			<view style="margin-top: 10px;border-top: 1px solid #e4e4e4;display: flex;flex-direction: column;">
 				<view style="display: flex;flex-direction: row;align-items: center;margin-top: 10px;">
@@ -46,6 +48,7 @@
 				</view>
 			</view>
 			
+			
 			<input style="height: 100px;"/>
 
 		</view>
@@ -58,13 +61,13 @@
 			<view style="display: flex;align-items: center;width: 20vw;margin-left: 2vw;" @click="change_favorite">
 				<image v-if="!data.is_favorite" src="@/static/navgiation/ShouYe/love.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
 				<image v-else src="@/static/navgiation/ShouYe/favorite_s.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
-				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{data.favorite}}</text>
+				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{data.favorites}}</text>
 			</view>
 			
 			<view style="display: flex;align-items: center;width: 20vw;margin-left: 1vw;" @click="change_shoucang">
 				<image v-if="!data.is_shoucang" src="@/static/navgiation/ShouYe/shoucang.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
 				<image v-else src="@/static/navgiation/ShouYe/shoucang_s.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
-				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{Math.ceil(data.favorite/8)}}</text>
+				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{Math.ceil(data.favorites/8)}}</text>
 			</view>
 			
 			<view style="display: flex;align-items: center;width: 20vw;margin-left: 1vw;">
@@ -76,9 +79,12 @@
 </template>
 
 <script>
+	var app = getApp();
+	import recommend from "@/pages/commponent/home/recommend";
 	export default {
 		data() {
 			return {
+				modes:false,
 				data:{
 					title:'210m平方珠海尚东领御雅居原创新中式风格案例',
 					image:[
@@ -90,14 +96,17 @@
 						'https://7463-tcb-6dkhphdodd5e2a-7dedu72135999-1309304321.tcb.qcloud.la/HomePaint/image/6.jpg',
 					],
 					favorite:323,
-					avatar:'https://img1.baidu.com/it/u=1403245892,3051757811&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
+					user:{
+						avatar:'https://img1.baidu.com/it/u=1403245892,3051757811&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'
+					},
 					writename:'无与同空间设计',
 					content:'专业的客厅设计包括功能划分、区块划设装修风格、色彩搭配、灯光布局、家具配套、软装渲染等一系列设计布局。\n新中式继承了中国传统家居理念的精华，将其中的经典元素符号提炼，通过设计手法来改变原有形式状态，空间布局借鉴传统中式空间设计美学，并且非常注重空间层次、布局、对称等，风格讲究纲常，讲究对称，以阴阳平衡概念调和室内生态，中国五千年文化汉代、唐代的风格都可以用现代手法来演经新中式风格。\n#室内设计 #家居家装日堂 #珠海装修 #现代轻奢 #装修灵感库 #豪宅#珠海装修 #珠海室内设计#入户 #玄关 #鞋柜 ',
 					date:'2023-02-24',
 					is_guanzhu:false,
 					is_shoucang:false,
 					is_favorite:false,
-					shoucang:127
+					shoucang:127,
+					goodsInfo:[]
 				},
 				current:0,
 				dotstyle:{
@@ -108,14 +117,22 @@
 					height:10,
 					width:10
 				},
-				
+				colors:''
 			}
 		},
-		onLoad() {
-			
+		components: {
+
+			recommend
 		},
 		mounted() {
-			this.data = uni.getStorageSync('page_chuancan');
+			this.data = {...uni.getStorageSync('page_chuancan'),is_favorite:false,is_shoucang:false};
+			for(var i=0;i<this.data.goodsInfo.length;i++){
+				this.data.goodsInfo[i] = {...this.data.goodsInfo[i],imageURL:'https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/'+this.data.goodsInfo[i].modalId+'/image.jpg'}
+			}
+			console.log(this.data);
+			this.setData({
+				colors: app.globalData.newColor
+			});
 		},
 		methods: {
 			change_image(e){

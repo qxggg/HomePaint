@@ -90,6 +90,7 @@ import { render } from "vue"
 				// console.log('-------------------')
 				var that = this;
 				let loader = new OBJLoader();
+				loader.setCrossOrigin("Anonymous");
 				loader.load(that.result_file.OBJ, function(
 						Myobj) {
 					

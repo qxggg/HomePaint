@@ -14,19 +14,19 @@
 					<text v-else style="font-size: 14px;margin-left: 10px;">停止</text>
 				</view>
 
-				<view @click="save_image()" style="display: flex;align-items: center;margin-top: 10rpx;">
+				<view @click="save_image()" style="display: flex;align-items: center;margin-top: 10px;">
 					<image src="../../static/ultis/baocun.png" mode="widthFix" style="width: 15px;"></image>
 					<text style="font-size: 14px;margin-left: 10px;">保存</text>
 
 				</view>
 
-				<view @click="chehui" style="display: flex;align-items: center;margin-top: 10rpx;">
+				<view @click="chehui" style="display: flex;align-items: center;margin-top: 10px;">
 					<image src="../../static/ultis/chehui.png" mode="widthFix" style="width: 15px;"></image>
 					<text style="font-size: 14px;margin-left: 10px;">撤回</text>
 
 				</view>
 
-				<view @click="deleteHouse" style="display: flex;align-items: center;margin-top: 10rpx;">
+				<view @click="deleteHouse" style="display: flex;align-items: center;margin-top: 10px;">
 					<image src="../../static/ultis/deleteBlue.png" mode="widthFix" style="width: 15px;"></image>
 					<text style="font-size: 14px;margin-left: 10px;">删除</text>
 				</view>
@@ -40,7 +40,7 @@
 			<view style="display: flex;flex-direction: column;justify-content: right;width: 10%;flex-shrink: 0;">
 				<view style="margin-top: 25px;display: flex;align-items: center;" @click="jump_unity()">
 					<image  src="../../static/ultis/3D.png" mode="widthFix" style="width: 20px;"></image>
-					<a style="font-size: 15px;margin-left: 5rpx;text-decoration: underline" href="uniwebview://close">3D视角</a>
+					<a style="font-size: 15px;margin-left: 5rpx;text-decoration: underline">3D视角</a>
 				</view>
 
 				<view style="display: flex;align-items: center;margin-top: 10px;">
@@ -203,16 +203,20 @@
 			
 			this.init();
 		},
-		onUnload() {
-			
-			plus.screen.lockOrientation('default');
-			
-		},
 		methods: {
 			jump_unity(){
+				uni.showLoading({
+					title:'加载中'
+				});
+				setTimeout(function(){
+					uni.navigateBack();
+					window.location.href = "uniwebview://close";
+					uni.hideLoading();
+				},1000);
 				
 			},
 			init() {
+
 				// 总初始化
 				this.result = {
 					...this.root.DWW
@@ -231,7 +235,7 @@
 				// 渲染
 				this.get_area();
 				this.get_fangsuo();
-				this.draw_All_Wall();
+				// this.draw_All_Wall();
 				this.draw_All_Door();
 				this.draw_All_Window();
 				this.AddHouseName();
@@ -357,27 +361,38 @@
 				}
 			},
 			save_image() {
-				this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
-					if(res.code==0){
-					}
-				});
+
 				uni.canvasToTempFilePath({
 					canvasId: 'firstCanvas',
-					success: (res) => {
+					
+					  success: function(res) {
 						// 在H5平台下，tempFilePath 为 base64
-						console.log(res.tempFilePath)
-					}
+						console.log(res);
+						this.request(this.server_url+'picture/upload',{image:res.tempFilePath},'POST').then((re)=>{
+							console.log(re);
+								
+							if(re.code==0){
+								this.data.image.push(re.url);
+								uni.showToast({
+									title:'上传成功!',
+									icon:'none'
+								});
+							}
+							
+						});
+					  } 
 				});
 				this.root.house = this.house;
 				this.root.DWW = this.result;
 				console.log(this.root);
-				this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
-					if(res.code==0){
-						uni.showToast({
-							title: '保存成功!'
-						});
-					}
-				});
+				
+				// this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
+				// 	if(res.code==0){
+				// 		uni.showToast({
+				// 			title: '保存成功!'
+				// 		});
+				// 	}
+				// });
 
 			},
 			save_qiang() {
@@ -422,7 +437,6 @@
 				if (!this.is_huaqiang) {
 					// 打标签操作
 					this.now_room = this.GetRoomId(e.touches[0]);
-					console.log('---------')
 					console.log(this.now_room);
 					this.change_toolbox(-1);
 				} else {
@@ -501,7 +515,6 @@
 				this.AddWallToSave();
 			},
 			change_showtext() {
-				console.log('--------------')
 				this.showtext = !this.showtext;
 				this.ctx.draw();
 			},
@@ -509,14 +522,6 @@
 				uni.reLaunch({
 					url: '/pages/navigation/ShouYe/ShouYe'
 				})
-			},
-			switch_2d(e) {
-				console.log(e);
-				// this.nowList = e.swithcSelectItem.value;
-				uni.navigateTo({
-					url: '/pages/draw/draw3d'
-				});
-
 			},
 			change_toolbox(e) {
 				if (e != -1) this.menu[e].check = !this.menu[e].check;
