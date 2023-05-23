@@ -17,6 +17,7 @@ public class ChangeStyleService {
     @Autowired
     GetGoods getGoods;
 
+
     /**
      List<String> styles = getGoods.getStyleList(userId);
      JSONObject idx = new JSONObject();
@@ -40,7 +41,11 @@ public class ChangeStyleService {
      double x = idx.get(0);
      double y = idx.get(2);
      */
-    public void changeStyle(String style, JSONArray rooms, JSONArray goods, List<Integer> roomList){
+    public void changeStyle(String style, JSONArray rooms, JSONObject furniture, List<Integer> roomList){
+        JSONArray goods = furniture.getJSONArray("goods");
+        JSONArray floors = furniture.getJSONArray("floor");
+        JSONArray wallpaper = furniture.getJSONArray("WallPaper");
+
         for (int j = 0; j < roomList.size(); ++j){
             int roomId = roomList.get(j);
             JSONObject roomInfo = new JSONObject();
@@ -67,9 +72,35 @@ public class ChangeStyleService {
                     if (changeGood.isEmpty()) changeGood = getGoods.GetGoods_ByStyle_LianXiang_Category(style, category);
                     if (changeGood.isEmpty()) continue;
                     int random = CreateHouseService.generateRandomNumber(changeGood.size() - 1);
-                    Map<String, Object> cg = changeGood.get(i);
+                    Map<String, Object> cg = changeGood.get(random);
                     good.put("modalId", cg.get("modalId"));
                     good.put("title", cg.get("title"));
+                }
+            }
+
+            for (int i = 0; i < floors.size(); ++i){
+                JSONObject floor = floors.getJSONObject(i);
+                int rId = floor.getInteger("roomId");
+                if (rId == roomId){
+                    List<Map<String, Object>> styleFloor = getGoods.changeFloorStyle(style);
+                    int random = CreateHouseService.generateRandomNumber(styleFloor.size() - 1);
+                    Map<String, Object> sf = styleFloor.get(random);
+                    floor.put("imageURL", sf.get("imageURL"));
+                    floor.put("id", sf.get("id"));
+                    floor.put("price", sf.get("price"));
+                }
+            }
+
+            for (int i = 0; i < wallpaper.size(); ++i){
+                JSONObject wallpape = wallpaper.getJSONObject(i);
+                int rId = wallpape.getInteger("roomId");
+                if (rId == roomId){
+                    List<Map<String, Object>> stylePaper = getGoods.changeWallpaintStyle(style);
+                    int random = CreateHouseService.generateRandomNumber(stylePaper.size() - 1);
+                    Map<String, Object> sf = stylePaper.get(random);
+                    wallpape.put("imageURL", sf.get("imageURL"));
+                    wallpape.put("id", sf.get("id"));
+                    wallpape.put("price", sf.get("price"));
                 }
             }
             }

@@ -1,6 +1,7 @@
 package com.homepainter.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.homepainter.service.GetGoods;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,9 @@ public class TestRedis {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    GetGoods getGoods;
 
     @Test
     public void testRedis(){
@@ -66,5 +70,20 @@ public class TestRedis {
                 redisUtil.set(key, j);
             }
         }
+    }
+
+    @Test
+    public void selectFloor(){
+//        String sql = "select * from floors";
+//        List<Map<String, Object>> floorList = jdbcTemplate.queryForList(sql);
+//        redisUtil.set("floorList", floorList);
+//
+//        String sql2 = "select * from wallpaint";
+//        List<Map<String, Object>> wallpaintList = jdbcTemplate.queryForList(sql2);;
+//        redisUtil.set("wallpaintList", wallpaintList);
+//        System.out.println(redisUtil.get("wallpaintList"));
+
+        System.out.println(getGoods.changeFloorStyle("东南亚"));
+
     }
 }
