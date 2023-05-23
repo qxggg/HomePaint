@@ -50,6 +50,8 @@ public class GetGoods {
     }
 
 
+
+
     /**
      * 根据 联想风格 去选家具
      * @param style

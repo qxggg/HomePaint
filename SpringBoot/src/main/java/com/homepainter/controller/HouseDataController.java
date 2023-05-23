@@ -4,6 +4,7 @@ package com.homepainter.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.homepainter.service.ChangeStyleService;
 import com.homepainter.util.RedisUtil;
 
 import com.qcloud.cos.utils.Jackson;
@@ -32,11 +33,56 @@ public class HouseDataController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    ChangeStyleService changeStyleService;
+
     public String filename = "HouseData.json";
+
+    /**
+        风格切换
+     */
+
+    @PostMapping("/ChangeSTyle")
+    public JSONObject changeStyle(@RequestBody JSONObject data, @RequestHeader String token){
+        JSONObject res = new JSONObject();
+        JSONArray goods = data.getJSONObject("furniture").getJSONArray("goods");
+        JSONArray rooms = data.getJSONObject("house").getJSONArray("Room");
+        String style = data.getJSONObject("furniture").getString("style");
+
+        List<Integer> changeRooms = (List<Integer>) data.getJSONObject("furniture").get("ChangeStyle");
+        changeStyleService.changeStyle(style, rooms, goods, changeRooms);
+
+        JSONObject furniure = data.getJSONObject("furniture");
+        furniure.remove("style");
+        furniure.remove("ChangeStyle");
+        save(data, (String) redisUtil.get(token));
+
+        res.put("data", goods);
+        res.put("code", 0);
+        res.put("msg", "更换后的家具如上");
+        return res;
+    }
 
     /**
         保存户型图蓝图信息，没有则新建文件夹，文件夹名为用户id
      */
+
+    public void save(JSONObject input, String userid){
+        String dir = "HouseData/"+userid+"/";
+        if(isExit(filename,dir)){
+            // 直接覆盖
+        }else{
+            // 创建文件夹
+            createDir(dir);
+        }
+
+        // 覆盖文件
+        try{
+            writejson(input,filename,dir);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     @PostMapping("/save")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> save_house(@RequestBody Map<String, Object> input, @RequestHeader String token){
