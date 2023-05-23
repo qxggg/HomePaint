@@ -1,5 +1,7 @@
 package com.homepainter.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.homepainter.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,4 +96,30 @@ public class GetGoods {
         return (List<String>) map.get(style);
     }
 
+    public  List<Map<String, Object>> changeFloorStyle(String style) {
+        List<Map<String, Object>> array = new ArrayList<>();
+        List<Map<String, Object>> floorList = (List<Map<String, Object>>) redisUtil.get("floorList");
+        for (int i = 0; i < floorList.size(); ++i) {
+            Map<String, Object> floor = floorList.get(i);
+            String s = (String) floor.get("style");
+            if (s == null) continue;
+            if (s.equals(style))
+                array.add(floor);
+        }
+        return array;
+    }
+
+
+    public  List<Map<String, Object>> changeWallpaintStyle(String style) {
+        List<Map<String, Object>> array = new ArrayList<>();
+        List<Map<String, Object>> floorList = (List<Map<String, Object>>) redisUtil.get("wallpaintList");
+        for (int i = 0; i < floorList.size(); ++i) {
+            Map<String, Object> floor = floorList.get(i);
+            String s = (String) floor.get("style");
+            if (s == null) continue;
+            if (s.equals(style))
+                array.add(floor);
+        }
+        return array;
+    }
 }

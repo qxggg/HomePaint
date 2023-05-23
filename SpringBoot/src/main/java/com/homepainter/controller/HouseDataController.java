@@ -50,14 +50,15 @@ public class HouseDataController {
         String style = data.getJSONObject("furniture").getString("style");
 
         List<Integer> changeRooms = (List<Integer>) data.getJSONObject("furniture").get("ChangeStyle");
-        changeStyleService.changeStyle(style, rooms, goods, changeRooms);
-
         JSONObject furniure = data.getJSONObject("furniture");
+
+        changeStyleService.changeStyle(style, rooms, furniure, changeRooms);
+
         furniure.remove("style");
         furniure.remove("ChangeStyle");
         save(data, (String) redisUtil.get(token));
 
-        res.put("data", goods);
+        res.put("data", furniure);
         res.put("code", 0);
         res.put("msg", "更换后的家具如上");
         return res;
