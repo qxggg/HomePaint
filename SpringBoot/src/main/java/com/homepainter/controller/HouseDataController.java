@@ -42,7 +42,7 @@ public class HouseDataController {
         风格切换
      */
 
-    @PostMapping("/ChangeSTyle")
+    @PostMapping("/ChangeStyle")
     public JSONObject changeStyle(@RequestBody JSONObject data, @RequestHeader String token){
         JSONObject res = new JSONObject();
         JSONArray goods = data.getJSONObject("furniture").getJSONArray("goods");
