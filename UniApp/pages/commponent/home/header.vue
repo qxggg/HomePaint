@@ -6,6 +6,7 @@
 
 		<view>
 			<view class="left" @tap="nearAddress">
+				<image src="@/static/images/back.png" style="width: 20px;" mode="widthFix" @click="back()"></image>
 				<image src="/static/images/home/weizhi.png"></image>
 				<view>{{city || '请选择位置'}}</view>
 			</view>
@@ -147,6 +148,7 @@
 			}
 		},
 		methods: {
+			back(){uni.navigateBack()},
 			jump_search(e) {
 				uni.navigateTo({
 					url: '/pages/navigation/ShouYe/furniture_shop/classList?content=' + e.title

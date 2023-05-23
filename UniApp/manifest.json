@@ -148,6 +148,14 @@
                     "pathRewrite" : {
                         "^/api" : "/"
                     }
+                },
+                "/obj" : {
+                    "target" : "https://image-1304455659.cos.ap-nanjing.myqcloud.com",
+                    "changeOrigin" : true, //是否跨域
+                    "secure" : false, // 设置支持https协议的代理
+                    "pathRewrite" : {
+                        "^/obj" : "/"
+                    }
                 }
             }
         },

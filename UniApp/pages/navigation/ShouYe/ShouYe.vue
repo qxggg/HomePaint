@@ -215,6 +215,7 @@
 			
 			if(params!=undefined&&params.token!=undefined&&params.token.length!=0){
 				uni.setStorageSync('token',params.token);
+				this.initdata();
 			}else{
 				this.islogin();
 			}
@@ -282,12 +283,13 @@
 				})
 			},
 			jump_family(){
+				uni.setStorageSync('IsShare',false);
 				uni.navigateTo({
 					url:'/pages/SheQu/SheQuList/SheQuList'
 				});
 			},
 			jump_cehui(){
-				location.href = "uniwebview://LandscapeLeft";
+
 				if(this.dontHaveHouse)
 					uni.navigateTo({
 						url:'/pages/draw/UploadImage'
@@ -298,22 +300,19 @@
 					})
 			},
 			share(){
-				uni.setClipboardData({
-					data:'快来使用次世代家装App把！',
-					showToast:false,
-					success: (res) => {
-						uni.showToast({
-							title:'链接已复制！',
-							icon:'none'
-						});
-					}
+				uni.setStorageSync('isShare',true);
+				uni.navigateTo({
+					url:'/pages/SheQu/SheQuList/SheQuList'
 				});
 			},
 			jump_u3d(){
-				uni.showModal({
-					title:'提示',
-					content:'为方便开发，目前APP为2D和3D场景分离，3D场景请在U3D.apk上体验'
+				uni.showLoading({
+					title:'渲染中'
 				});
+				setTimeout(function(){
+					uni.hideLoading();
+					window.location.href = "uniwebview://close";
+				},700);
 			},
 			jump_vr(){
 				uni.navigateTo({
@@ -376,7 +375,7 @@
 				}
 			},
 			jump_xiangqing(e){
-				uni.setStorageSync('page_chuancan',e);4
+				uni.setStorageSync('page_chuancan',e);
 				
 				uni.navigateTo({
 					url:'/pages/navigation/ShouYe/XiangQing/XiangQing'

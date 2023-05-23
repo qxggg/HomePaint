@@ -18,14 +18,13 @@
 						<text style="float: right;color:red;font-size: 13px;"
 							v-if="item.score!=null">{{item.score}}分</text>
 					</view>
-					<view class="goumai">
+					<view class="goumai" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
 						<view class="g_left"> 
 							<text v-if="item.style!=null&&item.style.length!=0">{{item.style}}</text>
 							<text v-if="item.material!=null&&item.material.length!=0">{{item.material}}</text>
-
 						</view>
-						<view class="g_right" @tap="addCart(item)">
-							<text class="iconfont icon-gouwuche"></text>
+						<view class="g_right" @tap="FangZhi(item)">
+							<image src="@/static/images/fangZhi.png" mode="widthFix" style="width: 20px;"></image>
 						</view>
 					</view>
 				</view>
@@ -47,17 +46,19 @@
 							<text v-if="item.style!=null">{{item.style}}</text>
 							<text v-if="item.material!=null">{{item.material}}</text>
 						</view>
-						<view class="price">
-							<text class="money">￥{{item.price}}</text>
-							<text class="hx_money">￥{{(item.price*1.2).toFixed(2)}}</text>
-							<text class="iconfont icon-gouwuche gouwuche" @tap="addCart(item)"></text>
+						<view class="price" style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
+							<view style="display: flex;flex-direction: row;align-items: center;">
+								<text class="money">￥{{item.price}}</text>
+								<text class="hx_money">￥{{(item.price*1.2).toFixed(2)}}</text>
+							</view>
+
+							<image @click="FangZhi(item)" src="../../../static/images/fangZhi.png" style="width: 20px;" mode="widthFix"></image>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
 
-		<nodata :colors="colors" title="暂无分类商品" v-if="newList.length == 0"></nodata>
 		<view class="loading" v-if="loading == true">加载中...</view>
 		<view class="loading" v-if="loading == false">—— 到底啦 ——</view>
 		<!-- 选择规格 -->
@@ -115,6 +116,13 @@
 			}
 		},
 		methods: {
+			FangZhi(e){
+				var temp = {
+					modalId:e.modalId,
+					title:e.title
+				}
+				window.location.href = "uniwebview://GOODS"+JSON.stringify(temp);
+			},
 			setDataList(newVal) {
 				const newList = [].concat(...Array.from(newVal.reduce((total, cur, index) => { //瀑布流处理
 					total[index % 2].push(cur);

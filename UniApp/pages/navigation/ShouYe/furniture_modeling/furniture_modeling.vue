@@ -1,7 +1,9 @@
 <template>
 	<view style="display: flex;flex-direction: column;">
+				
 		<view style="display: flex;flex-direction: row;margin-top: 44px;width: 95%;margin-left: 2%;">
-			<search style="width: 90%;"></search>
+			<image src="@/static/images/back.png" style="width: 20px;" mode="widthFix" @click="back()"></image>
+			<search style="width: 85%;margin-left: 5px;"></search>
 			<image src="@/static/ultis/scan.png" mode="widthFix" style="width: 30px;flex-shrink: 0;"
 				@click="openCamera()"></image>
 		</view>
@@ -163,6 +165,9 @@
 			uni.stopPullDownRefresh();
 		},
 		methods: {
+			back(){
+				uni.navigateBack();
+			},
 			delete_moule(item){
 				uni.showModal({
 					title:'确认删除该模型吗?',
