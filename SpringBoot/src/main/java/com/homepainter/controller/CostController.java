@@ -48,22 +48,21 @@ public class CostController {
             double price = wallPaper.getDouble("price");
             int roomId = wallPaper.getInteger("roomId");
             for (int j = 0; j < rooms.size(); ++j)
-                if (roomId == rooms.getJSONObject(j).getInteger("roomId")){
+                if (roomId == rooms.getJSONObject(j).getInteger("roomId")) {
                     JSONObject room = rooms.getJSONObject(j);
                     JSONArray points = room.getJSONArray("point");
                     double area = 0;
-                    for (int x = 0; x < points.size(); ++x){
+                    for (int x = 0; x < points.size(); ++x) {
                         JSONObject point1 = points.getJSONObject(x);
                         JSONObject point2 = points.getJSONObject((x + 1) % points.size());
                         double x1 = point1.getDouble("x"), y1 = point1.getDouble("y"),
-                        x2 = point2.getDouble("x"), y2 = point2.getDouble("y");
+                                x2 = point2.getDouble("x"), y2 = point2.getDouble("y");
                         area += Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
                     }
                     wallPaper.put("area", area);
                     price = price * area;
                     wallPaper.put("totalPrice", price * 0.8);
                 }
-
         }
 
         res.put("wallPaper", wallPapers);
