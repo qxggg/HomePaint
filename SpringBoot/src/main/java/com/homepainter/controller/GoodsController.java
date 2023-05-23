@@ -74,6 +74,29 @@ public class GoodsController {
         outXlxsUltraGCNService.writeFurnitureXlxs();
     }
 
+    @PostMapping("insertFloor")
+    public Map<String, Object> insertFloor(@RequestBody Map<String, Object> data){
+        Map<String, Object> map = new HashMap<>();
+        String style = (String) data.get("style");
+        int id = (int) data.get("id");
+        String sql = "update floors set style = ? where id = " + id;
+        jdbcTemplate.update(sql, style);
+        map.put("code", 0);
+        map.put("msg", "ok");
+        return map;
+    }
+
+    @PostMapping("insertWallpaint")
+    public Map<String, Object> insertWallpaint(@RequestBody Map<String, Object> data){
+        Map<String, Object> map = new HashMap<>();
+        String style = (String) data.get("style");
+        int id = (int) data.get("id");
+        String sql = "update wallpaint set style = ? where id = " + id;
+        jdbcTemplate.update(sql, style);
+        map.put("code", 0);
+        map.put("msg", "ok");
+        return map;
+    }
 
 
     @GetMapping("/get_list")
