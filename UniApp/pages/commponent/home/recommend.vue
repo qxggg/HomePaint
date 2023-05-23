@@ -117,11 +117,8 @@
 		},
 		methods: {
 			FangZhi(e){
-				var temp = {
-					modalId:e.modalId,
-					title:e.title
-				}
-				window.location.href = "uniwebview://GOODS"+JSON.stringify(temp);
+				
+				window.location.href = "uniwebview://GOODS"+JSON.stringify(e);
 			},
 			setDataList(newVal) {
 				const newList = [].concat(...Array.from(newVal.reduce((total, cur, index) => { //瀑布流处理

@@ -97,15 +97,8 @@ public class HouseIdentifyController {
         }
 
         // 分房算法
-        try {
-            Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
-            data.put("house",house);
-        }catch (Exception e){
-            res.put("code",22);
-            res.put("Exception",e);
-            res.put("msg","分房算法失败");
-            return res;
-        }
+        Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+        data.put("house",house);
 
 
         res.put("data", data);
@@ -115,7 +108,7 @@ public class HouseIdentifyController {
         //给房间绑定门窗 //给room打id
         try{
             JSONArray rooms = RuleUtils.findDoorWindow((JSONObject) JSONObject.parse(res.toJSONString()));
-            HashMap<String, Object> house = (HashMap<String, Object>) data.get("house");
+             house = (HashMap<String, Object>) data.get("house");
             JSONObject furniture = new JSONObject();
             data.put("furniture", furniture);
             JSONArray floor = new JSONArray();
@@ -193,4 +186,6 @@ public class HouseIdentifyController {
         JSONObject j = (JSONObject) JSONObject.parse(content);
         return HouseIdentifyHandler.getResult(j);
     }
+
+
 }

@@ -1,6 +1,6 @@
 <template>
 	 <view class="category-list">
-		<view v-for="(item, index) in categoryList" :key="index" class="category" @tap="jumpList(item)">
+		<view v-for="(item, index) in categoryList" :key="index" class="category" @tap="jumpList(item,index)">
 			<view class="class_img"><image :src="item.img" class="imgs"></image></view>
 			<view class="text">{{ item.name }}</view>
 		</view>
@@ -20,11 +20,25 @@ export default {
 	  }
   },
   methods: {
-    jumpList(item) {
+    jumpList(item,ind) {
 		 // console.log(item)
-		  uni.navigateTo({
-			url: '/pages/navigation/ShouYe/furniture_shop/classList?content='+ item.name
-		  });
+			 
+		 if(ind<8){
+			uni.navigateTo({
+				url: '/pages/navigation/ShouYe/furniture_shop/classList?content='+ item.name
+			}); 
+			 
+		 }else if(ind==8||ind==9){
+			 // 壁纸 ,地板
+			 if(ind==8)
+				uni.setStorageSync('IsFloor',false);
+			else
+				uni.setStorageSync('IsFloor',true);
+			 uni.navigateTo({
+			 	url:'/pages/navigation/ShouYe/furniture_shop/floorList'
+			 });
+		 }
+
     }
   }
 };

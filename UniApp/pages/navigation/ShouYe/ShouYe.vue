@@ -53,7 +53,7 @@
 						
 						<view @click="jump_vr()">
 							<image src="@/static/navgiation/ShouYe/VR.png" mode="widthFix" style="width: 10px;"></image>
-							<text style="margin-left: 5px;margin-right: 10px;">一键装修</text>
+							<text style="margin-left: 5px;margin-right: 10px;">新手引导</text>
 							
 						</view>
 					</view>
@@ -316,7 +316,7 @@
 			},
 			jump_vr(){
 				uni.navigateTo({
-					url:'XiangQing/yijian'
+					url:'XiangQing/yindao'
 				})
 				// uni.navigateTo({
 				// 	url:'/pages/navigation/Middle/AR/AR'

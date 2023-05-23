@@ -235,12 +235,12 @@
 				// 渲染
 				this.get_area();
 				this.get_fangsuo();
-				// this.draw_All_Wall();
+				this.draw_All_Wall();
 				this.draw_All_Door();
 				this.draw_All_Window();
 				this.AddHouseName();
 				this.FillRoom();
-
+				// this.change_toolbox(-1);
 				this.ctx.draw();
 			},
 			get_area() {
@@ -685,6 +685,7 @@
 				this.ctx.restore();
 				// 画出门
 				for (var i = 0; i < this.result.Doors.length; i++) {
+					
 					this.ctx.beginPath();
 					var text = '单开门';
 					var category = this.result.Doors[i].category;
@@ -791,6 +792,7 @@
 			draw_All_Wall() {
 				// 画出墙体
 				for (var i = 0; i < this.result.Walls.length; i++) {
+					if(this.request.Walls[i].isDoor==true)	break;
 					this.ctx.beginPath();
 					var temp_start = this.get_wallspoint(this.result.Walls[i].start_point);
 					var temp_end = this.get_wallspoint(this.result.Walls[i].end_point);

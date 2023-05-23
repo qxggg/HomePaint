@@ -316,6 +316,8 @@ public class SpliteHouseService {
             double[][] vertices = new double[m][2];
             double sumx = 0;
             double sumy = 0;
+
+            int cnt_aodian = 0;
             for(int j=0;j< m;j++){
                 int id = closed_spaces.get(i).get(j);
                 vertices[j][0] = getWallsPointX(id);
@@ -326,14 +328,24 @@ public class SpliteHouseService {
                 tempp.put("y",vertices[j][1]);
                 tempp.put("id",id);
                 point.add(tempp);
+                // 计算是否是凹点
+
+                double[] p = vertices[j];
+                double[] a = vertices[(j - 1 + m) % m];
+                double[] b = vertices[(j + 1) % m];
+                double cross_product = (p[0] - a[0]) * (b[1] - p[1]) - (b[0] - p[0]) * (p[1] - a[1]);
+                if(cross_product>0){
+                    sumx += vertices[j][0];
+                    sumy += vertices[j][1];
+                    cnt_aodian++;
+                }
                 // 计算均值
-                sumx += vertices[j][0];
-                sumy += vertices[j][1];
+
             }
 
             Map<String,Object> center = new HashMap<>();
-            center.put("x",sumx/m);
-            center.put("y",sumy/m);
+            center.put("x",sumx/cnt_aodian);
+            center.put("y",sumy/cnt_aodian);
 
             double area = getArea(vertices);
             temp.put("area",area);

@@ -350,6 +350,27 @@
 			}
             
         }
+        ,{
+            "path" : "pages/navigation/ShouYe/furniture_shop/floorList",
+			"style": {
+				"navigationBarTitleText": "商品列表",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"bounce": "none"
+				}
+			}
+            
+        }
+        ,{
+            "path" : "pages/navigation/ShouYe/XiangQing/yindao",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
