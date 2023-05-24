@@ -1,6 +1,9 @@
 package com.homepainter.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.homepainter.pojo.Tieba;
+import com.homepainter.service.CommunityService;
 import com.homepainter.service.GetGoods;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,9 @@ import java.util.*;
 
 @SpringBootTest
 public class TestRedis {
+
+    @Autowired
+    CommunityService communityService;
 
     @Autowired
     RedisUtil redisUtil;
@@ -82,8 +88,36 @@ public class TestRedis {
 //        List<Map<String, Object>> wallpaintList = jdbcTemplate.queryForList(sql2);;
 //        redisUtil.set("wallpaintList", wallpaintList);
 //        System.out.println(redisUtil.get("wallpaintList"));
+//
+//        System.out.println(getGoods.changeFloorStyle("东南亚"));
 
-        System.out.println(getGoods.changeFloorStyle("东南亚"));
+        Map<String, Object> map = new HashMap();
+        List<Tieba> tiebas = communityService.getTiebaList();
+        JSONArray array = new JSONArray();
 
+        for (Tieba tieba : tiebas) {
+            tieba.getUser().setPassword(null);
+            int id = tieba.getTiebaId();
+            String sql = "select * from tiebagoods inner join tieba on tiebagoods.tiebaId = tieba.tiebaId inner join" +
+                    " goods on tiebagoods.goodsId = goods.goodsId where tieba.tiebaId = " + id;
+
+            JSONObject j = new JSONObject();
+            j.put("tiebaId", tieba.getTiebaId());
+            j.put("user", tieba.getUser());
+            j.put("tiebaFlages", tieba.getTiebaFlags());
+            j.put("tiebaImage", tieba.getTiebaImage());
+            j.put("title", tieba.getTitle());
+            j.put("time", tieba.getTime());
+            j.put("content", tieba.getContent());
+            j.put("favorites", tieba.getFavorites());
+            j.put("collect", tieba.getCollect());
+            j.put("goodsInfo",  jdbcTemplate.queryForList(sql));
+
+            array.add(j);
+
+        }
+
+        System.out.println(array);
+        redisUtil.set("communityInfo", array.toJSONString());
     }
 }
