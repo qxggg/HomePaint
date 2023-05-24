@@ -96,7 +96,8 @@ public class HouseDataController {
     }
 
     @PostMapping("2dto3d")
-    public Object twoToThree(@RequestBody JSONObject data, @RequestHeader String token){
+    public JSONObject twoToThree(@RequestBody JSONObject data, @RequestHeader String token){
+        JSONObject res = new JSONObject();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
         JSONArray rooms = data.getJSONObject("house").getJSONArray("Room");
@@ -119,7 +120,10 @@ public class HouseDataController {
             getFloorWalls(allWallpaint, i, roomId, wallpaint);
 
         }
-        return allWallpaint;
+        res.put("data", data);
+        res.put("code", 0);
+        res.put("msg", "打标签成功了！！！");
+        return res;
     }
 
     private void getFloorWalls(JSONArray allWallpaint, int i, int roomId, Map<String, Object> wallpaint) {
