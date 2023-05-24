@@ -42,33 +42,33 @@ public class CommunityController {
     @GetMapping("/list")
     public Map<String, Object> getCommunityList(){
         Map<String, Object> map = new HashMap();
-        List<Tieba> tiebas = communityService.getTiebaList();
-        JSONArray array = new JSONArray();
-
-        for (Tieba tieba : tiebas) {
-            tieba.getUser().setPassword(null);
-            int id = tieba.getTiebaId();
-            String sql = "select * from tiebagoods inner join tieba on tiebagoods.tiebaId = tieba.tiebaId inner join" +
-                    " goods on tiebagoods.goodsId = goods.goodsId where tieba.tiebaId = " + id;
-
-            JSONObject j = new JSONObject();
-            j.put("tiebaId", tieba.getTiebaId());
-            j.put("user", tieba.getUser());
-            j.put("tiebaFlages", tieba.getTiebaFlags());
-            j.put("tiebaImage", tieba.getTiebaImage());
-            j.put("title", tieba.getTitle());
-            j.put("time", tieba.getTime());
-            j.put("content", tieba.getContent());
-            j.put("favorites", tieba.getFavorites());
-            j.put("collect", tieba.getCollect());
-            j.put("goodsInfo",  jdbcTemplate.queryForList(sql));
-
-            array.add(j);
-
-        }
+//        List<Tieba> tiebas = communityService.getTiebaList();
+//        JSONArray array = new JSONArray();
+//
+//        for (Tieba tieba : tiebas) {
+//            tieba.getUser().setPassword(null);
+//            int id = tieba.getTiebaId();
+//            String sql = "select * from tiebagoods inner join tieba on tiebagoods.tiebaId = tieba.tiebaId inner join" +
+//                    " goods on tiebagoods.goodsId = goods.goodsId where tieba.tiebaId = " + id;
+//
+//            JSONObject j = new JSONObject();
+//            j.put("tiebaId", tieba.getTiebaId());
+//            j.put("user", tieba.getUser());
+//            j.put("tiebaFlages", tieba.getTiebaFlags());
+//            j.put("tiebaImage", tieba.getTiebaImage());
+//            j.put("title", tieba.getTitle());
+//            j.put("time", tieba.getTime());
+//            j.put("content", tieba.getContent());
+//            j.put("favorites", tieba.getFavorites());
+//            j.put("collect", tieba.getCollect());
+//            j.put("goodsInfo",  jdbcTemplate.queryForList(sql));
+//
+//            array.add(j);
+//
+//        }
         map.put("code", 0);
         map.put("msg", "社区信息查询成功！");
-        map.put("data", array);
+        map.put("data", JSONObject.parse((String) redisUtil.get("communityInfo")));
         return map;
     }
 

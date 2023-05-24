@@ -5,8 +5,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.homepainter.service.ChangeStyleService;
+import com.homepainter.service.GetGoods;
+import com.homepainter.service.SpliteHouseService;
+import com.homepainter.util.HouseIdentifyHandler;
 import com.homepainter.util.RedisUtil;
 
+import com.homepainter.util.RuleUtils;
 import com.qcloud.cos.utils.Jackson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,6 +39,12 @@ public class HouseDataController {
 
     @Autowired
     ChangeStyleService changeStyleService;
+
+    @Autowired
+    SpliteHouseService spliteHouse;
+
+    @Autowired
+    GetGoods getGoods;
 
     public String filename = "HouseData.json";
 
@@ -84,6 +94,151 @@ public class HouseDataController {
             e.printStackTrace();
         }
     }
+
+    @PostMapping("2dto3d")
+    public JSONObject twoToThree(@RequestBody JSONObject data, @RequestHeader String token){
+        JSONObject res = new JSONObject();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        JSONArray rooms = data.getJSONObject("house").getJSONArray("Room");
+        JSONObject furniture = data.getJSONObject("furniture");
+        JSONArray allFloors = furniture.getJSONArray("floor");
+        JSONArray allWallpaint = furniture.getJSONArray("WallPaper");
+        for (int i = 0; i < rooms.size(); ++i){
+            JSONObject room = rooms.getJSONObject(i);
+            int roomId = room.getInteger("roomId");
+            if (room.getString("style") == null) continue;
+            String style = room.getString("style");
+            List<Map<String, Object>> floors = getGoods.changeFloorStyle(style);
+            int random = floors.size() - 1;
+            Map<String, Object> floor = floors.get(random);
+            List<Map<String, Object>> wallpaints = getGoods.changeWallpaintStyle(style);
+            random = wallpaints.size() - 1;
+            Map<String, Object> wallpaint = wallpaints.get(random);
+            getFloorWalls(allFloors, i, roomId, floor);
+
+            getFloorWalls(allWallpaint, i, roomId, wallpaint);
+
+        }
+        res.put("data", data);
+        res.put("code", 0);
+        res.put("msg", "打标签成功了！！！");
+        return res;
+    }
+
+    private void getFloorWalls(JSONArray allWallpaint, int i, int roomId, Map<String, Object> wallpaint) {
+        for (int j = 0; j < allWallpaint.size(); ++j) {
+            JSONObject f = allWallpaint.getJSONObject(i);
+            if (f.getInteger("roomId") == roomId) {
+                f.put("imageURL", wallpaint.get("imageURL"));
+                f.put("price", wallpaint.get("price"));
+                f.put("id", wallpaint.get("id"));
+            }
+        }
+    }
+
+    @PostMapping("/AddWall")
+    public JSONObject addWall(@RequestBody HashMap<String, Object> data, @RequestHeader String token) throws Exception {
+        HashMap<String, Object> origin = (HashMap<String, Object>) data.get("origin");
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
+        JSONObject res = new JSONObject();
+        // 抠门扣窗
+        try{
+            data.put("DWW", HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
+        }catch (Exception e){
+            res.put("code",21);
+            res.put("Exception",e);
+            res.put("msg","抠门扣窗失败");
+            return res;
+        }
+
+        Map<String, Object> IdentifyResult = new HashMap<>();
+        IdentifyResult.put("data", origin);
+        IdentifyResult.put("code", 0);
+        // 分房算法
+        try {
+            Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+            data.put("house",house);
+        }catch (Exception e){
+            res.put("code",22);
+            res.put("Exception",e);
+            res.put("msg","分房算法失败");
+            return res;
+        }
+
+
+        res.put("data", data);
+        res.put("code", 0);
+        res.put("msg", "户型识别检索成功");
+
+        //给房间绑定门窗 //给room打id
+        try{
+            JSONArray rooms = RuleUtils.findDoorWindow((JSONObject) JSONObject.parse(res.toJSONString()));
+            HashMap<String, Object> house = (HashMap<String, Object>) data.get("house");
+            JSONObject furniture = new JSONObject();
+            data.put("furniture", furniture);
+            JSONArray floor = new JSONArray();
+            JSONArray door = new JSONArray();
+            JSONArray wallPaper = new JSONArray();
+            JSONArray light = new JSONArray();
+            JSONArray defaultFloors = new JSONArray();
+            JSONArray defaultWallpaints = new JSONArray();
+            JSONArray defaultLights = new JSONArray();
+            for (int i = 0; i < rooms.size(); ++i) {
+                JSONObject defaultFloor = new JSONObject();
+                JSONObject defaultWallpaint = new JSONObject();
+                JSONObject defaultLight = new JSONObject();
+                JSONObject room = rooms.getJSONObject(i);
+
+                defaultWallpaint.put("id", 780);
+                defaultWallpaint.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/BiZhi/780.jpg");
+                defaultWallpaint.put("roomId", i);
+                defaultWallpaint.put("price", 15);
+                defaultWallpaints.add(defaultWallpaint);
+                defaultFloor.put("id", 6);
+                defaultFloor.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/DiBan/6.jpg");
+                defaultFloor.put("roomId", i);
+                defaultFloor.put("price", 299.9);
+                defaultLight.put("roomId", i);
+
+                if (room.getString("name").equals("洗漱间") || room.getString("name").equals("卫生间")){
+                }
+                else if (room.getString("name").equals("阳台") || room.getString("name").equals("厨房")){
+                }
+                else if (room.getString("name").equals("客厅")){
+                    defaultLight.put("modalId", "3f546069-dc34-425c-87d0-f1cc1f858a5c");
+                    defaultLight.put("goodsId", 1345);
+                    defaultLight.put("price", 1000);
+                    defaultLight.put("center", room.getJSONObject("center"));
+                }
+                else{
+                    defaultLight.put("modalId", "38ea2314-1803-442e-9add-ace97d2959a2");
+                    defaultLight.put("goodsId", 141);
+                    defaultLight.put("price", 1000);
+                    defaultLight.put("center", room.getJSONObject("center"));
+                }
+                rooms.getJSONObject(i).put("roomId", i);
+
+
+                defaultFloors.add(defaultFloor);
+                //     defaultWallpaints.add(defaultWallpaint);
+                defaultLights.add(defaultLight);
+            }
+            furniture.put("floor", defaultFloors);
+            furniture.put("WallPaper", defaultWallpaints);
+            furniture.put("goods", new ArrayList());
+            furniture.put("light", defaultLights);
+
+            house.put("Room", rooms);
+        }catch (Exception e){
+            res.put("code", 24);
+            res.put("Exception", e);
+            res.put("msg", "绑定门窗失败");
+        }
+        return res;
+    }
+
     @PostMapping("/save")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Map<String, Object> save_house(@RequestBody Map<String, Object> input, @RequestHeader String token){

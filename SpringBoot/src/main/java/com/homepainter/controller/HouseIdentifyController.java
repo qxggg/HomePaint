@@ -48,6 +48,8 @@ public class HouseIdentifyController {
      * @return
      * @throws Exception
      */
+
+
     @PostMapping("/upload")
     public Map<String,Object> houseIdentify(@RequestBody Map<String,Object> input, @RequestHeader String token) throws Exception {
         // 获取userId
@@ -123,6 +125,7 @@ public class HouseIdentifyController {
                 JSONObject defaultWallpaint = new JSONObject();
                 JSONObject defaultLight = new JSONObject();
                 JSONObject room = rooms.getJSONObject(i);
+
                 defaultWallpaint.put("id", 780);
                 defaultWallpaint.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/BiZhi/780.jpg");
                 defaultWallpaint.put("roomId", i);
@@ -132,26 +135,21 @@ public class HouseIdentifyController {
                 defaultFloor.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/DiBan/6.jpg");
                 defaultFloor.put("roomId", i);
                 defaultFloor.put("price", 299.9);
-
                 defaultLight.put("roomId", i);
+
                 if (room.getString("name").equals("洗漱间") || room.getString("name").equals("卫生间")){
-                    defaultLight.put("modalId", "0f4227d2-88a2-4c39-bfd1-6d8603c9f0eb");
-                    defaultLight.put("goodsId", 881);
-                    defaultLight.put("price", 1000);
                 }
                 else if (room.getString("name").equals("阳台") || room.getString("name").equals("厨房")){
-                    defaultLight.put("modalId", "1bc7ff20-2031-44e9-91a9-4dd7bcf1b679");
-                    defaultLight.put("goodsId", 1602);
-                    defaultLight.put("price", 1000);
                 }
                 else if (room.getString("name").equals("客厅")){
-                    defaultLight.put("modalId", "38ea2314-1803-442e-9add-ace97d2959a2");
-                    defaultLight.put("goodsId", 141);
-                    defaultLight.put("price", 1000);
-                }
-                else{
                     defaultLight.put("modalId", "3f546069-dc34-425c-87d0-f1cc1f858a5c");
                     defaultLight.put("goodsId", 1345);
+                    defaultLight.put("price", 1000);
+                    defaultLight.put("center", room.getJSONObject("center"));
+                }
+                else{
+                    defaultLight.put("modalId", "38ea2314-1803-442e-9add-ace97d2959a2");
+                    defaultLight.put("goodsId", 141);
                     defaultLight.put("price", 1000);
                     defaultLight.put("center", room.getJSONObject("center"));
                 }
