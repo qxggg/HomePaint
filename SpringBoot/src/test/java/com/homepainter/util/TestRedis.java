@@ -98,8 +98,8 @@ public class TestRedis {
         for (Tieba tieba : tiebas) {
             tieba.getUser().setPassword(null);
             int id = tieba.getTiebaId();
-            String sql = "select * from tiebagoods inner join tieba on tiebagoods.tiebaId = tieba.tiebaId inner join" +
-                    " goods on tiebagoods.goodsId = goods.goodsId where tieba.tiebaId = " + id;
+            String sql = "select * from tiebagoods inner join" +
+                    " goods on tiebagoods.goodsId = goods.goodsId where tiebagoods.tiebaId = " + id;
 
             JSONObject j = new JSONObject();
             j.put("tiebaId", tieba.getTiebaId());
@@ -112,6 +112,7 @@ public class TestRedis {
             j.put("favorites", tieba.getFavorites());
             j.put("collect", tieba.getCollect());
             j.put("goodsInfo",  jdbcTemplate.queryForList(sql));
+
 
             array.add(j);
 
