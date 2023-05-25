@@ -2,7 +2,9 @@ package com.homepainter.ForTest;
 
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,12 +12,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Map;
 
 
 import static com.homepainter.ForTest.LuRuGoods.Get_Zi_Dir;
 
 @SpringBootTest
 public class GaiName {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Test
+    public void yiahs(){
+        for(int i=1;i<=200;i++){
+            System.out.println(i);
+            String sql = "select style from wallpaint WHERE id = "+i;
+            List<Map<String,Object>> temp = jdbcTemplate.queryForList(sql);
+            sql = "update floors set style = '"+temp.get(0).get("style")+"' where id = "+i;
+            System.out.println(sql);
+            jdbcTemplate.execute(sql);
+        }
+    }
+
 
     @Test
     public void start() throws IOException {

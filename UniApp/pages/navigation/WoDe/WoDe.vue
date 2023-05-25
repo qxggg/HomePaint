@@ -16,16 +16,7 @@
 			</view>
 			
 			<view class="wode_middle_box">
-				<view class="wode_middle_group" @click="scan()">
-					<view class="wode_middle_row">
-						<view class="wode_middle_row_view">
-							<image src="/static/navgiation/wode/saoyisao.png" mode="widthFix" style="width: 30px;"></image>
-							<text style="font-size: 16px;margin-left: 5%;">扫一扫 马上加入家庭</text>
-						</view>
-						<image src="/static/navgiation/wode/youjiantou.png" mode="widthFix" style="width: 6px;margin-right: 5%;"></image>
-					</view>
-				</view>
-				<hr>
+
 				
 				<view class="wode_middle_group" @click="jump_buy()">
 					<view class="wode_middle_row">

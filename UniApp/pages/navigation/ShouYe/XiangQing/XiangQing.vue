@@ -54,25 +54,19 @@
 		</view>
 		
 		<view class="bootom_group">
-			<view class="user_style">
-				使用风格
+			<view style="display: flex;align-items: center;width: 20vw;margin-left: 1vw;">
+				<image src="@/static/navgiation/ShouYe/commit.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
+				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">评论</text>
 			</view>
-			
-			<view style="display: flex;align-items: center;width: 20vw;margin-left: 2vw;" @click="change_favorite">
-				<image v-if="!data.is_favorite" src="@/static/navgiation/ShouYe/love.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
-				<image v-else src="@/static/navgiation/ShouYe/favorite_s.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
-				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{data.favorites}}</text>
-			</view>
-			
 			<view style="display: flex;align-items: center;width: 20vw;margin-left: 1vw;" @click="change_shoucang">
 				<image v-if="!data.is_shoucang" src="@/static/navgiation/ShouYe/shoucang.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
 				<image v-else src="@/static/navgiation/ShouYe/shoucang_s.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
 				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{Math.ceil(data.favorites/8)}}</text>
 			</view>
-			
-			<view style="display: flex;align-items: center;width: 20vw;margin-left: 1vw;">
-				<image src="@/static/navgiation/ShouYe/commit.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
-				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">评论</text>
+			<view style="display: flex;align-items: center;width: 20vw;margin-left: 2vw;" @click="change_favorite">
+				<image v-if="!data.is_favorite" src="@/static/navgiation/ShouYe/love.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
+				<image v-else src="@/static/navgiation/ShouYe/favorite_s.png" mode="widthFix" style="width: 30px;border-radius: 10px;"></image>
+				<text style="font-size: 17px;color: #7a7a7a;margin-left: 5rpx;">{{data.favorites}}</text>
 			</view>
 		</view>
 	</view>
@@ -181,14 +175,14 @@
 	.bootom_group{
 		border-top: 1px solid #dfdfdf;
 		display: flex;
-		flex-direction: row;
+		flex-direction: row-reverse;
 		position: fixed;
 		bottom: 0;
 		height: 120rpx;
 		background-color: #FFFFFF;
 		align-items: center;
 		width: 100vw;
-		justify-content: space-between;
+
 	}
 	
 	.subtitle{

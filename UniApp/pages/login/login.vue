@@ -67,7 +67,7 @@
 					uni.showToast({ title: '请输入手机号', icon: 'none' });
 					return;
 				}
-				if (!/^[1][3,4,5,7,8,9][0-9]{9}$/.test(that.data.phone)) {
+				if (that.data.phone.length==0) {
 					uni.showToast({ title: '请输入正确手机号', icon: 'none' });
 					return;
 				}
@@ -96,7 +96,7 @@
 					uni.showToast({ title: '请输入手机号', icon: 'none' });
 					return;
 				}
-				if (!/^[1][3,4,5,7,8,9][0-9]{9}$/.test(that.data.phone)) {
+				if (that.data.phone.length==0) {
 					uni.showToast({ title: '请输入正确手机号', icon: 'none' });
 					return;
 				}

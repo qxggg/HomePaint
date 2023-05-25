@@ -58,7 +58,7 @@
 					<view style="font-size: 14px;">窗</view>
 				</view>
 				
-				<view style="display: flex;align-items: center;margin-top: 10rpx;color: red;font-size: 15px;" v-if="now_room!=-1">
+				<view style="display: flex;align-items: center;margin-top: 10rpx;color: red;font-size: 15px;" v-if="now_room!=-1&&house!=null">
 					{{house.Room[now_room].area.toFixed(2)}}m²
 				</view>
 
@@ -208,12 +208,18 @@
 				uni.showLoading({
 					title:'加载中'
 				});
-				setTimeout(function(){
-					uni.navigateBack();
-					window.location.href = "uniwebview://close";
-					uni.hideLoading();
-				},1000);
-				
+				var temp = uni.getStorageSync('House_identify');
+				this.request(this.server_url+'houseData/save',temp,'POST').then((res)=>{
+					if(res.code==0){
+						uni.showToast({
+							title: '保存成功!'
+						});
+						
+						window.location.href = "uniwebview://close";
+						uni.hideLoading();
+						uni.navigateBack();
+					}
+				});				
 			},
 			init() {
 
@@ -361,18 +367,18 @@
 				}
 			},
 			save_image() {
-
+				var that = this;
 				uni.canvasToTempFilePath({
 					canvasId: 'firstCanvas',
 					
 					  success: function(res) {
 						// 在H5平台下，tempFilePath 为 base64
 						console.log(res);
-						this.request(this.server_url+'picture/upload',{image:res.tempFilePath},'POST').then((re)=>{
+						that.request(that.server_url+'picture/uploadHouseImage',{image:res.tempFilePath},'POST').then((re)=>{
 							console.log(re);
 								
 							if(re.code==0){
-								this.data.image.push(re.url);
+								that.data.image.push(re.url);
 								uni.showToast({
 									title:'上传成功!',
 									icon:'none'
@@ -386,13 +392,13 @@
 				this.root.DWW = this.result;
 				console.log(this.root);
 				
-				// this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
-				// 	if(res.code==0){
-				// 		uni.showToast({
-				// 			title: '保存成功!'
-				// 		});
-				// 	}
-				// });
+				this.request(this.server_url+'houseData/save',this.root,'POST').then((res)=>{
+					if(res.code==0){
+						uni.showToast({
+							title: '保存成功!'
+						});
+					}
+				});
 
 			},
 			save_qiang() {
@@ -578,7 +584,7 @@
 			},
 			get_fangsuo() {
 				if (this.result.img_size[0] < this.result.img_size[1]) {
-					this.xuanzhuan_x_y();
+					// this.xuanzhuan_x_y();
 				}
 				// 求出放缩范围
 				var maxx = -100;
@@ -642,7 +648,19 @@
 					this.result.WindowPoints[i].x = this.result.WindowPoints[i].y;
 					this.result.WindowPoints[i].y = temp;
 				}
-
+				
+				for(var i = 0;i< this.house.Room.length;i++){
+					// 转化center
+					var temp = this.house.Room[i].center.x;
+					this.house.Room[i].center.x = this.house.Room[i].center.y;
+					this.house.Room[i].center.y = temp;
+					// 转化point
+					for(var j=0;j<this.house.Room[i].point.length;j++){
+						var tempp = this.house.Room[i].point[j].x;
+						this.house.Room[i].point[j].x = this.house.Room[i].point[j].y;
+						this.house.Room[i].point[j].y = tempp;
+					}
+				}
 			},
 			draw_All_Window() {
 				this.ctx.restore();
@@ -792,7 +810,7 @@
 			draw_All_Wall() {
 				// 画出墙体
 				for (var i = 0; i < this.result.Walls.length; i++) {
-					if(this.request.Walls[i].isDoor==true)	break;
+					if(this.result.Walls[i].isDoor==true)	continue;
 					this.ctx.beginPath();
 					var temp_start = this.get_wallspoint(this.result.Walls[i].start_point);
 					var temp_end = this.get_wallspoint(this.result.Walls[i].end_point);

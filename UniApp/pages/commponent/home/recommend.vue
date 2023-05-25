@@ -117,7 +117,7 @@
 		},
 		methods: {
 			FangZhi(e){
-				
+				console.log(e);
 				window.location.href = "uniwebview://GOODS"+JSON.stringify(e);
 			},
 			setDataList(newVal) {

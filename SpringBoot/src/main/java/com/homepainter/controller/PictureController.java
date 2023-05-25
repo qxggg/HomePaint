@@ -1,7 +1,10 @@
 package com.homepainter.controller;
 
 import com.homepainter.util.FileUtils;
+import com.homepainter.util.RedisUtil;
 import com.qcloud.cos.model.PutObjectResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +28,12 @@ import static com.homepainter.util.ReadFile.readfile;
 @RequestMapping("/picture")
 @RestController
 public class PictureController {
+
+    @Autowired
+    RedisUtil redisUtil;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     /**
      * 裁剪图片，可以不传 x,y(自动补全100)
@@ -145,7 +154,7 @@ public class PictureController {
     }
 
     @PostMapping ("/upload")
-    public Map<String,Object> upload(@RequestBody Map<String,Object> input) throws IOException {
+    public Map<String,Object> upload(@RequestBody Map<String,Object> input,@RequestHeader String token) throws IOException {
         Map<String,Object> res = new HashMap<>();
         try{
             // 图片base64转换并上传
@@ -154,6 +163,7 @@ public class PictureController {
             PutObjectResult putObjectResult = putObject(filename, file_res, "picture/");
             String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/picture/" + filename;
             res.put("url",Imageurl);
+
         }catch (Exception e){
             res.put("msg",e.toString());
             res.put("code",16);
@@ -167,5 +177,59 @@ public class PictureController {
         return res;
     }
 
+    @PostMapping ("/uploadHouseImage")
+    public Map<String,Object> uploadHouseImage(@RequestBody Map<String,Object> input,@RequestHeader String token) throws IOException {
+        Map<String,Object> res = new HashMap<>();
+        try{
+            // 图片base64转换并上传
+            File file_res = Base64ToFile(input.get("image").toString());
+            String filename =  System.currentTimeMillis() + "upload.jpg";
+            PutObjectResult putObjectResult = putObject(filename, file_res, "picture/");
+            String Imageurl = "https://image-1304455659.cos.ap-nanjing.myqcloud.com/picture/" + filename;
+            res.put("url",Imageurl);
 
+            // 插入到数据库中
+            String id =(String) redisUtil.get(token);
+            int userId = Integer.parseInt(id.substring(5));
+            String sql = "UPDATE `user` set HouseImage = '"+Imageurl+"' where userId = "+userId;
+            jdbcTemplate.execute(sql);
+        }catch (Exception e){
+            res.put("msg",e.toString());
+            res.put("code",16);
+            return res;
+        }
+        // 图片base64转换并上传
+
+
+        res.put("msg","上传成功");
+        res.put("code",0);
+        return res;
+    }
+
+    @GetMapping("/GetHouseImage")
+    public Map<String,Object> GetHouseImage(@RequestHeader String token) throws IOException {
+        Map<String,Object> res = new HashMap<>();
+        try{
+            // 插入到数据库中
+            String id =(String) redisUtil.get(token);
+            int userId = Integer.parseInt(id.substring(5));
+            String sql = "select HouseImage from `user` where userId ="+userId;
+            List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
+            if(list.size()==0||list.get(0).get("HouseImage")==null){
+                res.put("data","https://image-1304455659.cos.ap-nanjing.myqcloud.com/picture/huxing.jpg");
+            }else{
+                res.put("data",list.get(0).get("HouseImage"));
+            }
+        }catch (Exception e){
+            res.put("msg",e.toString());
+            res.put("code",16);
+            return res;
+        }
+        // 图片base64转换并上传
+
+
+        res.put("msg","上传成功");
+        res.put("code",0);
+        return res;
+    }
 }

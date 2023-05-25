@@ -95,8 +95,9 @@
 									<view class="g_left" style="color: red;font-weight: bold;" v-else>
 										<text >已失败</text>
 									</view>
-									
-
+								</view>
+								<view style="width: 100%;display: flex;flex-direction: row-reverse;margin-top: 5px;">
+									<image src="../../../../static/images/fangZhi.png" style="width: 20px;" mode="widthFix" @click="fangzhi(item)"></image>
 								</view>
 							</view>
 						</view>
@@ -165,6 +166,12 @@
 			uni.stopPullDownRefresh();
 		},
 		methods: {
+			fangzhi(e){
+				console.log(e);
+				e.modalId = e.userFurniture.fpId;
+				e.title = e.userFurniture.name;
+				window.location.href = "uniwebview://GOODS"+JSON.stringify(e);
+			},
 			back(){
 				uni.navigateBack();
 			},

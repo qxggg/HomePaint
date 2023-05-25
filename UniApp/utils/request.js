@@ -17,9 +17,9 @@ async function request(mehtod, params, type, callBack) {
     'X-Requested-With': 'XMLHttpRequest',
     "Accept": "application/json",
     "Content-Type": "application/json; charset=UTF-8",
-	// "token":uni.getStorageSync('token'),
+	"token":uni.getStorageSync('token'),
 	'Access-Control-Allow-Origin':'*',
-	"token":"d109cd10-d3e5-4338-821c-823798c4e4d7"
+	// "token":"d109cd10-d3e5-4338-821c-823798c4e4d7"
   };
   let http = {
     url: mehtod,

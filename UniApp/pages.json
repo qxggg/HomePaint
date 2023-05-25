@@ -3,6 +3,7 @@
 		{
 			"path": "pages/navigation/ShouYe/ShouYe",
 			"style": {
+				"enablePullDownRefresh": true,
 				"navigationStyle": "custom",
 				"app-plus": {
 					"titleView": false
@@ -369,6 +370,28 @@
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false
             }
+            
+        }
+        ,{
+            "path" : "pages/draw/ChangeStyle",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleView": false
+				},
+				"enablePullDownRefresh": true
+			}
+            
+        }
+        ,{
+            "path" : "pages/navigation/ShouYe/furniture_shop/ChooseRoom",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleView": false
+				},
+				"enablePullDownRefresh": true
+			}
             
         }
     ],

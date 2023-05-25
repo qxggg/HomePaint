@@ -320,9 +320,9 @@
 			},
 			jump_3d(){
 				var temp = {
-					OBJ:'http://101.42.44.6:8095/download/'+this.goodsData.modalId+'/normalized_model.obj',
-					jpg:'http://101.42.44.6:8095/download/'+this.goodsData.modalId+'/texture.png',
-					mtl:'http://101.42.44.6:8095/download/'+this.goodsData.modalId+'/model.mtl',
+					OBJ:'https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/'+this.goodsData.modalId+'/normalized_model.obj',
+					jpg:'https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/'+this.goodsData.modalId+'/texture.png',
+					mtl:'https://image-1304455659.cos.ap-nanjing.myqcloud.com/3D-FUTURE-model-part1/'+this.goodsData.modalId+'/model.mtl',
 					scale:500
 				};
 
