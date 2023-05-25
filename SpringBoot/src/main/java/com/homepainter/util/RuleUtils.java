@@ -620,6 +620,15 @@ public class RuleUtils {
                     }
 
                 }
+                for (int l = 0; l < wallList.size(); ++l)
+                    for (int m = 0; m < wallList.size(); ++m) {
+                        JSONObject wall = wallList.getJSONObject(l);
+                        JSONObject mall = wallList.getJSONObject(m);
+                        if (wall != mall && wall.get("id").equals(mall.get("id")))
+                            if (wall.get("isDoor").equals(true)) wallList.remove(m);
+                            else if (mall.get("isDoor").equals(false)) wallList.remove(l);
+                    }
+
                 room.put("wall", wallList);
             }
             System.out.println(wallList);
