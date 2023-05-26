@@ -78,13 +78,14 @@ public class ChangeStyleService {
                 }
             }
 
+
+            List<Map<String, Object>> styleFloor = getGoods.changeFloorStyle(style);
+            int random = CreateHouseService.generateRandomNumber(styleFloor.size() - 1);
+            Map<String, Object> sf = styleFloor.get(random);
             for (int i = 0; i < floors.size(); ++i){
                 JSONObject floor = floors.getJSONObject(i);
                 int rId = floor.getInteger("roomId");
                 if (rId == roomId){
-                    List<Map<String, Object>> styleFloor = getGoods.changeFloorStyle(style);
-                    int random = CreateHouseService.generateRandomNumber(styleFloor.size() - 1);
-                    Map<String, Object> sf = styleFloor.get(random);
                     floor.put("imageURL", sf.get("imageURL"));
                     floor.put("id", sf.get("id"));
                     floor.put("price", sf.get("price"));
@@ -96,14 +97,14 @@ public class ChangeStyleService {
                 int rId = wallpape.getInteger("roomId");
                 if (rId == roomId){
                     List<Map<String, Object>> stylePaper = getGoods.changeWallpaintStyle(style);
-                    int random = CreateHouseService.generateRandomNumber(stylePaper.size() - 1);
-                    Map<String, Object> sf = stylePaper.get(random);
                     wallpape.put("imageURL", sf.get("imageURL"));
                     wallpape.put("id", sf.get("id"));
                     wallpape.put("price", sf.get("price"));
                 }
             }
             }
+
+        System.out.println(floors);
         }
 
 }

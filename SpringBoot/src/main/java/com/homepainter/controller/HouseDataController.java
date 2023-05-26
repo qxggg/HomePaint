@@ -120,7 +120,7 @@ public class HouseDataController {
             getFloorWalls(allWallpaint, i, roomId, wallpaint);
 
         }
-        save(data, token);
+        save(data, (String) redisUtil.get(token));
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "打标签成功了！！！");
