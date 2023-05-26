@@ -96,16 +96,18 @@ public class HouseDataController {
     }
 
     @PostMapping("2dto3d")
-    public JSONObject twoToThree(@RequestBody JSONObject data, @RequestHeader String token){
+    public JSONObject twoToThree(@RequestBody JSONObject data, @RequestHeader String token) throws Exception {
         JSONObject res = new JSONObject();
         String id =(String) redisUtil.get(token);
         int userId = Integer.parseInt(id.substring(5));
-        JSONArray rooms = data.getJSONObject("house").getJSONArray("Room");
-        JSONObject furniture = data.getJSONObject("furniture");
-        JSONArray allFloors = furniture.getJSONArray("floor");
-        JSONArray allWallpaint = furniture.getJSONArray("WallPaper");
-        for (int i = 0; i < rooms.size(); ++i){
-            JSONObject room = rooms.getJSONObject(i);
+        JSONObject origin = data.getJSONObject("origin");
+
+        JSONArray roomss = data.getJSONObject("house").getJSONArray("Room");
+        JSONObject furnitures = data.getJSONObject("furniture");
+        JSONArray allFloors = furnitures.getJSONArray("floor");
+        JSONArray allWallpaint = furnitures.getJSONArray("WallPaper");
+        for (int i = 0; i < roomss.size(); ++i){
+            JSONObject room = roomss.getJSONObject(i);
             int roomId = room.getInteger("roomId");
             if (room.getString("style") == null) continue;
             String style = room.getString("style");
@@ -120,10 +122,36 @@ public class HouseDataController {
             getFloorWalls(allWallpaint, i, roomId, wallpaint);
 
         }
+
+//
+//        try{
+//            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
+//        }catch (Exception e){
+//            res.put("code",21);
+//            res.put("Exception",e);
+//            res.put("msg","抠门扣窗失败");
+//            return res;
+//        }
+//
+//
+//        JSONObject IdentifyResult = new JSONObject();
+//        IdentifyResult.put("data", origin);
+//        Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+//        data.put("house",house);
+//
+//
+//        res.put("data", data);
+//        res.put("code", 0);
+//        res.put("msg", "户型识别检索成功");
+//
+
         save(data, (String) redisUtil.get(token));
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "打标签成功了！！！");
+
+
+
         return res;
     }
 
@@ -237,6 +265,7 @@ public class HouseDataController {
             res.put("Exception", e);
             res.put("msg", "绑定门窗失败");
         }
+        save(new JSONObject(data), (String) redisUtil.get("token"));
         return res;
     }
 
