@@ -55,6 +55,8 @@ public class HouseDataController {
     @PostMapping("/ChangeStyle")
     public JSONObject changeStyle(@RequestBody JSONObject data, @RequestHeader String token){
         JSONObject res = new JSONObject();
+        String id =(String) redisUtil.get(token);
+        int userId = Integer.parseInt(id.substring(5));
         JSONArray goods = data.getJSONObject("furniture").getJSONArray("goods");
         JSONArray rooms = data.getJSONObject("house").getJSONArray("Room");
         String style = data.getJSONObject("furniture").getString("style");
@@ -66,7 +68,8 @@ public class HouseDataController {
 
         furniure.remove("style");
         furniure.remove("ChangeStyle");
-        save(data, (String) redisUtil.get(token));
+
+        save(data, id);
 
         res.put("data", furniure);
         res.put("code", 0);
@@ -123,29 +126,29 @@ public class HouseDataController {
 
         }
 
-//
-//        try{
-//            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
-//        }catch (Exception e){
-//            res.put("code",21);
-//            res.put("Exception",e);
-//            res.put("msg","抠门扣窗失败");
-//            return res;
-//        }
-//
-//
-//        JSONObject IdentifyResult = new JSONObject();
-//        IdentifyResult.put("data", origin);
-//        Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
-//        data.put("house",house);
-//
-//
-//        res.put("data", data);
-//        res.put("code", 0);
-//        res.put("msg", "户型识别检索成功");
-//
 
-        save(data, String.valueOf(userId));
+        try{
+            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
+        }catch (Exception e){
+            res.put("code",21);
+            res.put("Exception",e);
+            res.put("msg","抠门扣窗失败");
+            return res;
+        }
+
+
+        JSONObject IdentifyResult = new JSONObject();
+        IdentifyResult.put("data", origin);
+        Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
+        data.put("house",house);
+
+
+        res.put("data", data);
+        res.put("code", 0);
+        res.put("msg", "户型识别检索成功");
+
+
+        save(data, id);
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "打标签成功了！！！");
