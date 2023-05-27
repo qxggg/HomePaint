@@ -145,7 +145,7 @@ public class HouseDataController {
 //        res.put("msg", "户型识别检索成功");
 //
 
-        save(data, (String) redisUtil.get(token));
+        save(data, id);
         res.put("data", data);
         res.put("code", 0);
         res.put("msg", "打标签成功了！！！");
