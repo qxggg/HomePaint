@@ -127,27 +127,6 @@ public class HouseDataController {
         }
 
 
-        try{
-            data.put("DWW",HouseIdentifyHandler.getResult(JSON.parseObject( JSON.toJSONString( origin))));
-        }catch (Exception e){
-            res.put("code",21);
-            res.put("Exception",e);
-            res.put("msg","抠门扣窗失败");
-            return res;
-        }
-
-
-        JSONObject IdentifyResult = new JSONObject();
-        IdentifyResult.put("data", origin);
-        Map<String,Object> house = spliteHouse.SpliteHouseController(IdentifyResult,userId);
-        data.put("house",house);
-
-
-        res.put("data", data);
-        res.put("code", 0);
-        res.put("msg", "户型识别检索成功");
-
-
         save(data, id);
         res.put("data", data);
         res.put("code", 0);
