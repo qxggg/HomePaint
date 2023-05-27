@@ -126,8 +126,6 @@ public class HouseIdentifyController {
                 JSONObject defaultLight = new JSONObject();
                 JSONObject room = rooms.getJSONObject(i);
 
-
-
                 defaultWallpaint.put("id", 780);
                 defaultWallpaint.put("imageURL", "https://image-1304455659.cos.ap-nanjing.myqcloud.com/BiZhi/780.jpg");
                 defaultWallpaint.put("roomId", i);

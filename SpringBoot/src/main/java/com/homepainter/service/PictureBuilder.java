@@ -91,6 +91,7 @@ public class PictureBuilder {
                 }
             }
         }
+
         return show;
     }
 
