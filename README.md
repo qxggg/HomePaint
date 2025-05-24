@@ -46,6 +46,7 @@ ProjectName and Description
  本篇README.md面向开发者
 
 ## 本项目年久失修，链接可能失效啦！
+## 借了一下我队友的readme，导航到他那边，主要是app端的代码（unity），我这边有后端和h5的代码。
 ### 目录
 
 [toc]
